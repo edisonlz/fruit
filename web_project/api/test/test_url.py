@@ -109,6 +109,8 @@ class TestUrl(object):
         print "[end]..."
 
 if __name__ == "__main__":
+
+    
     tu = TestUrl()
     tu.run()
 
