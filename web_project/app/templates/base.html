@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>CMS内容管理系统</title>
+    <title>Fruit-CMS内容管理系统</title>
     <meta name="viewport" content="">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -12,11 +12,6 @@
     <!-- CSS -->
     <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/hint.min.css" rel="stylesheet">
-{#    <link href="{{ STATIC_URL }}bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet"#}
-{#          media="screen">#}
-{#    <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet">#}
-
-{#    <link href="{{ STATIC_URL }}css/jquery-ui.css" rel="stylesheet">#}
     <link href="{{ STATIC_URL }}jquery-ui-1.10.4/css/ui-lightness/jquery-ui-1.10.4.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/font-awesome.min.css" rel="stylesheet">
 
@@ -35,21 +30,12 @@
     <link rel="shortcut icon" href="{{ STATIC_URL }}ico/favicon.png">
 
     <script src="{{ STATIC_URL }}js/jquery.js"></script>
-{#    <script src="{{ STATIC_URL }}js/jquery-sortable.js"></script>#}
+
     <script src="{{ STATIC_URL }}js/jquery-ui.js"></script>
     <script src="{{ STATIC_URL }}js/line_basic.js"></script>
-    {#    <script src="{{ STATIC_URL }}js/bootstrap.js"></script>#}
 
     <style type="text/css">
-{#        .well-small {#}
-{#            margin-top: 10px;#}
-{#            padding-bottom: 10px;#}
-{#            padding-top: 20px;#}
-{#        }#}
 
-{#        .time {#}
-{#            margin-bottom: 10px;#}
-{#        }#}
         .action_tag{
             width: 20px;
             height: 20px;
@@ -57,8 +43,7 @@
         .navigation-div {
             color: black;
             font-size: 18px;
-{#            margin-bottom: 20px;#}
-{#            margin-top: 10px;#}
+
         }
 
         #myModal .modal-body {
@@ -120,36 +105,20 @@
             _height: 100%;
         }
 
-{#        #content {#}
-{#            margin: 0 auto -25px;#}
-{#            padding: 0;#}
-{#            min-width: 70%;#}
-{#            height: 100%;#}
-{#            min-height: 100%;#}
-{#            _height: 100%;#}
-{#        }#}
+
 
         #main-content {
             padding-top: 40px;
             padding-bottom: 40px;
             padding-right: 10px;
         }
-        #nav-left {
-{#            max-width: 230px;#}
-{#            min-width: 170px;#}
-{#            min-width: 220px;#}
-        }
+
         #content-box {
             max-width: 82%;
             width: auto;
             min-width: 720px;
-{#            overflow: auto;#}
         }
-{#        .tooltip-inner {#}
-{#            color: #3A87AD;#}
-{#            background-color: #D9EDF7;#}
-{#            border-color: #BCE8F1;#}
-{#        }#}
+
         .breadcrumb {
             padding: 8px 5px;
             margin-bottom: 10px;
@@ -180,12 +149,12 @@
                 <div class="nav-collapse collapse">
 
                     <ul class="nav navbar-nav">
-{#                        {% show_user_top_menu %}#}
+
                     </ul>
 
                     
                     <p class="navbar-text pull-left">
-{#                        <a href="/" class="navbar-link">返回首页</a>#}
+                        <a href="/" class="navbar-link">返回首页</a>
                     </p>
 
                     <p class="navbar-text pull-right">
@@ -260,17 +229,7 @@
             charset="UTF-8"></script>
 
     <script type="text/javascript">
-          $('input').tooltip() {#  用于修改input title属性显示样式    #}
-{#        $('.form_date').datetimepicker({#}
-{#            language: 'zh-CN',#}
-{#            weekStart: 1,#}
-{#            todayBtn: 1,#}
-{#            autoclose: 1,#}
-{#            todayHighlight: 1,#}
-{#            startView: 2,#}
-{#            minView: 2,#}
-{#            forceParse: 0#}
-{#        });#}
+        $('input').tooltip();
         $('#myTab a').click(function (e) {
             e.preventDefault();
             $(this).tab('show');
@@ -309,16 +268,6 @@
                     interval = null;
                 }
             }
-
-{#            //设置主内容区域和表格同宽#}
-{#            var main_table = $(document.getElementsByClassName('table')[0]);#}
-{#            if (main_table.width() < 720) {#}
-{#                main_table.animate({width: 720});#}
-{#                main_table.parent().animate({display:'inline-block', width:720});#}
-{#            } else {#}
-{#                main_table.parent().css('display', 'inline-block');#}
-{#            }#}
-
         });
     </script>
 

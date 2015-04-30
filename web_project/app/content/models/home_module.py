@@ -2,7 +2,7 @@
 from django.db import models
 from wi_cache.base import CachingManager
 from django.db.models import Max
-
+from common import Status
 
 
 class BoxType(object):
@@ -12,7 +12,7 @@ class BoxType(object):
         NORMAL: u'普通盒子',
         HEADER_SHOW: u'轮播图'
     }
-    
+
     TYPES = [
         (NORMAL, u'普通盒子'),
         (HEADER_SHOW, u'轮播图'),
@@ -28,7 +28,6 @@ class Box(models.Model):
     title = models.CharField(max_length=100, default=u'标题')
     position = models.IntegerField(verbose_name=u'位置', default=0, db_index=True)
 
-
     state = models.IntegerField(verbose_name=u"状态(开/关)", choices=Status.STATUS, default=0, db_index=True, max_length=2)
     iner_count = models.IntegerField(verbose_name=u"内部容器个数", default=12)
 
@@ -38,7 +37,6 @@ class Box(models.Model):
     updated_at = models.DateTimeField(verbose_name=u'更新时间', auto_now=True)
     is_delete = models.BooleanField(verbose_name=u'删除标记', default=False, db_index=True)
 
-    box_id = models.ForeignKey(verbose_name=u'模块ID',HomeBox)
     objects = CachingManager()
 
     class Meta:

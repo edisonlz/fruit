@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">
     <style type="text/css">
+
         div.nav-group {
             position: relative;
         }
@@ -104,15 +105,13 @@
                     <td colspan="1">
                     
                         <a class="btn btn-small btn-info btn-table"
-                           href="{% url "iphone_main_page_videos" %}?box_id={{ module.id }}">
                             <i class="icon-film"></i> 内容 </a>
 
-                            <a class="btn btn-small btn-table" href="{% url "iphone_query_module" module.id %}" title="修改">
+                            <a class="btn btn-small btn-table" title="修改">
                                 <i class="icon-edit"></i> 
                                 修改</a>
 
                             <a class="btn btn-small btn-danger btn-table del"
-                               href="{% url "iphone_delete_module" module.id %}"
                                title="删除">
                                 <i class="icon-trash"></i> 删除</a>
                     </td>
@@ -122,7 +121,7 @@
         </table>
     </div>
 
-    {% if not modules %}
+    {% if not boxes %}
         <div class="row-fluid">
             <div class="col-sm-8">
                 <div class="alert">
@@ -135,11 +134,7 @@
 
 
     <div class="row-fluid">
-        {% include  'iphone/main_page/module_manage/module/add_module.html' %}
-    </div>
-
-    <div class="row-fluid">
-        {% include  'iphone/main_page/module_manage/module/_publish_modal.html' %}
+        {% include  'box/add_box.html' %}
     </div>
 
 {% endblock %}
@@ -180,7 +175,7 @@
 
             })
         }
-        
+
         {% include "common_module/sort_edit_del.js" %}
         {% include "common_module/image_upload.js" %}
         {% include "iphone/main_page/module_manage/module/_add_module_validate.js" %}

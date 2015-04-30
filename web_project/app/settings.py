@@ -66,7 +66,6 @@ def load_settings(settings, debug=True, **kwargs):
                 'django.contrib.messages.middleware.MessageMiddleware',
                 'django.middleware.transaction.TransactionMiddleware',
                 'app.middleware.profile_middleware.ProfileMiddleware',
-                'app.middleware.user_path_middleware.UserPathMiddleware',
             ],
 
             'AUTH_USER_MODEL': 'user.User',
@@ -88,10 +87,9 @@ def load_settings(settings, debug=True, **kwargs):
                 'app.permission',
                 'app.content',
                 'app.bootstrap_toolkit',
-                # 'object_log',
                 'django_extensions',
-                #'guardian',
             ],
+            
             "LOGIN_URL": "/signin",
             "LOGIN_REDIRECT_URL": "/",
             "MENU_CONFIG": Menus,

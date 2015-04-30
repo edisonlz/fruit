@@ -17,7 +17,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
 
-    url(r'^$', 'content.views.index', name=u'首页'),
+    url(r'^$', 'content.views.module.cms_module', name=u'首页'),
 
     url(r'^signin/$', 'django.contrib.auth.views.login', {'template_name': 'signin.html'}, name="signin"),
     url(r'^signout/$', 'django.contrib.auth.views.logout_then_login',  name="signout"),
