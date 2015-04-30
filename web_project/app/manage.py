@@ -14,4 +14,4 @@ from base.settings import execute
 
 if __name__ == "__main__":
 
-    execute('m-cms-new.base', 'm-cms-new.app')
+    execute('web_project.base', 'web_project.app')

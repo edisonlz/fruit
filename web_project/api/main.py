@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.join(PROJECT_ROOT, os.pardir))
 from base.settings import load_django_settings
 from settings import load_tonardo_settings
 
-load_django_settings('m-cms-new.base', 'm-cms-new.app', 'm-cms-new.api')
+load_django_settings('web_project.base', 'web_project.app', 'web_project.api')
 
 import tornado.httpserver
 import tornado.ioloop

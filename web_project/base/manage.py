@@ -8,4 +8,4 @@ sys.path.insert(0, os.path.join(PROJECT_ROOT, os.pardir))
 from base.settings import execute
 
 if __name__ == "__main__":
-    execute('m-game-platform.base')
+    execute('web_project.base')
