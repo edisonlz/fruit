@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <!--<div class="hero-unit">
+        <h3>说明：</h3>
+        <p>
+            这里要保证“每个APP的换量系统”，只有固定的3个TAB。
+            我们无法控制第三个TAB的内容（该内容由友盟SDK控制），我们只能修改第三个TAB的名字
+        </p>
+    </div>-->
+    <div class="container">
+        {% if error %}
+            <div class="message alert alert-danger" >
+                {{ error }}
+            </div>
+        {% endif %}
+        <div class="controls-row">
+            <label class="control-label">产品过滤</label>
+            <select id="filter" class="span5">
+                <option value="-1">全部</option>
+                {% for product in products %}
+                <option value="{{ product.id }}">{{ product.name }}</option>
+                {% endfor %}
+            </select>
+            <a href="/app/tab/edit" class="btn btn-primary span2 offset12">新建 Tab</a>
+        </div>
+        <div>
+            {% for product in products %}
+            <table class="table table-bordered" id="product_{{ product.id }}">
+                <caption><h3>{{ product.name }}</h3></caption>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>TAB名称</th>
+                        <th>顺序号</th>
+                        <th>应用数</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                {% for tab in product.tab_set.all %}
+                        <tbody>
+                            <tr>
+                                <td>{{ tab.id }}</td>
+                                <td>{{ tab.name }}</td>
+                                <td>{{ tab.rank }}</td>
+                                <td>{{ tab.app_num }}</td>
+                                {% ifequal tab.del_mark 0 %}
+                                    <td><span class="label label-success">已上架</span></td>
+                                    <td><a href="/app/tab/edit?tab_id_edit={{ tab.id }}">编辑</a></td>
+                                    <td><a href="/app/tab/delete?tab_id_delete={{ tab.id }}">下架</a></td>
+                                {% else %}
+                                    <td><span class="label label-important">下架中</span></td>
+                                    <td><a href="/app/tab/edit?tab_id_edit={{ tab.id }}">编辑</a></td>
+                                    <td><a href="/app/tab/on?tab_id_on={{ tab.id }}">上架</a></td>
+                                {% endifequal %}
+                            </tr>
+                        </tbody>
+                {% endfor %}
+            </table>
+           {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#filter").change(function(){
+        id = $("#filter").val();
+        if(id!=-1){
+            id = "product_"+id;
+            $("table.table-bordered").hide();
+            $("#"+id).show();
+        }else{
+            $("table.table-bordered").show();
+        }
+    });
+});
+</script>
+
+{% endblock %}

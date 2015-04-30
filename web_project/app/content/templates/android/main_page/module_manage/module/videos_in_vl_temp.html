@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% load util_tags %}
+
+{% block link %}
+
+    <link href="{{ STATIC_URL }}select2/select2.css" rel="stylesheet"/>
+    <link href="{{ STATIC_URL }}select2/select2-bootstrap.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
+
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="row-fluid input-prepend" >
+        <h3>{{ video_list.title }}Vidoe List 视频</h3>
+    </div>
+    <div class="pull-right">
+            <a class="btn btn-primary module-state" value="1" href="#">开启</a>
+            <a class="btn btn-primary module-state" value="0" href="#">关闭</a>
+            <a class="btn btn-danger" href="{% url 'video_list_add_video' video_list.id %}">新增内容</a>
+{#            <a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal">同步</a>#}
+            {% include  'home_common/common_video/select_sync_platforms_modal.html' with current_box_id=video_list.id override_box=override_box%}
+    </div>
+    <table class="table table-striped">
+        <thead>
+        <th><input type="checkbox" style="margin-right: 2px;margin-bottom: 2px" id="state-all-pick">全选</th>
+        <th>内容ID</th>
+        <th>类型</th>
+        <th>标题</th>
+        <th>腰封</th>
+        <th>图片</th>
+        <th>建立时间</th>
+        <th>版权</th>
+        <th>付费？</th>
+        <th>状态</th>
+        <th>操作</th>
+        </thead>
+        <tbody id="sortable">
+        {% for video in videos %}
+            <tr id="{{ video.id }}" value="{{ video.id }}" class="sort-item">
+            <td><input type="checkbox" class="video-status-tag"></td>
+            {% if video.video_type == 4 %}
+                <td><a class="data_tip" href="#" data-toggle="tooltip"
+                       title="{{ video.url }}">{{ video.url | slice:"10" }}...</a></td>
+            {% else  %}
+                <td>{{ video.video_id }}</td>
+            {% endif %}
+                <td>{% show_video_type_human_readable video.video_type %}</td>
+                <td><a class="data_tip" href="#" data-toggle="tooltip"
+                       title="{{ video.title}}">{{ video.title | slice:"12" }}...</a></td>
+                <td><a class="data_tip" href="#" data-toggle="tooltip"
+                       title="{{ video.intro }}">{{ video.intro | slice:"10" }}...</a></td>
+                <td><img src="{{ video.h_image }}" style="height: 90px" class="img-polaroid"/></td>
+                <td>{{ video.created_at }}</td>
+                <td>{{ video.copyright_for_view }}</td>
+                <td>{{ video.pay_type_for_view }}</td>
+                <td id="status_{{ video.id }}">
+                        {{ state_hash | dict_get:video.state }}
+                </td>
+                <td colspan="2">
+                    <a href="{% url "video_list_query_video" video.module_id video.id %}"><img class="action_tag" title="修改" src="{{ STATIC_URL }}images/edit.png"></a>
+                    <a href="{% url "video_list_delete_video" video.module_id video.id %}" class="del"><img class="action_tag" title="删除" src="{{ STATIC_URL }}images/delete.png"></a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% if not videos %}
+        <div class="row-fluid">
+            <div class="col-sm-8">
+                <div class="alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Warning!</strong> Video List 视频模块数据为空,请创建视频数据。
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+
+    <div class="row-fluid">
+        <form method="post" id="save_position_form">
+            <input type="hidden" name="item_ids" id="item_ids"/>
+            <input type="hidden" name="box_id" id="box_id" value="{{ video_list.id }}"/>
+            <input type="submit" value="保存顺序" class="btn btn-primary" id="save_position_btn"/>
+            <a class="btn btn-danger" href="{% url 'home_common_boxes'%}?page={{ from_box_page }}">返回</a>
+        </form>
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+    <script src="{{ STATIC_URL }}select2/select2.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script src="{{ STATIC_URL }}jquery-validate/jquery.validate.js"></script>
+    <script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+
+    <script type="text/javascript">
+        {% include 'common_module/sort_edit_del.js' %}
+
+        function collect_channel_ids_with_order() {
+            children = $("#sortable").children();
+            ret = '';
+            for (i = 0; i < children.length; i++) {
+                child = children[i];
+                ret += $(child).attr('value') + ',';
+            }
+            return ret.substring(0, ret.length - 1);
+        }
+
+        $("#save_position_btn").click(function () {
+                item_ids = collect_channel_ids_with_order();
+                if (item_ids == '') {
+                    alert('没有要排序的内容');
+                    return false;
+                }
+                $("#item_ids").val(item_ids);
+        });
+
+        $(document).ready(function () {
+
+
+            $('#box_list').change(function () {
+                box_id = $(this).val()
+                window.location = location.pathname + '?box_id=' + box_id
+            })
+
+
+            $(function () {
+                $.fn.editable.defaults.mode = 'popup';
+                $('.select_pick').editable({
+                    showbuttons: false,
+                    source: [
+                        {value: 1, text: '开启'},
+                        {value: 0, text: '关闭'}
+                    ]
+                });
+            });
+
+        });
+    </script>
+        <script type="text/javascript">
+        $('#state-all-pick').click(function () {
+            if ($(this).is(':checked')) {
+                $("input:checkbox.video-status-tag").prop("checked", true)
+            } else {
+                $("input:checkbox:checked.video-status-tag").attr("checked", false)
+            }
+        })
+        function collect_change_module_ids() {
+            var module_id_array = [];
+            var module_ids = '';
+            $("input:checkbox:checked.video-status-tag").each(function () {
+                module_id_array.push($(this).parent().parent().attr('value'))
+            })
+            module_ids = module_id_array.join(",")
+            return module_ids
+        }
+
+        $('.module-state').click(function () {
+                var module_ids = ""
+                var val = $(this).attr("value")
+                var source = {
+                    '1': '开启',
+                    '0': '关闭'
+                };
+            module_ids = collect_change_module_ids()
+            if (module_ids.length > 0) {
+                $.ajax({
+                    url: '/content/android/video_list/update_video_status',
+                    type: "POST",
+                    dataType: 'json',
+                    data:{
+                        module_ids: module_ids,
+                        value: val
+                    },
+                    success: function (data) {
+                        for (var i = 0; i < data.module_ids.length; i++) {
+                            $('#status_' + data.module_ids[i]).html(source[val])
+                        };
+                        $().toastmessage({
+                            position: 'middle-center'
+                        });
+                        $().toastmessage('showSuccessToast', '操作成功');
+                    }
+                })
+            }
+        })
+    </script>
+    <link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css"
+          rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+
+{% endblock %}

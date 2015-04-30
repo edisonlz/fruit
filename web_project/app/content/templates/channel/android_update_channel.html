@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block link %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+    <div class="row-fluid">
+        <h3>更新Android频道数据</h3>
+
+        <form role="form" id="create_cha" method="post" action="{% url "android_update_channel" %}">
+            <div class="form-group">
+                <input type="hidden" class="form-control" id="id" name="id" value="{{ channel.id }}">
+                <label for="cid">频道ID</label>
+                <input type="number" class="form-control" id="cid" name="cid"
+                       value="{{ channel.cid }}">
+            </div>
+            <div class="form-group">
+                <label for="title">频道名称</label>
+                <input type="text" class="form-control" id="title" name="title" value="{{ channel.title }}">
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label>色值</label>
+
+                {% for single_color in color_board %}
+                    <label for="color_{{ forloop.counter }}"></label>
+                    {% ifequal single_color channel.color %}
+                        <input type="radio"  id="color_{{ forloop.counter }}" name="color" value="{{ single_color }}" style="vertical-align: top;margin-left: 50px;" checked="checked">
+                    {% else %}
+                        <input type="radio"  id="color_{{ forloop.counter }}" name="color" value="{{ single_color }}" style="vertical-align: top;margin-left: 50px;">
+                    {% endifequal %}
+                    <span style="background-color:{{ single_color }};display:inline-block;width: 100px;">&nbsp;&nbsp;</span>
+                    <br>
+                {% endfor %}
+
+            </div>
+
+            
+            <div class="control-group">
+                <label for="selected-input" class="control-label">背景图(尺寸 248 x 248)</label>
+
+                <div class="controls">
+
+                <span id="normal-button" class="btn btn-success fileinput-button  btn-large"
+                      {% if channel.icon_bg %}style="display:none;"{% endif %}>
+                     <span>+ 上传截图...</span>
+                     <input id="normal-upload" type="file" name="files[]" multiple>
+                </span>
+
+                    <div id="normal-success" class="alert alert-success"
+                         style="font-size: 20px;margin-top: 10px;width:150px;
+                                 {% if not channel.icon_bg %}display:none;{% endif %}">
+                        <button type="button" class="close">&times;</button>
+                        <img id='normal-content' src="{% if channel.icon_bg %}{{ channel.icon_bg }}{% endif %}"
+                             class="img-polaroid">
+                    </div>
+                    <div id="normal-progress" class="progress progress-success progress-striped  active"
+                         style="display: none">
+                        <div class="bar"></div>
+                    </div>
+                    <input type='hidden' id='normal-input' name='icon_bg'
+                           value="{% if channel.icon_bg %}{{ channel.icon_bg }}{% endif %}" height="100" width="100"/>
+                </div>
+            </div>
+            <div class="control-group ordinary">
+                <label for="small-input" class="control-label">图标(尺寸112×108)</label>
+
+                <div class="controls">
+
+                <span id="small-button" class="btn btn-success fileinput-button  btn-large "
+                      {% if channel.icon %}style="display:none;"{% endif %}>
+                     <span>+ 上传截图...</span>
+                     <input id="small-upload" type="file" name="files[]" multiple>
+                </span>
+
+                    <div id="small-success" class="alert alert-success"
+                         style="font-size: 20px;margin-top: 10px;width:150px;
+                                 {% if not channel.icon %}display:none;{% endif %}">
+                        <button type="button" class="close">&times;</button>
+                        <img id='small-content' src="{% if channel.icon %}{{ channel.icon }}{% endif %}"
+                             class="img-polaroid">
+                    </div>
+                    <div id="small-progress" class="progress progress-success progress-striped  active"
+                         style="display: none">
+                        <div class="bar"></div>
+                    </div>
+                    <input type='hidden' id='small-input' name='icon'
+                           value="{% if channel.icon %}{{ channel.icon }}{% endif %}" height="100" width="100"/>
+                </div>
+            </div>
+            
+
+
+            <button type="submit" class="btn btn-default">更新</button>
+            <a class="btn btn-default" href="{% url 'android_channels' %}">返回</a>
+        </form>
+
+    </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script type="text/javascript">
+        {% include "common_module/image_upload.js" %}
+        $(document).ready(function () {
+            $("#li_android_module").addClass('active');
+            var img_upload_arr = ['normal', 'small'];
+            for (var index = 0; index < img_upload_arr.length; index++) {
+                add_upload_handler(generate_upload_dict(img_upload_arr[index]));
+            }
+        });
+
+    </script>
+
+    {% include "channel/channel_validate.html" %}
+
+{% endblock %}

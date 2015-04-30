@@ -1,0 +1,43 @@
+
+<style type="text/css">
+    div#box_all {
+{#        margin-left: 10px;#}
+        margin: 0 auto;
+    }
+    div#box_head {
+        margin-left: 6px;
+    }
+    div#video_body {
+        width: 338px;
+        overflow: auto;
+        margin: 0 auto;
+    }
+
+    div#video_body img{
+      width: 90px;
+        height: 135px;
+        margin: 5px;
+    }
+</style>
+
+<div id="box_all">
+
+    <div id="box_head">
+    <img src="http://r2.ykimg.com/0510000054BC8CF16714C07FF5078C57" style="vertical-align: text-bottom;">
+        <h3 style="clear:right;line-height: 20px;margin-left: 2px;display: inline-block;"> {{ box_title }} </h3>
+        </a>
+        </div>
+    <div id="video_body">
+        {% if videos %}
+
+            {% for video in videos %}
+            {% if video.v_image %}
+                <img src="{{ video.v_image }}" title="{{ video.title }}" class="img-polaroid">
+                {% else %}
+                <img src="http://static.youku.com/index/img/2013/video/video_default_145x218.png" class="img-polaroid" title="{{ video.title }}">
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+</div>

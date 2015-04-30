@@ -1,0 +1,626 @@
+{% extends "base.html" %}
+{% block link %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}app/content/module/update.css">
+
+{% endblock %}
+{% block content %}
+
+    <div class="container">
+    <div class="row-fluid span8">
+        <h3>更新{{ module_platform }}模块数据</h3>
+
+        <form role="form" method="post" action="{% url "update_new_module" module_platform %}">
+            <table class="table table-hover table-striped">
+                <tbody>
+                <tr>
+                    <td>
+                        <label for="title">模块ID</label>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" id="title" name="box_id" value="{{ module.box_id }}">
+                    </td>
+                    <input type="hidden" class="form-control" id="id" name="id" value="{{ module.id }}">
+                </tr>
+                <tr>
+                    <td><label for="title">模块标题</label></td>
+                    <td><input type="text" class="form-control" id="title" name="title" value="{{ module.title }}"></td>
+                </tr>
+                <tr>
+                    <td style="width: 30%"> 模块类型</td>
+                    <td>
+                        <select class="form-control" id="box_type" name="box_type" placeholder="">
+                            {% for k,v in box_type_list %}
+                                {% if k == module.box_type %} }}
+                                    <option value="{{ k }}" selected="selected">{{ v }}</option>
+                                {% else %}
+                                    <option value="{{ k }}">{{ v }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                {% if module_platform != 'ipad' %}
+                    <tr>
+                        <td><label for="video_count_for_phone">phone视频个数</label></td>
+                        <td><input type="text" class="form-control" id="video_count_for_phone"
+                                   name="video_count_for_phone"
+                                   value="{{ module.video_count_for_phone }}">
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td>
+                        <label for="video_count_for_phone">pad视频个数</label>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" id="video_count_for_phone" name="video_count_for_pad"
+                               value="{{ module.video_count_for_pad }}">
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="cid">跳转CID</label></td>
+                    <td><input type="text" class="form-control" id="cid" name="cid" value="{{ module.cid }}"></td>
+                </tr>
+                {% if module_platform != 'ipad' %}
+                    <tr class="control-group">
+                        <td><label for="normal-input" class="control-label">冠名图片 (Iphone,Android模块必填)</label></td>
+                        <div class="validate-error"></div>
+                        <td>
+                            <div class="controls">
+                                    <span id="normal_button" class="btn btn-success fileinput-button  btn-large ">
+                                         <span>+ 上传截图...</span>
+                                         <input id="module-img-upload" type="file" name="files[]" multiple>
+                                    </span>
+
+                                <div id="normal_success" class="alert alert-success"
+                                     style="font-size: 20px;margin-top: 10px;width: 165px">
+                                    <button type="button" id="module-image-close" class="close"
+                                            style="float: right">&times;</button>
+                                    <img id='normal-content' src="{{ module.image }}" class="img-polaroid">
+                                </div>
+                                <div id="normal-progress" class="progress progress-success progress-striped  active"
+                                     style="display: none">
+                                    <div class="bar"></div>
+                                </div>
+                                <input type='hidden' id='normal-img-url' name='normal_img' value="{{ module.image }}"
+                                       height="100" width="100"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="cid">冠名图片跳转url (Iphone,Android模块必填)</label></td>
+                        <td><input type="text" class="form-control" id="image_link" name="image_link"
+                                   value="{{ module.image_link }}"></td>
+                    </tr>
+                    <tr>
+                        <td>抽屉标题跳转</td>
+                        <td>
+                            <table>
+                                {% if title_tag %}
+                                    {% include "new/module_tag/tag.html" with tag=title_tag %}
+                                {% endif %}
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>抽屉标签及跳转</td>
+
+                        <td>
+                            <table id="normal_tags_table">
+                                {% if normal_tags %}
+                                    {% for tag in normal_tags %}
+                                        {% include "new/module_tag/tag.html" with tag=tag %}
+                                    {% endfor %}
+                                {% endif %}
+                                <tr>
+                                    <td colspan="3">
+                                        <a id='create-tag-button' href="#myModal" role="button" class="btn pull-right"
+                                           data-toggle="modal">新增标签</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                {% endif %}
+                {% if module_platform == 'ipad' %}
+                    <tr id="membership_tag">
+                        <td><label>是否为会员专享 (Ipad模块需填)</label></td>
+                        <td>
+                            {% if module.for_membership == 0 %}
+                                <input type="radio" name="membership" value="1">是
+                                <input type="radio" name="membership" value="0" checked="checked">否
+                            {% else %}
+                                <input type="radio" name="membership" value="1" checked="checked">是
+                                <input type="radio" name="membership" value="0">否
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+                {% if module_platform == 'android' %}
+                    <tr id="use_multiply_units_tag">
+                        <td><label>是否phone只显示一个单元 (Android模块需填)</label></td>
+                        <td>
+                            {% if module.is_phone_use_multiply_units == 0 %}
+                                <input type="radio" name="use_multiply_units" value="1">是
+                                <input type="radio" name="use_multiply_units" value="0" checked="checked">否
+                            {% else %}
+                                <input type="radio" name="use_multiply_units" value="1">是
+                                <input type="radio" name="use_multiply_units" value="0" checked="checked">否
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-default">更新</button>
+            <a class="btn btn-default" href="{% url 'modules' module_platform %}">返回</a>
+        </form>
+        <div class="row-fluid" style="width: 760px">
+            {% include "new/module_tag/add_tag.html" with module=module tag_type_list=tag_type_list module_platform=module_platform channels=channels tag=tag %}
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script src="{{ STATIC_URL }}jquery-validate/jquery.validate.js"></script>
+    <script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#li_iphone_module").addClass('active');
+        });
+
+        var url = '/content/img/upload';
+        //初始化，主要是设置上传参数，以及事件处理方法(回调函数)
+
+        $('#module-img-upload').fileupload({
+            autoUpload: true,//是否自动上传
+            url: url,//上传地址
+            dataType: 'json',
+            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+            maxFileSize: 1048576,
+
+
+            add: function (e, data) {
+                var uploadErrors = [];
+                var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
+                if ('type' in data.originalFiles[0] && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+                    uploadErrors.push('上传图片格式错误!');
+                }
+
+                if ('size' in data.originalFiles[0] && data.originalFiles[0]['size'] > 1048576) {
+                    uploadErrors.push('上传图片需要小于1M!');
+                }
+
+                if (uploadErrors.length > 0) {
+                    show_error_msg(uploadErrors.join("\n"));
+                } else {
+                    data.submit();
+                }
+            },
+
+            done: function (e, data) {//设置文件上传完毕事件的回调函数
+
+                if ("e" in data.result && data.result["e"]["code"] < 0) {
+                    $("#normal_button").show();
+                    $("#normal-progress").hide();
+                    show_error_msg("upload error:" + data.result["e"]["code"] + ':' + data.result["e"]["desc"]);
+                    return;
+                }
+
+                $.each(data.result.files, function (index, file) {//
+                    $("#normal-content").attr("src", file.url);
+                    scoller_input = $("#normal-img-url")
+                    scoller_input.attr('value', file.url)
+                });
+
+                $("#normal-progress").hide();
+                $("#normal_success").show();
+            },
+
+            progressall: function (e, data) {//设置上传进度事件的回调函数
+
+                // $("#normal_button").hide();
+                $("#normal-progress").show();
+
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#scoller-progress .bar').css(
+                        'width',
+                        progress + '%'
+                );
+            }
+
+        });
+        $("button.close").click(function () {
+            $("#normal_success").hide();
+            $("#normal_button").show();
+            $("#normal-img-url").val("");
+        })
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            var validate_rules;
+            validate_form = function (form_selector, options) {
+                var default_options;
+                console.log("in validate_form")
+                console.log($(form_selector))
+                default_options = {
+                    errorPlacement: function (error, element) {
+                        if (element.is(":checkbox")) {
+                            return error.appendTo(element.next());
+                        } else {
+                            element.addClass('error');
+                            error.css("padding-left", "0px")
+                            return error.appendTo(element.parent());
+                        }
+                    },
+                    submitHandler: function (form) {
+                        return form.submit();
+                    },
+                    //success: function(label) {
+                    //     console.log(label)
+                    //    return label.html("&nbsp;").addClass("checked");
+                    //  },
+                    highlight: function (element, errorClass) {
+                        return $(element).parent().find("." + errorClass).removeClass("checked");
+                    }
+                };
+                options = $.extend(default_options, options);
+                return $(form_selector).validate(options);
+            };
+            validate_rules = {
+                'video_count': {
+                    'required': true,
+                    'maxlength': 6
+                },
+                'name': {
+                    'required': true
+                }
+            }
+            {%  if module_platform != 'ipad' %}
+                validate_rules['image_link'] = {
+                    'url': true,
+                    'required': true
+                }
+                validate_rules['normal_img'] = {
+                    'required': true
+                }
+            {%   endif %}
+            validate_form('form', {
+                        ignore: ':hidden:not(input[id*=normal-img-url])',
+                        rules: validate_rules
+                    }
+            );
+        })
+
+    </script>
+    <script type="text/javascript">
+
+    $(function () {
+        var add_tag_cancel_btn_click, add_tag_dialog_btn_click, add_tag_submit_btn_click, box_entity_id, check_if_tag_valid, delete_tag_btn_click, get_tag_params, modify_tag_btn_click, modify_tag_cancel_btn_click, modify_tag_submit_btn_click, adjust_jump_info;
+        var GAME_ID, TAG_TYPE, adjust_jump_info, change_sub_channels_selection, adjust_jump_info_for_bind, change_sub_channels_selection_for_bind;
+        TAG_TYPE = $('#tag_tag_type').val();
+        GAME_ID = '0';
+        var default_sub_channel_id;
+        default_sub_channel_id = '';
+        change_sub_channels_selection = function (channel_entity_id, default_sub_channel_id) {
+            return $.ajax({
+                url: "/content/info/sub_channel_options",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    sub_channel_id: default_sub_channel_id,
+                    channel_entity_id: channel_entity_id,
+                },
+                success: function (data) {
+                    $("#sub_channel_id").html(data.options);
+                    return $('#channel_page_id').val(data.channel_id);
+                }
+            });
+        };
+        adjust_jump_info = function (jump_type) {
+            if (jump_type === "6") {
+                $('#game_id_tr').show('fast');
+                $('#game_information_area').show('fast');
+            } else {
+                $('#game_id_tr').hide('fast');
+                $('#game_information_area').hide('fast');
+            }
+            if (jump_type === "1" || jump_type === "5" || jump_type === "6") {
+                return $('#jump_info_tr').hide('fast');
+            } else {
+                $('#jump_info_tr').show('fast');
+                if (jump_type === "2") {
+                    $('#cid_info').show().siblings().hide();
+                }
+                if (jump_type === "3") {
+                    $('#sub_channel_id_info').show().siblings().hide();
+                }
+                if (jump_type === "4") {
+                    return $('#hotword_info').show().siblings().hide();
+                }
+            }
+        };
+        adjust_jump_info_for_bind = function () {
+            var jump_type
+            jump_type = $('#tag_jump_type').val()
+            if (jump_type === "6") {
+                $('#game_id_tr').show('fast');
+                $('#game_information_area').show('fast');
+            } else {
+                $('#game_id_tr').hide('fast');
+                $('#game_information_area').hide('fast');
+            }
+            if (jump_type === "1" || jump_type === "5" || jump_type === "6") {
+                return $('#jump_info_tr').hide('fast');
+            } else {
+                $('#jump_info_tr').show('fast');
+                if (jump_type === "2") {
+                    $('#cid_info').show().siblings().hide();
+                }
+                if (jump_type === "3") {
+                    $('#sub_channel_id_info').show().siblings().hide();
+                }
+                if (jump_type === "4") {
+                    return $('#hotword_info').show().siblings().hide();
+                }
+            }
+        };
+        change_sub_channels_selection_for_bind = function () {
+            var channel_entity_id
+            channel_entity_id = $('#channel_page_id').val()
+            return $.ajax({
+                url: "/content/info/sub_channel_options",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    sub_channel_id: default_sub_channel_id,
+                    channel_entity_id: channel_entity_id,
+                },
+                success: function (data) {
+                    $("#sub_channel_id").html(data.options);
+                    return $('#channel_page_id').val(data.channel_id);
+                }
+            });
+        }
+        change_sub_channels_selection($('#channel_page_id').val(), default_sub_channel_id);
+        adjust_jump_info($('#tag_jump_type').val());
+        $('#tag_jump_type').change(function () {
+            return adjust_jump_info($(this).val());
+        });
+        $('#channel_page_id').change(function () {
+            return change_sub_channels_selection($(this).val());
+        });
+        if ($('#tag_jump_type').val() === 'jump_to_game') {
+            $('#original_game_id').val(GAME_ID);
+            if (GAME_ID !== '0') {
+                return $('#fetch_game_information_button').trigger('click');
+            }
+        }
+        $('#create-tag-button').click(function () {
+            $('#tag_title').val("")
+            $('#tag_jump_type').val(1)
+            $('#original_game_id').val("")
+            adjust_jump_info($('#tag_jump_type').val());
+            $('#game_field_form input').each(function(){
+                $(this).val("")
+            })
+        })
+        get_tag_params = function () {
+            var tag_params
+            if ("{{ module_platform }}" === "android"
+                    ) {
+                tag_params = {
+                    'box_id': $('#tag_box_id').val(),
+                    'cid': $('#cid').val(),
+                    'tag[state]': $('#tag_state').val(),
+                    'title': $('#tag_title').val(),
+                    'tag[tag_type]': $('#tag_tag_type').val(),
+                    'jump_type': $('#tag_jump_type').val(),
+                    'channel_page_id': $('#channel_page_id').val(),
+                    'tag_sub_channel_id': $('#tag_sub_channel_id').val(),
+                    'tag_hotword': $('#tag_hotword').val(),
+                    'original_game_id': $('#original_game_id').val(),
+                    'game_appname': $('#game_name').val(),
+                    'game_version_code': $('#game_version_code').val(),
+                    'game_version_name': $('#game_version_name').val(),
+                    'game_apk_package': $('#game_apk_package').val(),
+                    'game_logo': $('#game_logo').val(),
+                    'game_category_name': $('#game_category_name').val(),
+                    'game_score': $('#game_score').val(),
+                    'game_url': $("#game_apk_or_url").val(),
+                    'game_description': $('#game_description').val(),
+                    'game_download_count': $("#game_download_count").val(),
+                    'game_size': $('#game_size').val()
+                }
+            } else {
+                tag_params = {
+                    'box_id': $('#tag_box_id').val(),
+                    'cid': $('#cid').val(),
+                    'tag[state]': $('#tag_state').val(),
+                    'title': $('#tag_title').val(),
+                    'tag[tag_type]': $('#tag_tag_type').val(),
+                    'jump_type': $('#tag_jump_type').val(),
+                    'channel_page_id': $('#channel_page_id').val(),
+                    'tag_sub_channel_id': $('#sub_channel_id').val(),
+                    'tag_hotword': $('#tag_hotword').val(),
+                    'original_game_id': $('#original_game_id').val(),
+                    'game_appname': $('#game_appname').val(),
+                    'game_version_code': $('#game_version').val(),
+                    'game_itunesid': $('#game_itunesid').val(),
+                    'game_logo': $('#game_logo').val(),
+                    'game_scroller': $('#game_scroller').val(),
+                    'game_score': $('#game_score').val(),
+                    'game_url': $('#game_url').val(),
+                    'game_desc': $('#game_desc').val(),
+                    'game_upload_time': $('#game_upload_time').val(),
+                    'game_size': $('#game_size').val(),
+                    'game_redirect_type': $('#game_redirect_type').val(),
+                    'game_redirect_url': $('#game_redirect_url').val(),
+                    'game_recommend_type': $('#game_recommend_type').val(),
+                    'game_charge': $('#game_charge').val()
+                }
+            }
+            return tag_params
+        };
+        $("#add_tag_submit_btn").click(function () {
+            return add_tag_submit_btn_click(this);
+        });
+        add_tag_submit_btn_click = function () {
+            var params;
+            // if (!check_if_tag_valid()) {
+            //     return;
+            // }
+            params = get_tag_params();
+            $.ajax({
+                url: '/content/{{ module_platform }}/main_page/add/module_tags',
+                type: 'POST',
+                data: params,
+                success: function (data) {
+                    var last_tag, new_tr;
+                    if (data === 'count_err') {
+                        return alert('添加标签失败: 最多添加3个标签');
+                    } else {
+                        new_tr = data;
+                        last_tag = $('#normal_tags_table tr.tag_info:last');
+                        if (last_tag.length > 0) {
+                            last_tag.after(new_tr);
+                        } else {
+                            $('#normal_tags_table tr:first').before(new_tr);
+                        }
+                        $('.delete_tag_btn').unbind('click').bind('click', delete_tag_btn_click);
+                        return $('.modify_tag_btn').unbind('click').bind('click', modify_tag_btn_click);
+                    }
+                }
+            });
+            $('#tag_title').val("")
+            $('#tag_jump_type').val(1)
+            adjust_jump_info($('#tag_jump_type').val());
+            return $("#add_tag_cancel_btn").trigger("click");
+        };
+        $(".delete_tag_btn").click(function () {
+            if (confirm("确定删除tag?")){
+               return delete_tag_btn_click(this);
+            }
+        });
+        delete_tag_btn_click = function (dom) {
+            var tag_id;
+            tag_id = $(dom).parents('.tag_info').attr('id').replace(/tag_/, '');
+            return $.ajax({
+                dataType: 'json',
+                url: '/content/{{ module_platform }}/main_page/delete/module_tag',
+                type: 'POST',
+                data: {
+                    id: tag_id
+                },
+                success: function (data) {
+                    if (data.status === 'ok') {
+                        return $("#tag_" + tag_id).remove();
+                    } else {
+                        return alert('删除失败');
+                    }
+                }
+            });
+        };
+        $(".modify_tag_btn").click(function () {
+            return modify_tag_btn_click(this);
+        });
+        modify_tag_btn_click = function (dom) {
+            var tag_id;
+
+            tag_id = $(dom).parents('.tag_info').attr('id').replace(/tag_/, '');
+            console.log(tag_id)
+            $('#create-tag-button').trigger("click")
+            $.ajax({
+                url: '/content/{{ module_platform }}/main_page/query/module_tag/' + tag_id,
+                success: function (data) {
+                    $('#myModal').html(data);
+                    $('#modify_tag_submit_btn').unbind('click').bind('click', modify_tag_submit_btn_click);
+                    $('#channel_page_id').unbind('change').bind('change', change_sub_channels_selection_for_bind)
+                    $('#tag_jump_type').unbind('change').bind('change', adjust_jump_info_for_bind)
+                    change_sub_channels_selection($('#channel_page_id').val(), data.id);
+                    adjust_jump_info($('#tag_jump_type').val());
+                }
+            });
+        };
+        modify_tag_submit_btn_click = function () {
+            var params, tag_id;
+            tag_id = $('#modify_tag_id').val();
+            //if (!check_if_tag_valid()) {
+            //  return;
+            //}
+            params = get_tag_params();
+            params['id'] = tag_id;
+            $.ajax({
+                url: '/content/{{ module_platform }}/main_page/update/module_tag',
+                type: 'POST',
+                dataType: 'json',
+                data: params,
+                success: function (data) {
+                    var dom;
+                    if (data.status === 'err') {
+                        return alert('修改标签失败');
+                    } else {
+                        dom = $('tr[id=tag_' + tag_id + ']');
+                        dom.find('.tag_title').html(data.tag.title);
+                        return dom.find('.tag_jump_info').html(data.tag.jump_type);
+                    }
+                }
+            });
+            return $("#modify_tag_cancel_btn").trigger("click");
+        };
+        return check_if_tag_valid = function () {
+            $("#tag_details_table tr").each(function () {
+                if ($(this).find('td').size() === 2) {
+                    return $(this).append("<td></td>");
+                }
+            });
+            if ($('#tag_title').val().trim().length < 1) {
+                $('#tag_title_tr td:last').html("<span class='error'>跳转的名称不能为空</span>");
+                return false;
+            } else {
+                $('#tag_title_tr td:last').html("");
+            }
+            if ($('#tag_jump_type').val() === 'jump_to_hotword') {
+                if ($('#tag_hotword').val().trim().length < 1) {
+                    $('#jump_info_tr td:last').html("<span class='error'>热词不能为空</span>");
+                    return false;
+                } else {
+                    $('#jump_info_tr td:last').html("");
+                }
+            }
+            if ($('#tag_jump_type').val() === 'jump_to_game') {
+                $("#fetch_game_information_button").trigger('click');
+                if ($('#game_appname').val().trim().length < 1) {
+                    $('#game_id_tr td:last').html("<span class='error'>请填写有效的游戏ID</span>");
+                    return false;
+                } else {
+                    $('#game_id_tr td:last').html("");
+                }
+            }
+            return true;
+        };
+    });
+    $().toastmessage({
+        text: $($('.success')[0]).text(),
+        sticky: false,
+        position: 'middle-center',
+        type: 'success'
+    });
+    if ($('.success').length > 0) {
+        $().toastmessage('showSuccessToast');
+    }
+    if ($('.error').length > 0) {
+        $().toastmessage('showErrorToast');
+    }
+    </script>
+
+{% endblock %}

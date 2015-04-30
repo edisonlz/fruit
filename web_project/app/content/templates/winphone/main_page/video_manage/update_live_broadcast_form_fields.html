@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% load util_tags %}
+{% block link %}
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}switchery/dist/switchery.css"/>
+    <script src="{{ STATIC_URL }}switchery/dist/switchery.js"></script>
+
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row-fluid">
+
+            <h3>视频修改</h3>
+
+            <form role="form" method="post" action="{% url 'winphone_update_video' %}">
+                <input type="hidden" class="form-control" id="id" name="id" value="{{ video.id }}">
+
+                    <div class="form-group">
+                        <label for="video_id">视频ID</label>
+                        <label>{{ video.video_id }}</label>
+                    </div>
+
+                <div class="form-group">
+                    <label for="title">标题</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ video.title }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="subtitle">子标题</label>
+                    <input type="text" class="form-control" id="subtitle" name="subtitle" value="{{ video.subtitle }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="intro">腰封</label>
+                    <input type="text" class="form-control" id="intro" name="intro" value="{{ video.intro }}">
+                </div>
+
+                <div class="control-group">
+                    <label for="screen-input" class="control-label">图片</label>
+
+                    <div class="controls">
+
+                <span id="screen_button" class="btn btn-success fileinput-button  btn-large ">
+                    <span>+ 上传截图...</span>
+                    <input id="screen-img-upload" type="file" name="files[]" multiple>
+                </span>
+
+                        <div id="screen_success" class="alert alert-success"
+                             style="font-size: 20px;margin-top: 10px">
+                            <button type="button" class="close">&times;</button>
+                            <img id='screen-content' src="{{ video.h_image }}" class="img-polaroid">
+                        </div>
+                        <div id="screen-progress" class="progress progress-success progress-striped  active"
+                             style="display: none">
+                            <div class="bar"></div>
+                        </div>
+                        <input type='hidden' id='screen-input' name='h_image' value="{{ video.h_image }}" height="100"
+                               width="100"/>
+
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="pay_type">是否付费:</label>
+                    <select class="form-control" id="paid" name="paid" placeholder=""  >
+                        {% for live_paid in live_broadcast_paid%}
+                            <option value="{{ live_paid.id }}"
+                            {% ifequal live_paid.id video.paid %}
+                                    selected="selected"
+                            {% endifequal %}
+                                >
+                                {{ live_paid.desc }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="video_type">直播页面url(选填) :</label>
+                    <textarea id="url" name="url" rows="5">{{ video.url }}</textarea>
+                </div>
+
+
+
+
+                <button type="submit" class="btn btn-default">修改</button>
+                <a class="btn btn-default"
+                   href="{% url 'winphone_main_page_videos' %}?box_id={{ video.box_id }}">返回</a>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% block js %}
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+
+            $(".alert button").click(function () {
+                var btn = $(this);
+                $(btn).next().attr("src", "");
+                parent = $(btn).parent();
+                //隐藏
+                parent.hide();
+                //设置hidden input的值
+                if (parent.next().next()) parent.next().next().val("");
+                //显示上传按钮
+                $(parent.parent().children()[0]).show();
+
+            });
+
+            var url = '/content/img/upload';
+            //初始化，主要是设置上传参数，以及事件处理方法(回调函数)
+
+            $('#screen-img-upload').fileupload({
+                autoUpload: true,//是否自动上传
+                url: url,//上传地址
+                dataType: 'json',
+                acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+                maxFileSize: 1048576,
+
+
+                add: function (e, data) {
+                    data.formData = {
+                        'type': $('#select-img-type').val()
+                    };
+                    var uploadErrors = [];
+                    var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
+                    if ('type' in data.originalFiles[0] && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+                        uploadErrors.push('上传图片格式错误!');
+                    }
+
+                    if ('size' in data.originalFiles[0] && data.originalFiles[0]['size'] > 1048576) {
+                        uploadErrors.push('上传图片需要小于1M!');
+                    }
+
+                    if (uploadErrors.length > 0) {
+                        show_error_msg(uploadErrors.join("\n"));
+                    } else {
+                        data.submit();
+                    }
+                },
+
+                done: function (e, data) {//设置文件上传完毕事件的回调函数
+
+                    if ("e" in data.result && data.result["e"]["code"] < 0) {
+                        $("#screen_button").show();
+                        $("#screen-progress").hide();
+                        show_error_msg("upload error:" + data.result["e"]["code"] + ':' + data.result["e"]["info"]);
+                        return;
+                    }
+
+                    $.each(data.result.files, function (index, file) {//
+                        $("#screen-content").attr("src", file.url);
+                        $("#screen-content").show();
+                        scoller_input = $("#screen-input")
+                        scoller_input.attr('value', file.url)
+                    });
+
+                    $("#screen-progress").hide();
+                    console.log("in success")
+                    $("#screen_success").show();
+                },
+
+                progressall: function (e, data) {//设置上传进度事件的回调函数
+
+                    $("#screen_button").hide();
+                    $("#screen-progress").show();
+
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    $('#scoller-progress .bar').css(
+                            'width',
+                            progress + '%'
+                    );
+                }
+
+            });
+
+
+        });
+
+
+    </script>
+{% endblock %}

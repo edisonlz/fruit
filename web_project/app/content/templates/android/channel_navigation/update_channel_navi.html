@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block link %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+    <h3>更新频道导航</h3>
+    <div class="row-fluid">
+        <form role="form" id="create_cha" method="post" action="{% url "android_update_channel_navigation" navigation.id %}">
+
+            <table class=" offset2">
+                <tr>
+                    <td style="width: 100px"><label for="title">导航标题:</label></td>
+                    <td><input type="text" class="form-control" id="title" name="title" value="{{ navigation.title }}"></td>
+                </tr>
+{#                <tr>#}
+{#                    <td style="width: 100px"><label for="title">频道类型:</label></td>#}
+{#                    <td>#}
+{#                        <select class="form-control" id="nav-type" name="nav_type" >#}
+{#                            {% for val,name in nav_types %}#}
+{#                                {% if val == navigation.nav_type %}#}
+{#                                    <option value="{{ val }}" selected="selected">{{ name }}</option>#}
+{#                                {% else %}#}
+{#                                    <option value="{{ val }}">{{ name }}</option>#}
+{#                                {% endif %}#}
+{#                            {% endfor %}#}
+{#                        </select>#}
+{#                    </td>#}
+{#                </tr>#}
+            </table>
+        <div class="pull-left">
+            <button type="submit" class="btn btn-default">确定</button>
+            <a class="btn btn-default" href="{% url 'android_channel_navigation' %}">返回</a>
+        </div>
+        </form>
+
+    </div>
+
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script type="text/javascript">
+        {% include "common_module/image_upload.js" %}
+        $(document).ready(function () {
+            $("#li_android_module").addClass('active');
+            var img_upload_arr = ['normal', 'small'];
+            for (var index = 0; index < img_upload_arr.length; index++) {
+                add_upload_handler(generate_upload_dict(img_upload_arr[index]));
+            }
+        });
+
+    </script>
+
+    {% include "channel/channel_validate.html" %}
+
+{% endblock %}

@@ -1,0 +1,130 @@
+<!-- Modal -->
+<div id="myModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">创建iPad频道</h3>
+</div>
+
+<div class="modal-body">
+    <form role="form" id="create_cha" method="post" action="{% url "ipad_add_channel" %}">
+        <div class="form-group">
+            <label for="title">频道名称</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="">
+        </div>
+        <div class="form-group">
+            <label for="cid">CID</label>
+            <input type="number" class="form-control" id="cid" name="cid" placeholder="" value="">
+        </div>
+        <div class="form-group">
+            <label for="channel_type">频道类型</label>
+            <select class="form-control" id="channel_type" name="for_sale">
+                <option value="0">频道(非营销频道)</option>
+                <option value="1">频道(营销频道)</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label for="normal-input" class="control-label">正常图标(大)</label>
+            <div class="controls">
+                <span id="normal-button" class="btn btn-success fileinput-button  btn-large ">
+                     <span>+ 上传截图...</span>
+                     <input id="normal-upload" type="file" name="files[]" multiple>
+                </span>
+                <div id="normal-success" class="alert alert-success">
+                    <button type="button" class="close">&times;</button>
+                    <img id='normal-content' src="" class="img-polaroid">
+                </div>
+                <div id="normal-progress" class="progress progress-success progress-striped  active"
+                     style="display: none">
+                    <div class="bar"></div>
+                </div>
+                <input type='hidden' id='normal-input' name='icon_big' value="" height="100" width="100"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="normal-selected-input" class="control-label">选中图标(大)</label>
+            <div class="controls">
+                <span id="normal-selected-button" class="btn btn-success fileinput-button  btn-large ">
+                     <span>+ 上传截图...</span>
+                     <input id="normal-selected-upload" type="file" name="files[]" multiple>
+                </span>
+                <div id="normal-selected-success" class="alert alert-success">
+                    <button type="button" class="close">&times;</button>
+                    <img id='normal-selected-content' src="" class="img-polaroid">
+                </div>
+                <div id="normal-selected-progress" class="progress progress-success progress-striped  active"
+                     style="display: none">
+                    <div class="bar"></div>
+                </div>
+                <input type='hidden' id='normal-selected-input' name='icon_big_selected' value="" height="100"
+                       width="100"/>
+            </div>
+        </div>
+        <div class="control-group ordinary">
+            <label for="small-input" class="control-label">正常图标(小)</label>
+            <div class="controls">
+                <span id="small-button" class="btn btn-success fileinput-button  btn-large ">
+                     <span>+ 上传截图...</span>
+                     <input id="small-upload" type="file" name="files[]" multiple>
+                </span>
+                <div id="small-success" class="alert alert-success">
+                    <button type="button" class="close">&times;</button>
+                    <img id='small-content' src="" class="img-polaroid">
+                </div>
+                <div id="small-progress" class="progress progress-success progress-striped  active"
+                     style="display: none">
+                    <div class="bar"></div>
+                </div>
+                <input type='hidden' id='small-input' name='icon_small' value="" height="100" width="100"/>
+            </div>
+        </div>
+        <div class="control-group ordinary">
+            <label for="small-selected-input" class="control-label">选中图标(小)</label>
+            <div class="controls">
+                <span id="small-selected-button" class="btn btn-success fileinput-button  btn-large ">
+                     <span>+ 上传截图...</span>
+                     <input id="small-selected-upload" type="file" name="files[]" multiple>
+                </span>
+                <div id="small-selected-success" class="alert alert-success">
+                    <button type="button" class="close">&times;</button>
+                    <img id='small-selected-content' src="" class="img-polaroid">
+                </div>
+                <div id="small-selected-progress" class="progress progress-success progress-striped  active"
+                     style="display: none">
+                    <div class="bar"></div>
+                </div>
+                <input type='hidden' id='small-selected-input' name='icon_small_selected' value="" height="100"
+                       width="100"/>
+            </div>
+        </div>
+
+        <div class="form-group ordinary">
+            <label for="image">精选图片类型</label>
+            <select class="form-control" id="image_jin" name="image_type_choiceness">
+                <option value="0">横图</option>
+                <option value="1">竖图</option>
+            </select>
+        </div>
+        <div class="form-group ordinary">
+            <label for="image">全部图片类型</label>
+            <select class="form-control" id="image_all" name="image_type_all">
+                <option value="0">横图</option>
+                <option value="1">竖图</option>
+            </select>
+        </div>
+        <div class="form-group sales" style="display: none">
+            <label for="image">营销图片类型</label>
+            <select class="form-control" id="image_sale" name="image_type_sale">
+                <option value="0">横图</option>
+                <option value="1">竖图</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">创建</button>
+        <a class="btn btn-default" href="{% url 'ipad_channels' %}">返回</a>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+</div>
+
+</div>

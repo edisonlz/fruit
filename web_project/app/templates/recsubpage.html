@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h3 xmlns="http://www.w3.org/1999/html"><strong>游戏推荐产品子页面 -- {{ product_now.name }}</strong></h3>
+    <ul class="nav nav-tabs">
+        {% for product in products %}
+            <li {% if product_now == product %} class="active" {% endif %} ><a
+                    href="/app/gamerec/index?product={{ product.id }}">{{ product.name }}</a></li>
+        {% endfor %}
+    </ul>
+{#    <h4>添加子页面</h4>#}
+{#    <hr>#}
+{#    <form id="new-subpage" action="/app/gamerec/index" method="post">#}
+{#        <fieldset>#}
+{#            <label>子页面名称</label>#}
+{#            <input type="text" id="subpage_title" name="subpage_title">#}
+{#            <label>子页面标识</label>#}
+{#            <input type="text" id="subpage_name" name="subpage_name">#}
+{#            <label>是否要求包含vid</label>#}
+{#            <input type="radio" id="subpage_hasvid" name="subpage_hasvid" value="1">是#}
+{#            <input type="radio" id="subpage_hasvid" name="subpage_hasvid" value="0" checked="checked">否#}
+{#            <br>#}
+{#            <input type="hidden" id="product" name="product" value="{{ product_now.id }}">#}
+{#            <br>#}
+{#            <button class="btn btn-primary" type="submit" >提交</button>#}
+{#            <button class="btn" type="reset">重置</button>#}
+{#        </fieldset>#}
+{#    </form>#}
+    <h4>子页面列表</h4>
+    <hr>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>子页面名称</th>
+            <th>子页面标识</th>
+            <th>当前状态：（推荐引擎/运营）</th>
+            <th>是否要求包含vid</th>
+            <th>运营应用数量</th>
+            <th>编辑运营资源</th>
+{#            <th>删除</th>#}
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for subpage in subpages %}
+            <tr>
+                <td>{{ subpage.id }}</td>
+                <td>{{ subpage.title }}</td>
+                <td class="spname">{{ subpage.name }}</td>
+                <td>
+                    <a class="btn" type="button" href="/app/gamerec/chgstatus?subpage={{ subpage.id }}">
+                        当前状态：{% if subpage.status == 1 %}推荐引擎{% else %}运营{% endif %}
+                    </a>
+                </td>
+                <td>
+                    {% if subpage.hasvid == 1 %}是{% else %}否{% endif %}
+                </td>
+                <td>
+                    {{ subpage.count }}
+                </td>
+                <td>
+                    <a class="btn" type="button" href="/app/gamerec/detail?subpage={{ subpage.id }}">编辑</a>
+                </td>
+{#                <td>#}
+{#                    <a class="btn" type="button" onclick="delaciton('{{ subpage.id }}', '{{ subpage.name }}')">删除</a>#}
+{#                </td>#}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div id="delconfirm" class="modal hide fade">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>删除子页面</h3>
+        </div>
+        <div class="modal-body">
+            <p>你确认删除子页面<span id="delname" style="font-weight: bold; color: red"></span> 吗？（该操作不可回退）</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#" data-dismiss="modal" aria-hidden="true" class="btn">取消</a>
+            <a id="delconfirmbtn" name="delconfirmbtn" href="#" class="btn btn-primary btn-danger">确认删除</a>
+        </div>
+    </div>
+
+    <div id="formErrorModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">提示(Esc关闭)</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-error">提示消息</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+    </div>
+
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        $('#delconfirm').modal({
+            show: false
+        });
+        function delaciton(pageid, pagename) {
+            $('#delconfirmbtn').attr('href', '/app/gamerec/delete?subpage=' + pageid);
+            $('#delname').text(pagename);
+            $('#delconfirm').modal('show')
+        }
+        function show_error_msg(msg) {
+            $("#formErrorModal .modal-body p").text(msg);
+            $("#formErrorModal").modal();
+        }
+        $('#new-subpage').submit(function (event) {
+            var newname = $('#subpage_name').val();
+            if(newname == ''){
+                show_error_msg("子页面标识不能为空。");
+                return false;
+            }
+            var names = $('tbody tr');
+            for (var i = 0; i < names.length; i++) {
+                if (names.eq(i).find('td').eq(1).text() == newname) {
+                    show_error_msg("子页面标识有重复。");
+                    return false;
+                }
+            }
+        });
+
+    </script>
+{% endblock %}

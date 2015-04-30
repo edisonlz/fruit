@@ -1,0 +1,648 @@
+{% extends "base.html" %}
+
+{% block link %}
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/style.css" xmlns="http://www.w3.org/1999/html"
+          xmlns="http://www.w3.org/1999/html">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+
+    <style type="text/css">
+    </style>
+
+{% endblock %}
+
+
+{% block content %}
+    <div id="form_div">
+    <h3>应用详情&nbsp;*&nbsp;为必填项</h3>
+    <hr>
+
+    <div class="row-fluid">
+        <div class="span1">
+        </div>
+
+        <div class="span2">
+            <h4>应用LOGO</h4>
+        </div>
+
+        <div class="span6">
+            <span id="icon_file_button" class="btn btn-success fileinput-button">
+                    <span>+ Add Icon...</span>
+                    <input id="file-logo-img-upload" type="file" name="files[]"
+                           accept="image/png, image/gif, image/jpg, image/jpeg" multiple>
+            </span> <span class="text-error" style="margin-left: 16px;font-size: x-large ;font-weight: bold">*</span>
+
+            <div id="icon_file_success" class="alert alert-success" style="display: none;font-size: 20px">
+                <button type="button" class="close">&times;</button>
+                <img id='logo-img-content' src="" class="img-polaroid" height="100" width="120"/>
+            </div>
+            <div id="logo-progress" class="progress progress-success progress-striped active" style="display: none">
+                <div class="bar"></div>
+            </div>
+            <input type='hidden' id='logo-img-input' name='log-img'/>
+        </div>
+    </div>
+
+    </br>
+
+    <div class="row-fluid">
+        <div class="span1">
+        </div>
+
+        <div class="span2">
+            <h4>应用轮播图</h4>
+        </div>
+
+        <div class="span6">
+
+            <span id="img_file_button" class="btn btn-success fileinput-button">
+                    <span>+ Add Image...</span>
+                    <input id="file-scoller-img-upload" type="file" name="files[]" multiple>
+            </span>
+
+            <div id="img_file_success" class="alert alert-success" style="display: none;font-size: 20px">
+                <button type="button" class="close">&times;</button>
+                <img id='scoller-img-content' src="" class="img-polaroid">
+            </div>
+
+            <div id="scoller-progress" class="progress progress-success progress-striped  active" style="display: none">
+                <div class="bar"></div>
+            </div>
+
+            <input type='hidden' id='scoller-img-input' name='scoller-img'/>
+            <span class="text-error"
+                  style="margin-left: 16px;font-size: x-large ;font-weight: bold">轮播图尺寸800*380，1M以内</span>
+        </div>
+
+    </div>
+
+    <hr>
+
+    <form id='app-info' method="post">{% csrf_token %}
+    <div class="row-fluid">
+        <div class="span1">
+        </div>
+        <div class="span2">
+            <h4>应用名称</h4>
+        </div>
+
+        <div class="span6">
+            <input id='appname' name='appname' class="input-xlarge" type="text">
+            <span class="text-error" style="margin-left: 16px;font-size: x-large ;font-weight: bold">*</span>
+        </div>
+
+        <div class="span1">
+
+        </div>
+
+    </div>
+    <br>
+
+    <div class="row-fluid">
+        <div class="span1">
+        </div>
+        <div class="span2">
+            <h4>Appstore URL</h4>
+        </div>
+
+        <div class="span6">
+            <input id='ios-url' name="ios-url" class="input-xlarge" type="text" value="">
+            <span class="text-error" style="margin-left: 16px;font-size: x-large ;font-weight: bold">*</span>
+        </div>
+
+        <div class="span1">
+        </div>
+    </div>
+    <br>
+
+    <div class="row-fluid">
+        <div class="span1">
+        </div>
+        <div class="span2">
+            <h4>收费类型</h4>
+        </div>
+
+        <div class="span6">
+            <select name="charge-type" id="charge-type">
+                <option value="0">免费</option>
+                <option value="1">收费</option>
+                <option value="2">限免</option>
+            </select>
+        </div>
+
+        <div class="span1">
+        </div>
+    </div>
+    <br>
+
+    <div class="row-fluid">
+        <div class="span1">
+        </div>
+        <div class="span2">
+            <h4>价格(整数)</h4>
+        </div>
+
+        <div class="span6">
+            <input id="price" name="price" type="text">
+        </div>
+
+        <div class="span1">
+        </div>
+    </div>
+    <br>
+
+    <div class="row-fluid">
+        <div class="span1">
+        </div>
+        <div class="span2">
+            <h4>游戏类型：</h4>
+        </div>
+
+        <div class="span6">
+
+            <select name="game_categories" class="input-xlarge" id="game_categories">
+                <option value="" selected="selected">空</option>
+                {% for gametype in gametypes %}
+                    <option value="{{ gametype.id }}">{{ gametype.name }}</option>
+
+                {% endfor %}
+            </select>
+            <span class="text-error" style="margin-left: 16px;font-size: x-large ;font-weight: bold">*</span>
+        </div>
+
+        <div class="span1">
+
+        </div>
+    </div>
+    <br>
+
+    <div class="row-fluid">
+        <div class="span1">
+        </div>
+        <div class="span2">
+            <h4>应用简介</h4>
+        </div>
+
+        <div class="span6">
+            <textarea id='desc' name='desc' rows="3"></textarea>
+            <span class="text-error" style="margin-left: 16px;font-size: x-large ;font-weight: bold">*</span>
+
+        </div>
+
+        <div class="span1">
+        </div>
+    </div>
+    </br>
+
+    <div class="row-fluid">
+        <div class="span1">
+
+        </div>
+        <div class="span2">
+            <h4>应用状态</h4>
+        </div>
+        <div class="span6">
+
+            <select id='select-status'>
+                <option value="1" selected="selected">上架</option>
+                <option value="0">下架</option>
+            </select>
+
+        </div>
+    </div>
+    <br>
+
+    <div class="row-fluid">
+        <div class="span1">
+        </div>
+        <div class="span2">
+            <h4>版本号</h4>
+        </div>
+
+        <div class="span6">
+            <input id='ver-num' name="ver_num" class="input-xlarge" type="text">
+            <span class="text-error" style="margin-left: 16px;font-size: x-large ;font-weight: bold">*</span>
+        </div>
+
+        <div class="span1">
+        </div>
+    </div>
+    </br>
+
+    <div class="row-fluid">
+        <div class="span1">
+        </div>
+        <div class="span2">
+            <h4>软件大小(单位mb)</h4>
+        </div>
+
+        <div class="span6">
+            <input id='apk_size' name="apk_size" class="input-xlarge" type="text" value=""/>
+            <span class="text-error" style="margin-left: 16px;font-size: x-large ;font-weight: bold">*</span>
+        </div>
+
+        <div class="span1">
+        </div>
+    </div>
+    </br>
+
+    <div class="row-fluid">
+        <div class="span1">
+        </div>
+        <div class="span2">
+            <h4>初始下载量</h4>
+        </div>
+
+        <div class="span6">
+            <input id='init_download' name="init_download" class="input-xlarge" type="text" value=""/>
+            <span class="text-error" style="margin-left: 16px;font-size: x-large ;font-weight: bold">*</span>
+        </div>
+
+        <div class="span1">
+        </div>
+    </div>
+    </br>
+
+    <div class="row-fluid">
+        <div class="span1">
+        </div>
+        <div class="span2">
+            <h4>星级打分</h4>
+        </div>
+
+        <div class="span6">
+            <select name="score" id="score">
+                {% for score, show in scores %}
+                    <option value="{{ score }}">{{ show }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span1">
+        </div>
+        <div class="span2">
+            <h4>推荐类型</h4>
+        </div>
+
+        <div class="span6">
+            <select name="recommend_type" class="input-xlarge" id="recommend_type">
+                <option value="">空</option>
+                {% for recommendtype in recommendtypes %}
+                    <option value="{{ recommendtype.id }}">{{ recommendtype.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <hr>
+
+    <div class="row-fluid">
+        <div class="span8">
+        </div>
+        <div class="span4">
+            <img id="loader" style="display: none;width:56px" src="{{ STATIC_URL }}img/loading.gif" alt="loading "/>
+            <input id="sub" type="submit" value="保存" class="btn btn-primary">
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="formErrorModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">提示(Esc关闭)</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-error">提示消息</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+    </div>
+    </form>
+
+
+    </div>
+
+    <div id="form_success" style="display: none">
+        <div id="floater" style="float:left; height:200px; margin-bottom:-120px;"></div>
+
+        <div class="alert alert-success"
+             style="width: 600px;margin: auto auto;clear:both; height:240px; position:relative;">
+            <h1>Success！</h1>
+
+            <p>保存应用成功<span style="margin: 10px"><a href="/app/ios_add"> &gt;&gt;&gt;继续添加</a></span><span><a
+                    href="/app/list"> &gt;&gt;&gt;应用列表</a></span></p>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+<!-- 添加自己的js文件-->
+{% block js %}
+
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+
+            $(".alert button").click(function () {
+                var btn = $(this);
+                $(btn).next().attr("src", "");
+                parent = $(btn).parent();
+                //隐藏
+                parent.hide();
+                //设置hidden input的值
+                if (parent.next().next()) parent.next().next().val("");
+                //显示上传按钮
+                $(parent.parent().children()[0]).show();
+
+            });
+
+            var url = '/app/img/upload';
+            //初始化，主要是设置上传参数，以及事件处理方法(回调函数)
+
+            $('#file-scoller-img-upload').fileupload({
+                autoUpload: true,//是否自动上传
+                url: url,//上传地址
+                dataType: 'json',
+                acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+                maxFileSize: 1048576,
+
+
+                add: function (e, data) {
+                    var uploadErrors = [];
+                    var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
+                    var _URL = window.URL || window.webkitURL;
+                    img = new Image();
+                    img.src = _URL.createObjectURL(data.originalFiles[0]);
+                    if ('type' in data.originalFiles[0] && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+                        uploadErrors.push('上传图片格式错误!');
+                    }
+
+                    if ('size' in data.originalFiles[0] && data.originalFiles[0]['size'] > 1048576) {
+                        uploadErrors.push('上传图片需要小于1M!');
+                    }
+                    img.onload = function () {
+                        if (img.width != 800 || img.height != 380) {
+                            uploadErrors.push('上传图片尺寸错误。');
+                        }
+                        if (uploadErrors.length > 0) {
+                            show_error_msg(uploadErrors.join("\n"));
+                        } else {
+                            data.submit();
+                        }
+                    }
+                },
+
+                done: function (e, data) {//设置文件上传完毕事件的回调函数
+
+                    if ("e" in data.result && data.result["e"]["code"] < 0) {
+                        $("#img_file_button").show();
+                        $("#scoller-progress").hide();
+                        show_error_msg("upload error:" + data.result["e"]["code"] + ':' + data.result["e"]["desc"]);
+                        return;
+                    }
+
+                    $.each(data.result.files, function (index, file) {//
+                        $("#scoller-img-content").attr("src", file.url);
+                        $("#scoller-img-content").show();
+                        scoller_input = $("#scoller-img-input")
+                        scoller_input.attr('value', file.url)
+                    });
+
+                    $("#scoller-progress").hide();
+                    $("#img_file_success").show();
+                },
+
+                progressall: function (e, data) {//设置上传进度事件的回调函数
+
+                    $("#img_file_button").hide();
+                    $("#scoller-progress").show();
+
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    $('#scoller-progress .bar').css(
+                            'width',
+                            progress + '%'
+                    );
+                }
+
+            });
+
+            $('#file-logo-img-upload').fileupload({
+                autoUpload: true,//是否自动上传
+                url: url,//上传地址
+                dataType: 'json',
+                acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+                maxFileSize: 1048576,
+
+                add: function (e, data) {
+                    var uploadErrors = [];
+                    var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
+                    if ('type' in data.originalFiles[0] && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+                        uploadErrors.push('上传图片格式错误!');
+                    }
+
+                    if ('size' in data.originalFiles[0] && data.originalFiles[0]['size'] > 1048576) {
+                        uploadErrors.push('上传图片需要小于1M!');
+                    }
+
+                    if (uploadErrors.length > 0) {
+                        show_error_msg(uploadErrors.join("\n"));
+                    } else {
+                        data.submit();
+                    }
+                },
+
+                done: function (e, data) {//设置文件上传完毕事件的回调函数
+
+                    if ("e" in data.result && data.result["e"]["code"] < 0) {
+                        $("#icon_file_button").show();
+                        $("#logo-progress").hide();
+                        show_error_msg("upload error:" + data.result["e"]["code"] + ':' + data.result["e"]["desc"]);
+                        return;
+                    }
+
+                    $.each(data.result.files, function (index, file) {//
+                        $("#logo-img-content").attr("src", file.url);
+                        $("#logo-img-content").show()
+                        form = $("#app-info")
+                        logo_input = $("#logo-img-input")
+                        logo_input.attr('value', file.url)
+                        form.append(logo_input)
+                    });
+
+                    $("#logo-progress").hide();
+                    $("#icon_file_success").show();
+                },
+                progressall: function (e, data) {//设置上传进度事件的回调函数
+
+                    $("#icon_file_button").hide();
+                    $("#logo-progress").show();
+
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    $('#logo-progress .bar').css(
+                            'width',
+                            progress + '%'
+                    );
+                },
+                fail: function (e, data) {
+                    $("#icon_file_button").show();
+                    $("#logo-progress").hide();
+                    show_error_msg("上传失败!");
+                }
+
+            }).prop('disabled', !$.support.fileInput)
+                    .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+        });
+    </script>
+
+    <script type="text/javascript">
+
+        function show_error_msg(msg) {
+            $("#formErrorModal .modal-body p").text(msg);
+            $("#formErrorModal").modal();
+        }
+
+        $('#price').attr('disabled', true);
+
+        $('#charge-type').change(function(){
+            if($('#charge-type').val()== 0){
+                $('#price').attr('value', '0');
+                $('#price').attr('disabled', true);
+            }else{
+                $('#price').attr('disabled', false);
+            }
+        });
+
+        $("#app-info").submit(function (event) {
+
+            if ($("#logo-img-input").val() == '') {
+                show_error_msg('请上传应用Logo');
+                $("#logo-img-input").focus();
+                return false;
+            }
+
+            if (($('#charge-type').val() == 1) || ($('#charge-type').val() == 2)) {
+                if(($('#price').val() == '') || ($('#price').val() == 0)){
+                    show_error_msg('应用收费不能为空或零');
+                    $("#price").focus();
+                    return false;
+                }
+            }
+
+            if ($("#appname").val() == '') {
+                show_error_msg('请填写应用名称');
+                $("#appname").focus();
+                return false;
+            }
+            if ($("#ios-url").val() == '') {
+                show_error_msg('请填写下载地址');
+                $("#ios-url").focus();
+                return false;
+            }
+            if ($("#ver-num").val() == '') {
+                show_error_msg('请填写版本号');
+                $("#ver-num").focus();
+                return false;
+            }
+            if ($("#apk_size").val() == '') {
+                show_error_msg('请填写软件大小');
+                $("#apk_size").focus();
+                return false;
+            }
+            if (isNaN($("#apk_size").val())) {
+                show_error_msg('软件大小包含非法字符');
+                return false;
+            }
+            if ($("#init_download").val() == '') {
+                show_error_msg('请填写初始下载量');
+                $("#init_download").focus();
+                return false;
+            }
+            if (isNaN($("#init_download").val()) || $("#init_download").val().indexOf('.') != -1 ) {
+                show_error_msg('初始下载量包含非法字符');
+                return false;
+            }
+            if (parseInt($("#init_download").val()) > 100000000){
+                show_error_msg('初始下载量过大');
+                return false;
+            }
+            if (isNaN($("#price").val()) || $("#price").val().indexOf('.') != -1 ) {
+                show_error_msg('价格包含非法字符');
+                return false;
+            }
+            if ($("#desc").val() == '') {
+                show_error_msg('请填写简介');
+                return false;
+            }
+            if ($("#game_categories").val() == '') {
+                show_error_msg('请选择游戏类型');
+                return false;
+            }
+
+            event.preventDefault();
+
+            $("#loader").show();
+            $("#sub").attr("class", "btn btn-primary disabled");
+
+            $.ajax({
+                type: "POST",
+                url: "/app/ios_add",
+                data: {
+                    ver_num: $("#ver-num").val(),
+                    appname: $("#appname").val(),
+                    ios_url: $("#ios-url").val(),
+                    desc: $("#desc").val(),
+                    logo: $('#logo-img-input').val(),
+                    scoller: $('#scoller-img-input').val(),
+                    apk_size: $("#apk_size").val(),
+                    app_status: $('#select-status').val(),
+                    game_categories: $('#game_categories').val(),
+                    score: $('#score').val(),
+                    recommend_type: $('#recommend_type').val(),
+                    charge: $('#charge-type').val(),
+                    price: $('#price').val(),
+                    downloads: $('#init_download').val()
+
+                },
+                success: function (data) {
+
+                    $("#form_div").hide();
+                    $("#form_success").show();
+                    $("#ver-num").val('');
+                    $("#appname").val('');
+                    $("#desc").val('');
+                    $("#logo-img-content").hide();
+                    $("#scoller-img-content").hide();
+                    $('#logo-progress .bar').css(
+                            'width',
+                            0 + '%');
+                    $('#scoller-progress .bar').css(
+                            'width',
+                            0 + '%');
+                    $('#apk-progress .bar').css(
+                            'width',
+                            0 + '%');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $("#loader").hide();
+                    $("#sub").attr("class", "btn btn-primary");
+                    show_error_msg("保存失败，请重试！");
+                }
+
+            });
+            return false;
+        });
+
+    </script>
+
+{% endblock %}
+
+

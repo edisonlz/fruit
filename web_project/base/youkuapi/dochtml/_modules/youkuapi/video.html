@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>youkuapi.video &mdash; YoukuAPI 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="YoukuAPI 1.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">YoukuAPI 1.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for youkuapi.video</h1><div class="highlight"><pre>
+<span class="c">#coding=utf-8</span>
+
+<span class="kn">from</span> <span class="nn">base</span> <span class="kn">import</span> <span class="n">BaseApi</span>
+<span class="kn">import</span> <span class="nn">settings</span>
+
+<div class="viewcode-block" id="VideoApi"><a class="viewcode-back" href="../../index.html#youkuapi.video.VideoApi">[docs]</a><span class="k">class</span> <span class="nc">VideoApi</span><span class="p">(</span><span class="n">BaseApi</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    读取视频API</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">FD</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s">&#39;videoid&#39;</span><span class="p">,</span> <span class="s">&#39;title&#39;</span><span class="p">,</span> <span class="s">&#39;thumburl&#39;</span><span class="p">,</span>
+        <span class="s">&#39;thumburl_v2&#39;</span><span class="p">,</span> <span class="s">&#39;desc&#39;</span><span class="p">,</span> <span class="s">&#39;deschead&#39;</span><span class="p">,</span>
+        <span class="s">&#39;seconds&#39;</span><span class="p">,</span> <span class="s">&#39;total_vv&#39;</span><span class="p">,</span> <span class="s">&#39;state&#39;</span><span class="p">,</span> <span class="s">&#39;device_limit&#39;</span><span class="p">,</span>
+        <span class="s">&#39;isoriginal&#39;</span><span class="p">,</span> <span class="s">&#39;copyright_status&#39;</span><span class="p">,</span> <span class="s">&#39;showid&#39;</span><span class="p">,</span> <span class="s">&#39;show_videotype&#39;</span><span class="p">,</span>
+        <span class="s">&#39;show_videoseq&#39;</span><span class="p">,</span> <span class="s">&#39;userid&#39;</span><span class="p">,</span> <span class="s">&#39;username&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">fd</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FD</span><span class="p">)</span>
+
+    <span class="n">HOST</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">SHOW_HOST</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="VideoApi.get_video_info"><a class="viewcode-back" href="../../index.html#youkuapi.video.VideoApi.get_video_info">[docs]</a>    <span class="k">def</span> <span class="nf">get_video_info</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">video_id</span><span class="p">,</span> <span class="n">fd</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param str video_id: youku video id</span>
+<span class="sd">        :param str fd: field description default cls.fd</span>
+<span class="sd">        :param dict kwargs: params</span>
+<span class="sd">        :raises ValueError: if the video_id is None</span>
+<span class="sd">        :return wiki: http://wiki.1verge.net/webdev:ds:video#show_节目视频</span>
+<span class="sd">        get video info api code sample::</span>
+<span class="sd">            VideoApi.get_video_info(&quot;xasdtmmdx12&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">fd</span><span class="p">:</span>
+            <span class="n">fd</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">fd</span>
+        <span class="n">path</span><span class="o">=</span><span class="s">&#39;/video&#39;</span>
+        <span class="n">ft</span><span class="o">=</span><span class="s">&#39;json&#39;</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">q</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s">&#39;videoid&#39;</span><span class="p">:</span> <span class="n">video_id</span><span class="p">})</span>
+        <span class="n">q</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">q_str</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&quot;{k}:{v}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">q</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()])</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;ft&quot;</span><span class="p">:</span> <span class="n">ft</span><span class="p">,</span> <span class="s">&quot;q&quot;</span><span class="p">:</span> <span class="n">q_str</span><span class="p">,</span> <span class="s">&quot;fd&quot;</span><span class="p">:</span> <span class="n">fd</span><span class="p">}</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;X-Forwarded-For&#39;</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;ip&quot;</span><span class="p">)}</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">get_json</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">HOST</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;results&#39;</span><span class="p">,</span> <span class="p">[{},])[</span><span class="mi">0</span><span class="p">]</span>
+</div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">VideoApi</span><span class="o">.</span><span class="n">get_video_info</span><span class="p">(</span><span class="s">&#39;XNzg1MjI4ODA0&#39;</span><span class="p">)</span>
+
+    
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">YoukuAPI 1.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, edisonlz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

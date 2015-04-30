@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+{% load util_tags %}
+
+{% block link %}
+
+    <link href="{{ STATIC_URL }}select2/select2.css" rel="stylesheet"/>
+    <link href="{{ STATIC_URL }}select2/select2-bootstrap.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">
+
+    <style type="text/css">
+        .active-item-shadow {
+            box-shadow: rgba(133, 133, 133, 0.1) 0 0 5px 2px, rgba(133, 133, 133, 0.3) 0 0 2px;
+        }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+    <div class="row-fluid">
+        <h3> Android首页模块管理</h3>
+    </div>
+
+    <div class="row-fluid">
+        <table class="table table-striped">
+            <thead>
+            <th>模块ID</th>
+            <th>标题</th>
+            <th>模块类型</th>
+            <th>关联推荐池抽屉</th>
+            <th>频道CID</th>
+            <th>phone视频个数</th>
+            <th>pad视频个数</th>
+            <th>状态</th>
+            <th>是否对应主站频道</th>
+            <th>是否phone只显示一个单元</th>
+            <th>操作</th>
+            </thead>
+            <tbody id="sortable">
+            {% for module in modules %}
+                <tr id="module_{{ module.id }}" value="{{ module.id }}" class="sort-item">
+                    <td>
+                        {% if module.box_id %}
+                            {{ module.box_id }}
+                        {% endif %}
+                    </td>
+                    <td>{{ module.title }}</td>
+                    <td>{{ box_type_hash|dict_get:module.box_type }}</td>
+                    <td>{{ module. }}</td>
+                    <td>{{ module.cid }}</td>
+                    <td>{{ module.video_count_for_phone }}</td>
+                    <td>{{ module.video_count_for_pad }}</td>
+                    <td>
+                        <a class="select_pick" href="#" id="status_{{ module.id }}" data-type="select"
+                           data-pk="{{ module.id }}" data-url="/content/android/main_page/update_status/module"
+                           data-title="状态管理" data-value={{ module.state }}></a>
+                    </td>
+                    <td><a class="youku_channel_pick" href="#" id="youku_channel_tags_{{ module.id }}"
+                           data-type="select" data-pk="{{ module.id }}"
+                           data-url="/content/android/main_page/update_is_youku_channel/module" data-title="是否关联主站"
+                           data-value="{{ module.is_youku_channel }}"></a></td>
+                    <td><a class="multiply_units_pick" href="#" id="multiply_units_tag_{{ module.id }}"
+                           data-type="select" data-pk="{{ module.id }}"
+                           data-url="/content/android/main_page/update_is_multiply_units/module" data-title="是否phone只显示一个单元"
+                           data-value="{{ module.is_phone_use_multiply_units }}"></a></td>
+                    <td colspan="1"><a href="{% url "android_query_module" module.id %}">修改</a> <a
+                            href="{% url "android_delete_module" module.id %}" class="del">删除</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if not modules %}
+        <div class="row-fluid">
+            <div class="col-sm-8">
+                <div class="alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Warning!</strong> 相关首页模块数据为空,请创建模块数据。
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+
+    <div class="row-fluid">
+        <form method="post" id="save_position_form">
+            <input type="hidden" name="module_ids" id="item_ids"/>
+            <a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal">创建首页模块</a>
+            <input type="submit" value="保存顺序" class="btn btn-primary" id="save_position_btn"/>
+        </form>
+    </div>
+
+    <div class="row-fluid">
+        {% include  'android/main_page/module_manage/module/add_module.html' %}
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+    <script src="{{ STATIC_URL }}select2/select2.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script src="{{ STATIC_URL }}jquery-validate/jquery.validate.js"></script>
+    <script type="text/javascript">
+
+        {% include "common_module/sort_edit_del.js" %}
+
+        $(document).ready(function () {
+
+            $("button.close").click(function () {
+                $("#normal_success").hide();
+                $("#normal_button").show();
+            })
+
+        });
+        $(function () {
+
+            $('.youku_channel_pick').editable({
+                showbuttons: false,
+                source: [
+                    {value: 1, text: '是'},
+                    {value: 0, text: '否'}
+                ]
+            });
+           $('.multiply_units_pick').editable({
+                showbuttons: false,
+                source: [
+                    {value: 1, text: '是'},
+                    {value: 0, text: '否'}
+                ]
+            });
+
+            var url = '/content/img/upload';
+            //初始化，主要是设置上传参数，以及事件处理方法(回调函数)
+
+            $('#module-img-upload').fileupload({
+                autoUpload: true,//是否自动上传
+                url: url,//上传地址
+                dataType: 'json',
+                acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+                maxFileSize: 1048576,
+
+
+                add: function (e, data) {
+                    var uploadErrors
+                            = [];
+                    var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
+                    if ('type' in data.originalFiles[0] && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+                        uploadErrors.push('上传图片格式错误!');
+                    }
+
+                    if ('size' in data.originalFiles[0] && data.originalFiles[0]['size'] > 1048576) {
+                        uploadErrors.push('上传图片需要小于1M!');
+                    }
+
+                    if (uploadErrors.length > 0) {
+                        show_error_msg(uploadErrors.join("\n"));
+                    } else {
+                        data.submit();
+                    }
+                },
+
+                done: function (e, data) {//设置文件上传完毕事件的回调函数
+
+                    if ("e" in data.result && data.result["e"]["code"] < 0) {
+                        $("#normal_button").show();
+                        $("#normal-progress").hide();
+                        show_error_msg("upload error:" + data.result["e"]["code"] + ':' + data.result["e"]["desc"]);
+                        return;
+                    }
+
+                    $.each(data.result.files, function (index, file) {//
+                        $("#normal-content").attr("src", file.url);
+                        $("#normal-content").show();
+                        scoller_input = $("#normal-img-url")
+                        scoller_input.attr('value', file.url)
+                    });
+
+                    $("#normal-progress").hide();
+                    $("#normal_success").show();
+                },
+
+                progressall: function (e, data) {//设置上传进度事件的回调函数
+
+                    $("#normal_button").hide();
+                    $("#normal-progress").show();
+
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    $('#scoller-progress .bar').css(
+                            'width',
+                            progress + '%'
+                    );
+                }
+
+            });
+        });
+        function show_error_msg(msg) {
+
+            $("#formErrorModal .modal-body p").text(msg);
+            $("#formErrorModal").modal();
+
+        }
+
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            var validate_rules;
+            validate_form = function (form_selector, options) {
+                var default_options;
+                console.log("in validate_form")
+                console.log($(form_selector))
+                default_options = {
+                    errorPlacement: function (error, element) {
+                        if (element.is(":checkbox")) {
+                            return error.appendTo(element.next());
+                        } else {
+                            element.addClass('error');
+                            error.css("padding-left", "0px")
+                            return error.appendTo(element.parent());
+                        }
+                    },
+                    submitHandler: function (form) {
+                        return form.submit();
+                    },
+                    success: function (label) {
+                        // console.log(label)
+                        return label.html("&nbsp;").addClass("checked");
+                    },
+                    highlight: function (element, errorClass) {
+                        return $(element).parent().find("." + errorClass).removeClass("checked");
+                    }
+                };
+                options = $.extend(default_options, options);
+                return $(form_selector).validate(options);
+            };
+            validate_rules = {
+                'video_count_for_phone': {
+                    'required': true,
+                    'maxlength': 6
+                },
+                'video_count_for_pad': {
+                    'required': true,
+                    'maxlength': 6
+                },
+                'title': {
+                    'required': true
+                }
+
+            }
+
+            validate_rules['image_link'] = {
+                'url': true,
+                'required': true
+            }
+            validate_rules['normal_img'] = {
+                'required': true
+            }
+
+            validate_form('form#add-new-module', {
+                        ignore: ':hidden:not(input[id*=normal-img-url])',
+                        rules: validate_rules
+                    }
+            );
+        })
+
+    </script>
+
+    <link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css"
+          rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load util_tags %}
+
+{% block content %}
+
+    <div class="row-fluid input-prepend">
+        <h3>winphone视频管理</h3>
+    </div>
+    <div>
+        <select class="form-control" id="box_list" name="box_list" placeholder="">
+            {% for box in box_list %}
+                <option value="{{ box.id }}"
+                        {% ifequal current_box_id box.id %}
+                        selected='selected'
+                        {% endifequal %}
+                        >
+                    {{ box.title }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <table class="table table-striped">
+        <thead>
+        <th>内容ID</th>
+        <th>类型</th>
+        <th>标题</th>
+        <th>腰封</th>
+        <th>图片</th>
+        <th>建立时间</th>
+        <th>版权</th>
+        <th>付费？</th>
+        <th>状态</th>
+        <th>操作</th>
+        </thead>
+        <tbody id="sortable">
+        {% for video in videos %}
+            <tr id="box_{{ video.box_id }}" value="{{ video.id }}">
+            {% if video.video_type == 4 %}
+                <td><a class="data_tip" href="#" data-toggle="tooltip"
+                       title="{{ video.url }}">{{ video.url | slice:"10" }}...</a></td>
+            {% else  %}
+                <td>{{ video.video_id }}</td>
+            {% endif %}
+                <td>{% show_video_type_human_readable video.video_type %}</td>
+                <td><a class="data_tip" href="#" data-toggle="tooltip"
+                       title="{{ video.title}}">{{ video.title | slice:"12" }}...</a></td>
+                <td><a class="data_tip" href="#" data-toggle="tooltip"
+                       title="{{ video.intro }}">{{ video.intro | slice:"10" }}...</a></td>
+                <td><img src="{{ video.h_image }}" style="height: 90px" class="img-polaroid"/></td>
+                <td>{{ video.created_at }}</td>
+                <td>{{ video.has_copyright }}</td>
+                <td>{{ video.paid }}</td>
+                <td>
+                    <a class="select_pick" href="#" id="status_{{ video.id }}" data-type="select"
+                       data-pk="{{ video.id }}" data-url="/content/win_phone/main_page/update_status/video" data-title="状态管理"
+                       data-value={{ video.state }}></a>
+                </td>
+                <td colspan="2"><a href="{% url "winphone_query_video" video.id %}">修改</a> <a
+                        href="{% url "winphone_delete_video" video.id %}" class="del">删除</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% if not videos %}
+        <div class="row-fluid">
+            <div class="col-sm-8">
+                <div class="alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Warning!</strong> 相关首页视频模块数据为空,请创建视频数据。
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <a class="btn btn-danger" href="{% url 'winphone_main_page_add_video' %}?box_id={{ current_box_id }}">新增内容</a>
+
+{% endblock %}
+
+
+{% block js %}
+
+    <script type="text/javascript">
+        function collect_module_ids_with_order() {
+            children = $("#sortable").children();
+            ret = ''
+            for (i = 0; i < children.length; i++) {
+                child = children[i];
+                ret += $(child).attr('value') + ',';
+            }
+            return ret.substring(0, ret.length - 1);
+        }
+
+        $(document).ready(function () {
+
+            $(".data_tip").tooltip();
+
+            $("#sortable").sortable({
+                revert: true,
+                start: function (event, ui) {
+                    ui.video.startPos = ui.video.index();
+                },
+                stop: function (event, ui) {
+                    console.log("Start position: " + ui.video.startPos);
+                    console.log("New position: " + ui.video.index());
+                }
+            });
+
+            $("#save_position_btn").click(function () {
+                video_ids = collect_module_ids_with_order();
+                if (video_ids == '') {
+                    alert('没有要排序的内容');
+                    return false;
+                }
+                $("#video_ids").val(video_ids);
+            });
+
+            $(".del").click(function () {
+
+                var statu = confirm("确认删除吗?");
+                if (!statu) {
+                    return false;
+                }
+            });
+
+            $('#box_list').change(function () {
+                box_id = $(this).val()
+                window.location = location.pathname + '?box_id=' + box_id
+            })
+
+
+            $(function () {
+                $.fn.editable.defaults.mode = 'popup';
+                $('.select_pick').editable({
+                    showbuttons: false,
+                    source: [
+                        {value: 1, text: '开启'},
+                        {value: 0, text: '关闭'}
+                    ]
+                });
+            });
+
+        });
+    </script>
+    <link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css"
+          rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+
+{% endblock %}

@@ -1,0 +1,356 @@
+{% extends "base.html" %}
+
+
+
+{% block link %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row-fluid">
+
+            <h3>更新视频</h3>
+
+            <form role="form" method="post" action="{% url 'ipad_update_sub_channel_module_item' %}">
+                <div class="form-group">
+                    <label for="title">标题</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ item.title }}">
+                    <input type="hidden" class="form-control" id="id" name="id" value="{{ item.id }}">
+                    <input type="hidden" class="form-control" id="module_id" name="module_id" value="{{ module_id }}">
+                    <input type="hidden" class="form-control" id="subchannel_id" name="subchannel_id"
+                           value="{{ subchannel_id }}">
+                    <input type="hidden" class="form-control" id="channel_id" name="channel_id"
+                           value="{{ channel_id }}">
+                </div>
+                <div>
+                    <label for="subtitle">副标题</label>
+                    <input type="text" class="form-control" id="subtitle" name="subtitle" value="{{ item.subtitle }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="title">腰封</label>
+                    <input type="text" class="form-control" id="intro" name="intro"
+                           value="{{ item.intro }}">
+                </div>
+                <div class="control-group">
+                    <label for="himage-input" class="control-label">横图(448X252)</label>
+
+                    <div class="controls">
+
+                <span id="himage_button" class="btn btn-success fileinput-button  btn-large"
+                      {% if item.h_image %}style="display:none;"{% endif %}>
+                     <span>+ 上传截图...</span>
+                     <input id="himage-upload" type="file" name="files[]" multiple>
+                </span>
+
+                        <div id="himage_success" class="alert alert-success"
+                             style="font-size: 20px;margin-top: 10px;width:150px;
+                                     {% if not item.h_image %}display:none;{% endif %}">
+                            <button type="button" class="close">&times;</button>
+                            <img id='himage-content' src="{% if item.h_image %}{{ item.h_image }}{% endif %}"
+                                 class="img-polaroid">
+                        </div>
+                        <div id="himage-progress" class="progress progress-success progress-striped  active"
+                             style="display: none">
+                            <div class="bar"></div>
+                        </div>
+                        <input type='hidden' id='himage-input' name='h_image'
+                               value="{% if item.h_image %}{{ item.h_image }}   {% endif %}" height="100" width="100"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="vimage-input" class="control-label">竖图(200X300)</label>
+
+                    <div class="controls">
+
+                <span id="vimage_button" class="btn btn-success fileinput-button  btn-large"
+                      {% if item.v_image %}style="display:none;"{% endif %}
+                        >
+                     <span>+ 上传截图...</span>
+                     <input id="vimage-upload" type="file" name="files[]" multiple>
+                </span>
+
+                        <div id="vimage_success" class="alert alert-success"
+                             style="font-size: 20px;margin-top: 10px;width:150px;
+                                     {% if not item.v_image %}display:none;{% endif %}">
+                            <button type="button" class="close">&times;</button>
+                            <img id='vimage-content' src="{% if item.v_image %}{{ item.v_image }}{% endif %}"
+                                 class="img-polaroid">
+                        </div>
+                        <div id="vimage-progress" class="progress progress-success progress-striped  active"
+                             style="display: none">
+                            <div class="bar"></div>
+                        </div>
+                        <input type='hidden' id='vimage-input' name='v_image'
+                               value="{% if item.v_image %}{{ item.v_image }}   {% endif %}" height="100" width="100"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="simage-input" class="control-label">轮播图({{ slider_image_desc }})</label>
+
+                    <div class="controls">
+
+                <span id="simage_button" class="btn btn-success fileinput-button  btn-large"
+                      {% if item.s_image %}style="display:none;"{% endif %}
+                        >
+                     <span>+ 上传截图...</span>
+                     <input id="simage-upload" type="file" name="files[]" multiple>
+                </span>
+
+                        <div id="simage_success" class="alert alert-success"
+                             style="font-size: 20px;margin-top: 10px;width:150px;
+                                     {% if not item.s_image %}display:none;{% endif %}">
+                            <button type="button" class="close">&times;</button>
+                            <img id='simage-content' src="{% if item.s_image %}{{ item.s_image }}{% endif %}"
+                                 class="img-polaroid">
+                        </div>
+                        <div id="simage-progress" class="progress progress-success progress-striped  active"
+                             style="display: none">
+                            <div class="bar"></div>
+                        </div>
+                        <input type='hidden' id='simage-input' name='s_image'
+                               value="{% if item.s_image %}{{ item.s_image }}   {% endif %}" height="100" width="100"/>
+                    </div>
+                </div>
+            
+
+            
+                <div class="form-group">
+                    <label for="video_count">类型</label>
+                    <input type="text" class="form-control" value="{{ item.video_type_name }}" readonly>
+                    <input type="hidden" name="video_type" value="{{ item.video_type }}">
+                </div>
+
+                <button type="submit" class="btn btn-default">更新</button>
+                <a class="btn btn-default"
+                   href="{% url "ipad_sub_channel_module_items" %}?select_module={{ module_id }}&select_channel={{ channel_id }}&select_subchannel={{ subchannel_id }}">返回</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+
+{% block js %}
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script type="text/javascript">
+    {#    $(document).ready(function () {#}
+    {#        $("#li_ipad_module").addClass('active');#}
+    {##}
+    {#    });#}
+    $(document).ready(function () {
+        $("#li_ipad_module").addClass('active');
+        $("button[class='close']").click(function () {
+            $(this).next('img').attr('src', '').parent('div').hide().prev('span').show().parent('div').children('input').attr('value', '');
+        });
+        $("form").submit(function () {
+            var title = $("input[id='title']").val();
+            var cid = $("input[id='cid']").val();
+            console.log(title);
+            console.log(cid);
+            if (!$.trim(title)) {
+                alert('频道名称不能为空！');
+                return false;
+            }
+
+            {#                if(!cid || cid<0) {#}
+            {#                    alert('cid不能为空或负数,请填入数字');#}
+            {#                    return false;#}
+            {#                }#}
+        });
+
+    });
+
+    $(function () {
+        var url = '/content/img/upload';
+        //初始化，主要是设置上传参数，以及事件处理方法(回调函数)
+
+        $('#vimage-upload').fileupload({
+            autoUpload: true,//是否自动上传
+            url: url,//上传地址
+            dataType: 'json',
+            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+            maxFileSize: 1048576,
+
+
+            add: function (e, data) {
+                var uploadErrors = [];
+                var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
+                if ('type' in data.originalFiles[0] && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+                    uploadErrors.push('上传图片格式错误!');
+                }
+
+                if ('size' in data.originalFiles[0] && data.originalFiles[0]['size'] > 1048576) {
+                    uploadErrors.push('上传图片需要小于1M!');
+                }
+
+                if (uploadErrors.length > 0) {
+                    show_error_msg(uploadErrors.join("\n"));
+                } else {
+                    data.submit();
+                }
+            },
+
+            done: function (e, data) {//设置文件上传完毕事件的回调函数
+
+                if ("e" in data.result && data.result["e"]["code"] < 0) {
+                    $("#vimage_button").show();
+                    $("#vimage-progress").hide();
+                    show_error_msg("upload error:" + data.result["e"]["code"] + ':' + data.result["e"]["desc"]);
+                    return;
+                }
+
+                $.each(data.result.files, function (index, file) {//
+                    $("#vimage-content").attr("src", file.url);
+                    $("#vimage-content").show();
+                    scoller_input = $("#vimage-input")
+                    scoller_input.attr('value', file.url)
+                });
+
+                $("#vimage-progress").hide();
+                $("#vimage_success").show();
+            },
+
+            progressall: function (e, data) {//设置上传进度事件的回调函数
+
+                $("#vimage_button").hide();
+                $("#vimage-progress").show();
+
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#scoller-progress .bar').css(
+                        'width',
+                                progress + '%'
+                );
+            }
+
+        });
+
+        $('#himage-upload').fileupload({
+            autoUpload: true,//是否自动上传
+            url: url,//上传地址
+            dataType: 'json',
+            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+            maxFileSize: 1048576,
+
+
+            add: function (e, data) {
+                var uploadErrors = [];
+                var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
+                if ('type' in data.originalFiles[0] && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+                    uploadErrors.push('上传图片格式错误!');
+                }
+
+                if ('size' in data.originalFiles[0] && data.originalFiles[0]['size'] > 1048576) {
+                    uploadErrors.push('上传图片需要小于1M!');
+                }
+
+                if (uploadErrors.length > 0) {
+                    show_error_msg(uploadErrors.join("\n"));
+                } else {
+                    data.submit();
+                }
+            },
+
+            done: function (e, data) {//设置文件上传完毕事件的回调函数
+
+                if ("e" in data.result && data.result["e"]["code"] < 0) {
+                    $("#himage_button").show();
+                    $("#himage-progress").hide();
+                    show_error_msg("upload error:" + data.result["e"]["code"] + ':' + data.result["e"]["desc"]);
+                    return;
+                }
+
+                $.each(data.result.files, function (index, file) {//
+                    $("#himage-content").attr("src", file.url);
+                    $("#himage-content").show();
+                    scoller_input = $("#himage-input")
+                    scoller_input.attr('value', file.url)
+                });
+
+                $("#himage-progress").hide();
+                $("#himage_success").show();
+            },
+
+            progressall: function (e, data) {//设置上传进度事件的回调函数
+
+                $("#himage_button").hide();
+                $("#himage-progress").show();
+
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#scoller-progress .bar').css(
+                        'width',
+                                progress + '%'
+                );
+            }
+
+        });
+        
+        $('#simage-upload').fileupload({
+            autoUpload: true,//是否自动上传
+            url: url,//上传地址
+            dataType: 'json',
+            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+            maxFileSize: 1048576,
+
+
+            add: function (e, data) {
+                var uploadErrors = [];
+                var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
+                if ('type' in data.originalFiles[0] && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+                    uploadErrors.push('上传图片格式错误!');
+                }
+
+                if ('size' in data.originalFiles[0] && data.originalFiles[0]['size'] > 1048576) {
+                    uploadErrors.push('上传图片需要小于1M!');
+                }
+
+                if (uploadErrors.length > 0) {
+                    show_error_msg(uploadErrors.join("\n"));
+                } else {
+                    data.submit();
+                }
+            },
+
+            done: function (e, data) {//设置文件上传完毕事件的回调函数
+
+                if ("e" in data.result && data.result["e"]["code"] < 0) {
+                    $("#simage_button").show();
+                    $("#simage-progress").hide();
+                    show_error_msg("upload error:" + data.result["e"]["code"] + ':' + data.result["e"]["desc"]);
+                    return;
+                }
+
+                $.each(data.result.files, function (index, file) {//
+                    $("#simage-content").attr("src", file.url);
+                    $("#simage-content").show();
+                    scoller_input = $("#simage-input")
+                    scoller_input.attr('value', file.url)
+                });
+
+                $("#simage-progress").hide();
+                $("#simage_success").show();
+            },
+
+            progressall: function (e, data) {//设置上传进度事件的回调函数
+
+                $("#simage_button").hide();
+                $("#simage-progress").show();
+
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#scoller-progress .bar').css(
+                        'width',
+                                progress + '%'
+                );
+            }
+
+        });
+        
+
+    })
+    </script>
+
+{% endblock %}

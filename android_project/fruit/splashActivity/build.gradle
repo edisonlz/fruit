@@ -1,0 +1,72 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 17
+    buildToolsVersion "21.1.2"
+
+    defaultConfig {
+        applicationId "com.youku.api.gamestatis"
+        minSdkVersion 11
+        targetSdkVersion 17
+
+        ndk {
+            moduleName "myjni"
+        }
+    }
+
+//    signingConfigs {
+//        myConfig {
+//            storeFile file("xxxx.keystore")
+//            storePassword "xxxxx"
+//            keyAlias "xxxxx.keystore"
+//            keyPassword "xxxxx"
+//        }
+//    }
+
+    sourceSets.main {
+        jniLibs.srcDir 'src/main/libs'
+        jni.srcDirs = [] //disable automatic ndk-build call
+        //need export NDK_PROJECT_PATH=/Users/liuzheng/AndroidstudioProjects/m_games_android/splashActivity
+    }
+
+    task ndkBuild(type: Exec) {
+
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        def ndkDir = properties.getProperty('ndk.dir')
+
+        commandLine "$ndkDir/ndk-build", '-C', file('src/main').absolutePath
+    }
+
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn ndkBuild
+    }
+
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':slideMenulibrary')
+    compile 'com.android.support:support-v4:18.0.0'
+    compile 'com.android.support:appcompat-v7:19.1.0'
+    compile files('libs/GraphView-4.0.0.jar')
+    compile files('libs/android-async-http-1.4.4.jar')
+    compile files('libs/crouton-1.8.5.jar')
+    compile files('libs/disklrucache-2.0.1.jar')
+    compile files('libs/httpresponsecache-1.3.jar')
+    compile files('libs/mpchartlib.jar')
+    compile files('libs/residemenu.jar')
+
+    compile project(':pull_refresh_library')
+    //compile  'com.yalantis:phoenix:1.1.2'
+}

@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block link %}
+    <style type="text/css">
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <h3><strong>轮播图管理</strong></h3>
+    <h4 class="text-success">只有上传了轮播图的应用才会被筛选出来。</h4>
+
+    <hr>
+
+    <form id='scoller-app-submit' action="/app/ios_scoller/edit" method="POST">
+        {% if errors %}<h5 class="text-error">{{ errors }}</h5> {% endif %}
+        <div class="row-fluid">
+            <div class="span4">
+                <h4>选择轮播图应用</h4>
+                <hr>
+                <div class="input-append">
+                    <input type="text" name="select_app" id="select_app" placeholder="选择应用" autocomplete="off"/>
+                    <a class="btn" type="button" href="#" onclick="add_app()">展示</a>
+                    <input type="hidden" name="appid" id="appid"/>
+                </div>
+                <div id="img_file_success" class="alert alert-success"
+                     style="display: none;font-size:20px;margin-top:25px">
+                    <img id='scoller-img-content' src="">
+                </div>
+            </div>
+
+            <div class="span8">
+                <h4>选择TAB:</h4></span>
+                <hr>
+                {% for product in products %}
+                    {% if product.tab_num != 0 %}
+                        <div class="panel-group" id="accordion">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-toggle="collapse" data-parent="#accordion"
+                                           href="#collapseOne-{{ product.product.id }}">
+                                            <div class="alert fade in">
+                                                <strong>{{ product.product.name }}</strong>
+                                            </div>
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapseOne-{{ product.product.id }}" class="panel-collapse collapse in">
+                                    <div class="panel-body">
+                                        {% for tab in product.tabs %}
+                                            &nbsp;<input type="checkbox" name="tabs_{{ tab.id }}" id="inlineCheckbox1"
+                                                         value="{{ tab.id }}">
+                                            {{ tab.name }}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <input id='scoller-submit-btn' type="submit" class="btn btn-primary" disabled="disabled">
+
+    </form>
+
+    <hr>
+    <h4> 轮播图列表 </h4>
+    <hr>
+
+    <div class="row-fluid">
+        <div class="span12">
+            <form id='scoller-submit' action="/app/scoller/seq" method="POST">
+                {% for product in products %}
+                    {% if product.tab_num != 0 %}
+                        <span class="label label-info"
+                              style="margin-top: 5px;margin-bottom: 10px"><h6>{{ product.product.name }}</h6></span><br>
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>轮播图Id</th>
+                                <th>TAB名称</th>
+                                <th>轮播图应用名称</th>
+                                <th>轮播图</th>
+                                <th>轮播图顺序</th>
+                                <th>推荐语编辑</th>
+                                <!--<th>下载类型</th>-->
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for scoller in scollers %}
+                                {% if scoller.tab.product.id == product.product.id %}
+                                    <tr>
+                                        <td>{{ scoller.id }}</td>
+                                        <td>{{ scoller.tab.name }}</td>
+                                        <td>{{ scoller.app.appname }}</td>
+                                        <th><img class="img-rounded" height="40" width="80"
+                                                 src="{{ scoller.app.scoller }}" alt=""></th>
+                                        <td><input class="span3" type="text" name="{{ scoller.id }}"
+                                                   placeholder="{{ scoller.seq }}" value="{{ scoller.seq }}"/><i
+                                                style="display: none;">{{ scoller.tab.id }}</i></td>
+                                        <td><textarea name="rec-words{{ scoller.id }}">{% if scoller.rec_words %}{{ scoller.rec_words }}{% endif %}</textarea></td>
+                                        <td><a class="btn" type="button"
+                                               href="/app/scoller/delete?scollerid={{ scoller.id }}">删除</a></td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                {% endfor %}
+                <input type="hidden" name="platform" value="1">
+                <input type="submit" class="btn btn-primary">
+            </form>
+        </div>
+
+        <!-- Modal -->
+        <div id="formErrorModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="myModalLabel">提示(Esc关闭)</h3>
+            </div>
+            <div class="modal-body">
+                <p class="text-error">提示消息</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block js %}
+    <script src="{{ STATIC_URL }}js/bootstrap.autocomplete.js"></script>
+
+    <script type="text/javascript">
+
+        function add_app() {
+            app_info = $("#select_app").attr("real-value");
+            app_name = $("#select_app").val();
+            info = app_info.split('^^');
+            appid = info[0];
+            img = info[1];
+            $('#appid').val(appid);
+            $("#scoller-img-content").attr("src", img);
+            $("#img_file_success").show();
+            $('#scoller-submit-btn').attr('disabled', false);
+        }
+        ;
+
+        $("#select_app").autocomplete({
+
+            source: function (query, process) {
+                $.get("/app/autocomplete", {key: query, exclude: 1, platform: 1}, function (respData) {
+                    return process(respData);
+                });
+            },
+            formatItem: function (item) {
+                return item["label"];
+            },
+            setValue: function (item) {
+                return {'data-value': item["label"], 'real-value': item["value"].id + "^^" + item["value"].thumb};
+            }
+        });
+        function show_error_msg(msg) {
+
+            $("#formErrorModal .modal-body p").text(msg);
+            $("#formErrorModal").modal();
+
+        }
+
+        $("#scoller-app-submit").submit(function (event) {
+            var boxes = $("#scoller-app-submit").find("[type='checkbox']");
+            var bool = 0;
+            for(var i=0; i<boxes.length; i++){
+                if($(boxes[i]).is(":checked")){
+                    bool = 1;
+                    break;
+                }
+            }
+            if(bool == 0){
+                show_error_msg("没有选择任何tab");
+                return false;
+            }
+
+        });
+
+        $("#scoller-submit").submit(function (event) {
+
+            var tbodies = $("#scoller-submit tbody");
+
+            for (i = 0; i < tbodies.length; i++) {
+                tbody = tbodies[i];
+                var seq_dict = {};
+                trs = $(tbody).find("tr");
+
+                for (j = 0; j < trs.length; j++) {
+
+                    tr = trs[j];
+                    seq = $(tr).find("input").val();
+                    tab_id = $(tr).find("i").text();
+
+                    k = tab_id + "_" + seq;
+
+                    if (isNaN(seq) || seq.indexOf('.') != -1 ) {
+                        show_error_msg("轮播图顺序号中包含非法字符");
+                        return false;
+                    }
+                    if (seq_dict[k]) {
+                        show_error_msg("同一Tab下不能出现相同序号的轮播图");
+                        return false;
+                    }
+                    seq_dict[k] = true;
+                    console.log(seq_dict);
+                }
+            }
+
+
+        });
+
+        $(".collapse").collapse();
+    </script>
+
+{% endblock %}

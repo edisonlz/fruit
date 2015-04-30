@@ -1,0 +1,430 @@
+{% extends "base.html" %}
+
+{% load util_tags %}
+{% block link %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
+    <style type="text/css">
+        {% include "common_module/sort_img.css" %}
+
+        .img-polaroid {
+            height: 60px !important;
+            max-width: none;
+        }
+
+        label.checkbox {
+            margin: 0;
+        }
+
+        table {
+            font-size: 13px;
+        }
+
+        tbody#sortable > tr > td > input[type="text"] {
+            font-size: 13px;
+            max-width: 145px;
+            white-space: normal;
+        }
+
+        table {
+            font-size: 13px;
+        }
+
+        td.canBeEdit {
+            max-width: 195px;
+            min-width: 130px;
+        }
+
+        .text-block {
+            display: none;
+        }
+
+        .text-block > textarea {
+            font-size: 13px;
+            padding: 0;
+            margin: 0;
+            display: block;
+            max-height: 100px;
+            resize: vertical;
+            width: 100%;
+        }
+
+        .text-block > button {
+            float: right;
+            margin-left: 3px;
+            margin-top: 2px;
+        }
+
+        /* for video_id */
+        .td-vid {
+            min-width: 75px;
+        }
+
+        /* for video_type */
+        .td-type {
+            min-width: 84px;
+        }
+
+        /* for handle btns block */
+        .td-manage {
+            min-width: 56px;
+        }
+
+        .td-state {
+            min-width: 26px;
+        }
+
+        #btnGroup {
+            height: 40px;
+        }
+    </style>
+{% endblock %}
+
+{% block navigation %}
+    <div class="navigation-div">
+        <ul class="breadcrumb">
+            <li>频道管理<span class="divider">/</span></li>
+            <li><a style="text-decoration: none;" href="/content/iphone/new_channels">iphone频道</a><span
+                    class="divider">/</span></li>
+            <li>
+                <a href="{% url 'iphone_sub_channels' %}?select_channel={{ this_channel.id }}">{{ this_channel.title }}频道</a><span
+                    class="divider">/</span></li>
+            {% if this_subchannel.is_editable_box %}
+                <li>
+                    <a href="{% url 'iphone_sub_channel_modules' %}?select_channel={{ this_channel.id }}&select_subchannel={{ this_subchannel.id }}">{{ this_subchannel.title }}子频道</a><span
+                        class="divider">/</span></li>
+                <li class="active">{{ this_module.title }}-抽屉视频</li>
+            {% endif %}
+            {% if this_subchannel.is_editable_video_list %}
+                <li class="active">{{ this_subchannel.title }}子频道-视频</li>
+            {% endif %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row-fluid" id="btnGroup">
+        <div class="pull-left">
+            {% if this_subchannel.is_editable_box %}
+                <a class="btn"
+                   href="{% url 'iphone_sub_channel_modules' %}?select_channel={{ this_channel.id }}&select_subchannel={{ this_subchannel.id }}"><i
+                        class="icon-circle-arrow-left"></i>返回</a>
+            {% elif this_subchannel.is_editable_video_list %}
+                <a class="btn" href="{% url 'iphone_sub_channels' %}?select_channel={{ this_channel.id }}"><i
+                        class="icon-circle-arrow-left"></i>返回</a>
+            {% endif %}
+        </div>
+        <div class="pull-right">
+            {% box_btns_show_perm this_channel.id request.user 2 as perm_flag %}
+            {% if perm_flag %}
+                <a class="btn video-state" value="1"><i class="icon-ok"></i>开启</a>
+                <a id='sync_button' role="button" value="0" class="btn video-state"><i class="icon-off"></i>关闭</a>
+
+                <input type="hidden" name="item_ids" id="item_ids"/>
+                <input type="hidden" name="this_subchannel_id" id="this_subchannel_id"
+                       value="{{ this_subchannel.id }}"/>
+                <input type="hidden" name="this_channel_id" id="this_channel_id" value="{{ this_channel.id }}"/>
+                <input type="hidden" name="this_module_id" id="this_module_id" value="{{ this_module.id }}"/>
+                <a class="btn"
+                   href="{% url 'iphone_add_sub_channel_module_item' %}?channel_id={{ this_channel.id }}&subchannel_id={{ this_subchannel.id }}&module_id={{ this_module.id }}"><i
+                        class="icon-plus"></i>新增内容</a>
+                <button type="button" class="btn" id="save_position_btn"><i class="icon-sort"></i>保存顺序</button>
+                <a class="btn"
+                   href="{% url 'iphone_fixed_position_videos' %}?channel_id={{ this_channel.id }}&subchannel_id={{ this_subchannel.id }}&module_id={{ this_module.id }}"><i
+                        class="icon-plus"></i>固定位置视频</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {#    {% include "common_module/pagination.html" %}#}
+
+    <table class="table table-striped table-hover table-condensed" id="table-content">
+        <thead>
+        <th><label class="checkbox"><input type="checkbox" id="state-all-pick"></label></th>
+        <th>视频id</th>
+        <th>标题</th>
+        <th>副标题</th>
+        <th>类型</th>
+        <th>腰封</th>
+        <th>创建日期</th>
+        <th>横图</th>
+        <th>竖图</th>
+        <th>轮播图/游戏图</th>
+        <th>版权</th>
+        <th>付费</th>
+        <th>状态(开/关)</th>
+        {% if perm_flag %}
+            <th>操作</th>
+        {% endif %}
+        </thead>
+
+        <tbody id="sortable">
+        {% for item in items %}
+            <tr id="module_{{ item.id }}" value="{{ item.id }}" class="sort-item">
+                <td><label class="checkbox"><input type="checkbox" class="box-state-tag" value="{{ item.id }}"></label>
+                </td>
+                <td class="td-vid">
+                    {% if item.video_type == 4 %}
+                        <a class="data_tip" href="#" data-toggle="tooltip"
+                           title="{{ item.url }}">{{ item.url | slice:"10" }}...</a>
+                    {% else %}
+                        {{ item.video_id }}
+                    {% endif %}
+                </td>
+                <td class="canBeEdit">
+                    <div class="text-block">
+                        <label for="title-{{ item.id }}"></label>
+                        <textarea cols="3" rows="2" class="edit-area"
+                                  id="title-{{ item.id }}">{{ item.title }}</textarea>
+                        <button type="button" class="modify-text  btn btn-mini btn-info">确认</button>
+                        <button type="button" class="recover-text btn btn-mini">取消</button>
+                    </div>
+                    <div class="text-piece">{{ item.title }}</div>
+                </td>
+                <td class="canBeEdit text-sub">
+                    <div class="text-block">
+                        <label for="subtitle-{{ item.id }}"></label>
+                        <textarea cols="3" rows="2" class="edit-area"
+                                  id="subtitle-{{ item.id }}">{{ item.subtitle }}</textarea>
+                        <button type="button" class="modify-text  btn btn-mini btn-info">确认</button>
+                        <button type="button" class="recover-text btn btn-mini">取消</button>
+                    </div>
+                    <div class="text-piece">{{ item.subtitle }}</div>
+                </td>
+                <td class="td-type">{{ item.video_type_name }}</td>
+                <td class="canBeEdit text-sub">
+                    <div class="text-block">
+                        <label for="intro-{{ item.id }}"></label>
+                        <textarea cols="3" rows="2" class="edit-area"
+                                  id="intro-{{ item.id }}">{{ item.intro }}</textarea>
+                        <button type="button" class="modify-text  btn btn-mini btn-info">确认</button>
+                        <button type="button" class="recover-text btn btn-mini">取消</button>
+                    </div>
+                    <div class="text-piece">{{ item.intro }}</div>
+                </td>
+                <td>{{ item.created_at }}</td>
+                <td>{% if item.h_image %}
+                    <a href="{{ item.url_to_play }}" target="_blank">
+                        <img src="{{ item.h_image }}" class="img-polaroid"/>
+                    </a>
+                {% endif %}</td>
+                <td>
+                    {% if item.v_image %}
+                        <a href="{{ item.url_to_play }}" target="_blank">
+                            <img src="{{ item.v_image }}" class="img-polaroid"/>
+                        </a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if item.s_image %}
+                        <a href="{{ item.url_to_play }}" target="_blank">
+                            <img src="{{ item.s_image }}" class="img-polaroid"/>
+                        </a>
+                    {% endif %}
+                </td>
+                <td>{% if item.has_copyright %}有
+                {% else %}
+                    无
+                {% endif %}
+                </td>
+                <td>
+                    {% if item.paid %} 付费
+                    {% else %} 免费{% endif %}
+                </td>
+                <td class="out_pick td-state" id="status_{{ item.id }}">
+                    {% if item.state == 0 %}关闭{% else %}开启{% endif %}
+                </td>
+
+                {% if perm_flag %}
+                    <td class="td-manage" colspan="2">
+
+                        {#                    <a href="{% url "iphone_query_sub_channel_module_item" %}?item_id={{ item.id }}&channel_id={{ this_channel.id }}&subchannel_id={{ this_subchannel.id }}&module_id={{ this_module.id }}">修改</a>#}
+                        {#                    <a href="{% url "iphone_delete_sub_channel_module_item" %}?item_id={{ item.id }}&channel_id={{ this_channel.id }}&subchannel_id={{ this_subchannel.id }}&module_id={{ this_module.id }}"#}
+                        {#                       class="del">删除</a>#}
+                        <a class="btn btn-small btn-table"
+                           href="{% url "iphone_query_sub_channel_module_item" %}?item_id={{ item.id }}&channel_id={{ this_channel.id }}&subchannel_id={{ this_subchannel.id }}&module_id={{ this_module.id }}">
+                            <li class="icon-edit"></li>
+                            修改</a>
+                        <a class='btn btn-small btn-danger btn-table del'
+                           href="{% url "iphone_delete_sub_channel_module_item" %}?item_id={{ item.id }}&channel_id={{ this_channel.id }}&subchannel_id={{ this_subchannel.id }}&module_id={{ this_module.id }}">
+                            <li class="icon-trash"></li>
+                            删除</a>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+    {% if not channels %}
+        <div class="row-fluid">
+            <div class="col-sm-8">
+                <div class="alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Warning!</strong> 频道数据为空,请创建频道数据。
+                    <a href="{% url 'iphone_channels' %}">创建频道</a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        {% if not subchannels %}
+            <div class="col-sm-8">
+                <div class="alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Warning!</strong> 子频道数据为空,请创建子频道数据。
+                    <a href="{% url 'iphone_sub_channels' %}?select_channel={{ this_channel.id }}">创建子频道</a>
+                </div>
+            </div>
+        {% else %}
+            {% if this_subchannel.type == 1 and not modules %}
+                <div class="col-sm-8">
+                    <div class="alert">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <strong>Warning!</strong> 当前子频道是模块类型,请创建模块。
+                        <a href="{% url 'iphone_sub_channel_modules' %}?select_channel={{ this_channel.id }}&select_subchannel={{ this_subchannel.id }}">创建模块</a>
+                    </div>
+                </div>
+
+
+            {% else %}
+                {% if not items %}
+                    <div class="row-fluid">
+                        <div class="col-sm-8">
+                            <div class="alert">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong>Warning!</strong> 子频道视频数据为空,请创建子频道视频数据。
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {#                <div class="row-fluid" id="btn-handle">#}
+                {#                    <form method="post" id="save_position_form">#}
+                {#                        <input type="hidden" name="item_ids" id="item_ids"/>#}
+                {#                        <input type="hidden" name="this_subchannel_id" id="this_subchannel_id"#}
+                {#                               value="{{ this_subchannel.id }}"/>#}
+                {#                        <input type="hidden" name="this_channel_id" id="this_channel_id" value="{{ this_channel.id }}"/>#}
+                {#                        <input type="hidden" name="this_module_id" id="this_module_id" value="{{ this_module.id }}"/>#}
+                {#                        <a class="btn btn-danger"#}
+                {#                           href="{% url 'iphone_add_sub_channel_module_item' %}?channel_id={{ this_channel.id }}&subchannel_id={{ this_subchannel.id }}&module_id={{ this_module.id }}">新增内容</a>#}
+                {#                        <input type="submit" value="保存顺序" class="btn btn-primary" id="save_position_btn"/>#}
+                {##}
+                {#                    </form>#}
+                {#                </div>#}
+
+            {% endif %}
+
+        {% endif %}
+    {% endif %}
+
+{% endblock %}
+
+
+{% block js %}
+    <script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+    <script type="text/javascript">
+        {% include "common_module/dbclick_edit.js" with save_url="/content/iphone/update_item_value/subchannel/module/item"  %}
+
+        function save_position_btn_func() {
+            var item_ids = $('#item_ids').val();
+            var module_id = $('#this_module_id').val();
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: '/content/iphone/subchannel/module/items',
+                data: {
+                    item_ids: item_ids,
+                    module_id: module_id
+                },
+                success: function (data) {
+                    if (data.status === 'success') {
+                        $().toastmessage({
+                            position: 'middle-center'
+                        });
+                        $().toastmessage('showSuccessToast', '操作成功');
+                        setTimeout(function () {
+                            location.reload()
+                        }, 1000);
+                    } else {
+                        $().toastmessage('showErrorToast', "操作失败")
+                    }
+                }
+
+            })
+        }
+        {% include "common_module/sort_edit_del.js" with reorder_url="/content/iphone/subchannel/module/items" %}
+        {% include "common_module/state_switch_basic.js" %}
+
+        $(document).ready(function () {
+
+            function collect_change_box_ids() {
+                var box_id_array = [];
+                var box_ids;
+                $("input:checkbox:checked.box-state-tag").each(function () {
+                    box_id_array.push($(this).attr('value'))
+                });
+                box_ids = box_id_array.join(",");
+                return box_ids;
+            }
+
+            $('.video-state').click(function () {
+                var source = {
+                    '1': '开启',
+                    '0': '关闭'
+                };
+                var target_model;
+                var module_id = $('#this_module_id').val();
+                if (module_id.length > 0) {
+                    target_model = 'IphoneSubChannelModuleVideo';
+                } else {
+                    target_model = 'IphoneSubChannelVideo';
+                }
+                var val = $(this).attr("value");
+                console.log('val is' + val);
+                var video_ids = collect_change_box_ids();
+                console.log(video_ids);
+                if (video_ids.length > 0) {
+                    $.ajax({
+                        url: '/content/update_items_state',
+                        type: "POST",
+                        dataType: 'json',
+                        data: {
+                            item_ids: video_ids,
+                            value: val,
+                            target_model: target_model
+
+                        },
+                        success: function (data) {
+                            $().toastmessage({
+                                position: 'middle-center'
+                            });
+
+                            if (data.status === 'success') {
+                                for (var i = 0; i < data.item_ids.length; i++) {
+                                    $('#status_' + data.item_ids[i]).html(source[val])
+                                }
+                                $().toastmessage('showSuccessToast', '操作成功');
+                            } else {
+                                $().toastmessage('showErrorToast', '操作失败');
+                            }
+                            var state_boxes = $('.box-state-tag').add($('#state-all-pick'));
+                            state_boxes.prop('checked', false);
+                        }
+                    })
+                }
+            });
+
+
+        });
+
+        {#        {% include "subchannel_and_module_items/../syncjob/display_plans_on_hover.js" %}#}
+    </script>
+
+    {% include "subchannel_and_module_items/batch_handle_js.html" %}
+
+    <link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css"
+          rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+
+{% endblock %}

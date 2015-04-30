@@ -1,0 +1,449 @@
+{% extends "base.html" %}
+{% load util_tags %}
+
+{% block link %}
+
+    <link href="{{ STATIC_URL }}select2/select2.css" rel="stylesheet"/>
+    <link href="{{ STATIC_URL }}select2/select2-bootstrap.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">
+
+    <style type="text/css">
+        {% include "common_module/sort_img.css" %}
+        div.nav-group {
+            position: relative;
+        }
+
+        div.tool-box {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        a.btn-table {
+            padding: 2px 5px;
+        }
+
+        div.pull-right a.btn {
+            margin-left: 5px;
+            margin-bottom: 10px;
+        }
+
+        div.navigation-div [class^="icon-"] {
+            display: inline-block;
+            margin: 0 5px 0 5px;
+            width: 14px;
+        }
+
+        #save_position_form {
+            margin: 0 0 10px;
+            display: inline-block;
+            vertical-align: top;
+        }
+    </style>
+{% endblock %}
+{% block navigation %}
+    <div class="navigation-div">
+        {% if navigation_list %}
+            <ul class="breadcrumb">
+                {% for idx,val in navigation_list %}
+                    {% if forloop.last %}
+                        <li class="active">{{ val }}</li>
+                    {% else %}
+                        <li><a style="text-decoration: none;">{{ val }}</a><span class="divider">/</span></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+{% endblock %}
+{% block content %}
+
+    <div class="row-fluid">
+        <div class="nav-group">
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a href="/content/win_phone/main_page/uniq_modules">win-phone</a>
+                </li>
+                <li>
+                    <a href="/content/win_phone/main_page/preview">预览</a>
+                </li>
+            </ul>
+            <div class="pull-right tool-box">
+                <form method="post" id="save_position_form">
+                    <input type="hidden" name="box_ids" id="module_ids"/>
+                    <button type="submit" class="btn" id="save_position_btn"><i class="icon-sort"></i>保存顺序</button>
+                </form>
+                <a class="btn" href="#"><i class="icon-eye-open"></i>查看接口</a>
+                <a class="btn" href="#"><i class="icon-refresh"></i>刷新</a>
+                <a href="#myModal" role="button" class="btn" data-toggle="modal"><i class="icon-plus"></i>新增抽屉</a>
+                <a class="btn publish" href="#"><i class="icon-bullhorn"></i>发布</a>
+            </div>
+        </div>
+        <table class="table table-striped table-hover">
+            <thead>
+            <th><input type="checkbox" style="margin-right: 2px;margin-bottom: 2px" id="state-all-pick">全选</th>
+            <th>标题</th>
+            <th>模块类型</th>
+            <th>频道CID</th>
+            <th>phone视频个数</th>
+            <th>pad视频个数</th>
+            <th>状态</th>
+            <th>是否对应主站频道</th>
+            <th>操作</th>
+            </thead>
+            <tbody id="sortable">
+            {% for module in modules %}
+                <tr id="module_{{ module.id }}" value="{{ module.id }}">
+                    <td><input type="checkbox" class="module-status-tag"></td>
+                    <td>{{ module.title }}</td>
+                    <td>{{ box_type_hash|dict_get:module.box_type }}</td>
+                    <td>{{ module.cid }}</td>
+                    <td>{{ module.video_count_for_phone }}</td>
+                    <td>{{ module.video_count_for_pad }}</td>
+                    <td id="status_{{ module.id }}">
+                        {{ module_state_hash|dict_get:module.state }}
+                    </td>
+                    <td><a class="youku_channel_pick" href="#" id="youku_channel_tags_{{ module.id }}"
+                           data-type="select" data-pk="{{ module.id }}"
+                           data-url="/content/win_phone/main_page/update_is_youku_channel/module" data-title="是否关联主站"
+                           data-value="{{ module.is_youku_channel }}"></a></td>
+                    <td colspan="1">
+                        <a class="btn btn-small btn-table" href="{% url "winphone_query_module" module.id %}"
+                           title="修改">
+                            <i class="icon-edit"></i>修改</a>
+                        <a class="btn btn-small btn-danger btn-table del"
+                           href="{% url "winphone_delete_module" module.id %}"
+                           title="删除">
+                            <i class="icon-trash"></i>删除</a>
+                        <a class="btn btn-small btn-info btn-table"
+                           href="{% url "winphone_main_page_videos" %}?box_id={{ module.id }}">
+                            <i class="icon-film"></i>视频</a>
+
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if not modules %}
+        <div class="row-fluid">
+            <div class="col-sm-8">
+                <div class="alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Warning!</strong> 相关首页模块数据为空,请创建模块数据。
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+
+    <div class="row-fluid">
+        {% include  'winphone/main_page/module_manage/module/add_module.html' %}
+    </div>
+
+
+
+{% endblock %}
+
+
+
+
+{% block js %}
+    <script src="{{ STATIC_URL }}select2/select2.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script src="{{ STATIC_URL }}jquery-validate/jquery.validate.js"></script>
+    <script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+    <script type="text/javascript">
+    {% include "common_module/set_table_width.js" %}
+
+    function collect_change_module_ids() {
+        var module_id_array = []
+        var module_ids = ''
+        $("input:checkbox:checked.module-status-tag").each(function () {
+            module_id_array.push($(this).parent().parent().attr('value'))
+        })
+        module_ids = module_id_array.join(",")
+        return module_ids
+    }
+
+    function collect_channel_ids_with_order() {
+        children = $("#sortable").children();
+        ret = ''
+        for (i = 0; i < children.length; i++) {
+            child = children[i];
+            ret += $(child).attr('value') + ',';
+        }
+        return ret.substring(0, ret.length - 1);
+    }
+
+    $(document).ready(function () {
+        $("#sortable").sortable({
+            revert: true,
+            start: function (event, ui) {
+                ui.item.startPos = ui.item.index();
+            },
+            stop: function (event, ui) {
+                console.log("Start position: " + ui.item.startPos);
+                console.log("New position: " + ui.item.index());
+                if (ui.item.startPos != ui.item.index()) {
+                    $("#save_position_btn").removeClass("disabled");
+                }
+            }
+        });
+
+        $("#save_position_btn").click(function () {
+            item_ids = collect_channel_ids_with_order();
+            if (item_ids == '') {
+                alert('没有要排序的内容');
+                return false;
+            }
+            $("#module_ids").val(item_ids);
+        });
+
+        $(".del").click(function () {
+
+            var statu = confirm("确认删除吗?");
+            if (!statu) {
+                return false;
+            }
+        });
+        //发布视频
+        $("button.close").click(function () {
+            $("#normal_success").hide();
+            $("#normal_button").show();
+        })
+
+
+    })
+    $(function () {
+        $.fn.editable.defaults.mode = 'popup';
+        console.log("in module select_pick")
+        $('.select_pick').editable({
+            showbuttons: false,
+            source: [
+                {value: 1, text: '开启'},
+                {value: 0, text: '关闭'}
+            ]
+        });
+        $('.youku_channel_pick').editable({
+            showbuttons: false,
+            source: [
+                {value: 1, text: '是'},
+                {value: 0, text: '否'}
+            ]
+        });
+
+        $('#state-all-pick').click(function () {
+            if ($(this).is(':checked')) {
+                $("input:checkbox.module-status-tag").prop("checked", true)
+            } else {
+                $("input:checkbox:checked.module-status-tag").attr("checked", false)
+            }
+        })
+        $('.module-state').click(function () {
+            var module_ids = ""
+            var val = $(this).attr("value")
+            var source = {
+                '1': '开启',
+                '0': '关闭'
+            }
+            module_ids = collect_change_module_ids()
+            if (module_ids.length > 0) {
+                $.ajax({
+                    url: '/content/winphone/main_page/update_status/module',
+                    type: "POST",
+                    dataType: 'json',
+                    data: {
+                        module_ids: module_ids,
+                        value: val
+                    },
+                    success: function (data) {
+                        for (var i = 0; i < data.module_ids.length; i++) {
+                            $('#status_' + data.module_ids[i]).html(source[val])
+                        }
+                        $().toastmessage({
+                            position: 'middle-center'
+                        });
+                        $().toastmessage('showSuccessToast', '发布成功!');
+                    }
+                })
+            }
+        })
+
+        //发布视频
+        $('.publish').click(function () {
+            var module_ids = ""
+            module_ids = collect_change_module_ids()
+            if (module_ids.length > 0) {
+                $.ajax({
+                    url: '/content/iphone/main_page/publish',
+                    type: "POST",
+                    dataType: 'json',
+                    data: {
+                        module_ids: module_ids
+                    },
+                    beforeSend: function () {
+                        var sta = confirm("是否确认上线?");
+                        if (!sta) {
+                            return false;
+                        }
+                    },
+                    success: function (data) {
+                        $().toastmessage({
+                            position: 'middle-center'
+                        });
+                        if (data.status == 'success') {
+                            $().toastmessage('showSuccessToast', '操作成功');
+                        }
+                        else if (data.status == 'error') {
+                            $().toastmessage('showErrorToast', "\"" + data.box_title + "\"" + "---" + data.desc);
+                        }
+
+                    },
+                    complete: function () {
+                        //
+                    },
+                    error: function (data) {
+                        console.info("error: " + data.responseText);
+                    }
+
+                })
+            }
+        })
+
+
+        var url = '/content/img/upload';
+        //初始化，主要是设置上传参数，以及事件处理方法(回调函数)
+
+        $('#module-img-upload').fileupload({
+            autoUpload: true,//是否自动上传
+            url: url,//上传地址
+            dataType: 'json',
+            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+            maxFileSize: 1048576,
+
+
+            add: function (e, data) {
+                var uploadErrors
+                        = [];
+                var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
+                if ('type' in data.originalFiles[0] && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+                    uploadErrors.push('上传图片格式错误!');
+                }
+
+                if ('size' in data.originalFiles[0] && data.originalFiles[0]['size'] > 1048576) {
+                    uploadErrors.push('上传图片需要小于1M!');
+                }
+
+                if (uploadErrors.length > 0) {
+                    show_error_msg(uploadErrors.join("\n"));
+                } else {
+                    data.submit();
+                }
+            },
+
+            done: function (e, data) {//设置文件上传完毕事件的回调函数
+
+                if ("e" in data.result && data.result["e"]["code"] < 0) {
+                    $("#normal_button").show();
+                    $("#normal-progress").hide();
+                    show_error_msg("upload error:" + data.result["e"]["code"] + ':' + data.result["e"]["desc"]);
+                    return;
+                }
+
+                $.each(data.result.files, function (index, file) {//
+                    $("#normal-content").attr("src", file.url);
+                    $("#normal-content").show();
+                    scoller_input = $("#normal-img-url")
+                    scoller_input.attr('value', file.url)
+                });
+
+                $("#normal-progress").hide();
+                $("#normal_success").show();
+            },
+
+            progressall: function (e, data) {//设置上传进度事件的回调函数
+
+                $("#normal_button").hide();
+                $("#normal-progress").show();
+
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#scoller-progress .bar').css(
+                        'width',
+                                progress + '%'
+                );
+            }
+
+        });
+    });
+    function show_error_msg(msg) {
+
+        $("#formErrorModal .modal-body p").text(msg);
+        $("#formErrorModal").modal();
+
+    }
+
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            var validate_rules;
+            validate_form = function (form_selector, options) {
+                var default_options;
+                console.log("in validate_form")
+                console.log($(form_selector))
+                default_options = {
+                    errorPlacement: function (error, element) {
+                        if (element.is(":checkbox")) {
+                            return error.appendTo(element.next());
+                        } else {
+                            element.addClass('error');
+                            error.css("padding-left", "0px")
+                            return error.appendTo(element.parent());
+                        }
+                    },
+                    submitHandler: function (form) {
+                        return form.submit();
+                    },
+                    success: function (label) {
+                        // console.log(label)
+                        return label.html("&nbsp;").addClass("checked");
+                    },
+                    highlight: function (element, errorClass) {
+                        return $(element).parent().find("." + errorClass).removeClass("checked");
+                    }
+                };
+                options = $.extend(default_options, options);
+                return $(form_selector).validate(options);
+            };
+            validate_rules = {
+                'video_count_for_phone': {
+                    'required': true,
+                    'maxlength': 6
+                },
+                'box_id': {
+                    'required': true,
+                    'maxlength': 6
+                },
+                'title': {
+                    'required': true
+                }
+            }
+            validate_form('form#add-new-module', {
+                        ignore: ':hidden:not(input[id*=normal-img-url])',
+                        rules: validate_rules
+                    }
+            );
+        })
+
+    </script>
+
+    <link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css"
+          rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+
+{% endblock %}

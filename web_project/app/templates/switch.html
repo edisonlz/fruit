@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block link %}
+<link rel="stylesheet" href="{{ STATIC_URL }}/bootstrap-switch/static/stylesheets/bootstrap-switch.css" />
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid" style="margin-top: 50px">
+        <div class="span12">
+            <h4>换量开关管理</h4>
+            <form id='switch-form' method="POST" action="/app/switch/manage">
+                <table class="table">
+                {% for product in products %}
+                    <tr class="">
+                        <td><h4>{{ product.name }}</h4></td>
+                        <td>
+                            <div class="make-switch switch-small" id='{{ product.id }}'>
+                                 <input id="{{ product.id }}" type="checkbox" name="{{ product.id }}" class="switch" {% if product.product_switch.switch == 1 %}checked{% endif %}>
+                                 <input type="hidden" id='product-{{ product.id }}' name='product-{{ product.id }}' value="{{ product.product_switch.switch }}">
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </table>
+                <hr>
+                <input type="submit" class="btn btn-large btn-primary">
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{{ STATIC_URL }}/bootstrap-switch/static/js/bootstrap-switch.js"></script>
+    <script type="text/javascript">
+    console.log($('#mySwitch-1'));
+
+    $('.make-switch').on('switch-change', function (e, data) {
+        var $el = $(data.el)
+        , value = data;
+        console.log(data.el.context.id);
+        console.log(data.value);
+        var hiddenInputId = '#product-' + data.el.context.id
+        console.log(hiddenInputId)
+        if(data.value){
+            $(hiddenInputId).val('1')
+        }
+        else{
+            $(hiddenInputId).val('0')
+        }
+    });
+    </script>
+
+{% endblock %}

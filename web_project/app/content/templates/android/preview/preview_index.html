@@ -1,0 +1,402 @@
+{% extends "base.html" %}
+{% load util_tags %}
+
+{% block link %}
+
+    <link href="{{ STATIC_URL }}select2/select2.css" rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}select2/select2.js"></script>
+    <link href="{{ STATIC_URL }}select2/select2-bootstrap.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">
+    <style type="text/css">
+        div.nav-group {
+            position: relative;
+        }
+
+
+        div.navigation-div [class^="icon-"] {
+            display: inline-block;
+            margin: 0 5px 0 5px;
+            width: 14px;
+        }
+
+        #preview {
+            min-width: 800px;
+        }
+
+        #preview > .alert-info > div {
+            width: 150px;
+        }
+
+        #previewPage {
+            width: 530px;
+            height: 580px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            margin: 0 auto;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+        }
+
+        #preview-content {
+            height: 900px;
+            width: auto;
+            margin: 0 auto;
+        }
+
+        .candidate {
+            margin: 10px auto;
+            width: 492px;
+        }
+
+        .ordinary, .v-meta {
+            display: inline-block;
+        }
+
+        .v-meta {
+            background-color: #fff;
+            width: 224px;
+            height: 54px;
+        }
+
+        .v-meta-title {
+            padding-top: 8px;
+            margin: 0 5px;
+            word-break: break-all;
+            word-wrap: break-word;
+            font-size: 13px;
+            line-height: 18px;
+            height: 18px;
+            overflow: hidden;
+        }
+
+        .v-meta-entry {
+            font-size: 12px;
+            color: #909090;
+            margin: 0 5px;
+            height: 20px;
+        }
+
+        .ordinary {
+            margin: 15px 10px;
+            height: 180px;
+            vertical-align: top;
+        }
+
+        .episode {
+            width: 224px;
+            height: 126px;
+        }
+
+        .slider-img {
+            width: 470px;
+            height: 265px;
+
+        }
+
+        .candidate-head {
+            margin-left: 12px;
+            font-size: 18px;
+        }
+
+        .slider {
+            width: 470px;
+            height: auto;
+            margin: 20px auto 10px;
+        }
+
+        .carousel-inner > .item {
+            width: 470px;
+        }
+
+        .carousel-indicators {
+            position: absolute;
+            left: 40%;
+            top: 240px;
+            width: 75px;
+            height: 15px;
+        }
+
+        .carousel-meta {
+            height: 60px;
+            width: 100%;
+            background-color: #fff;
+        }
+
+        #myCarousel {
+            position: relative;
+
+        }
+
+        .carousel-indicators > li {
+            cursor: pointer;
+        }
+
+        .dir-control {
+            height: 100%;
+            width: 30px;
+            display: inline-block;
+        }
+
+        .dir-control:hover {
+            background-color: #ddd;
+            opacity: 0.6;
+        }
+
+        .dir-control > a:hover {
+            color: #000;
+            opacity: 1;
+        }
+
+        .dir-control > a {
+            text-decoration: none;
+            color: #ccc;
+            display: inline-block;
+            padding: 15px 0;
+            width: 100%;
+        }
+
+        .dir-left > a > i {
+            padding-left: 8px;
+        }
+
+        .dir-right > a > i {
+            display: block;
+            text-align: right;
+            margin-right: 8px;
+        }
+
+        .carousel-title {
+            display: inline-block;
+            width: 410px;
+            vertical-align: top;
+            padding-top: 8px;
+        }
+
+        .carousel-meta-title {
+            padding: 8px 10px 0;
+            margin: 0 5px;
+            word-break: break-all;
+            word-wrap: break-word;
+            font-size: 16px;
+            line-height: 18px;
+            height: 18px;
+            overflow: hidden;
+        }
+
+        .carousel-meta-entry {
+            padding: 5px 10px 0;
+            font-size: 13px;
+            color: #909090;
+            margin: 0 5px;
+        }
+    </style>
+{% endblock %}
+{% block navigation %}
+    <div class="navigation-div">
+        <ul class="breadcrumb">
+            <li><a style="text-decoration: none;">内容管理</a><span class="divider">/</span></li>
+            <li class="active">抽屉列表</li>
+        </ul>
+    </div>
+{% endblock %}
+
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="nav-group">
+            <ul class="nav nav-tabs">
+                <li>
+                    <a href="/content/android/main_page/uniq_modules">Android</a>
+                </li>
+                <li class="active">
+                    <a href="/content/android/main_page/preview">预览</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="preview">
+        {% if not blank %}
+            <div id="previewPage">
+                <div id="preview-content">
+                    <div class="slider">
+                        <div id="myCarousel" class="carousel slide">
+                            {% if slider.videos %}
+                                <ol class="carousel-indicators">
+                                    {% for value in slider.video_count|times:"1 0" %}
+                                        {% if forloop.counter0 == 0 %}
+                                            <li data-target="#myCarousel" data-slide-to="{{ forloop.counter0 }}"
+                                                class="active"></li>
+                                        {% else %}
+                                            <li data-target="#myCarousel" data-slide-to="{{ forloop.counter0 }}"></li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ol>
+                            {% endif %}
+                            <div class="carousel-inner">
+                                {% for video in slider.videos %}
+                                    {% if forloop.counter0 == 0 %}
+                                        <div class="active item">
+                                    {% else %}
+                                        <div class="item">
+                                    {% endif %}
+                                {% if video %}
+                                    <a href="{{ video.url_to_play }}" target="_blank">
+                                    <img class="slider-img" title="{{ video.title }}"
+                                         src="{% if video.s_image %}{{ video.s_image }}{% else %}{{ video.h_image }}{% endif %}"
+                                         alt="{{ video.h_image }}">
+                                    </a>
+                                    <div class="carousel-caption">
+                                        <div class="carousel-meta-title">
+                                            {{ video.title }}
+                                        </div>
+                                        <div class="carousel-meta-entry">
+                                            播放: 10000万
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <img class="slider-img"
+                                         src="http://static.youku.com/index/img/2013/video/video_default_420x240.png"
+                                         alt="">
+                                    <div class="carousel-caption">
+                                        <div class="carousel-meta-title">
+                                        </div>
+                                        <div class="carousel-meta-entry">
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                </div>
+                                {% endfor %}
+
+                                </div>
+                                {% if slider.videos %}
+                                    <div class="carousel-meta">
+                                        <div class="dir-control dir-left">
+                                            <a href="#myCarousel" data-slide="prev"><i
+                                                    class="icon-angle-left icon-2x"></i></a>
+                                        </div><!-- this annotation exists for removing the space between elements with inline-block type, do not del it
+
+                                                                    --><div class="carousel-title">
+                                        </div><!--
+                                                                    --><div class="dir-control dir-right">
+                                            <a href="#myCarousel" data-slide="next"><i
+                                                    class="icon-angle-right icon-2x"></i></a>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="candidate">
+                            <div class="candidate-body">
+                                {% for video in slider_down.videos %}
+                                    <div class="ordinary">
+                                        <div class="thumbnails">
+                                            {% if video %}
+                                                <a href="{{ video.url_to_play }}" target="_blank">
+                                                <img class="episode" src="{{ video.h_image }}" title="{{ video.title }}"
+                                                     alt="http://static.youku.com/index/img/2013/video/video_default_420x240.png">
+                                                </a>
+                                            {% else %}
+                                                <img class="episode" title="这个位置还没有东西额～"
+                                                     src="http://static.youku.com/index/img/2013/video/video_default_420x240.png">
+                                            {% endif %}
+                                        </div>
+                                        <div class="v-meta">
+                                            <div class="v-meta-title">
+                                                {{ video.title }}
+                                            </div>
+                                            <div class="v-meta-entry">
+                                                播放: 18万
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        {% for box in normal_list %}
+
+
+                            <div class="candidate">
+                                <div class="candidate-head">
+                                    <img src="http://r2.ykimg.com/0510000054BC8CF16714C07FF5078C57"
+                                         style="vertical-align: text-bottom;">
+                                    {{ box.title }}
+                                </div>
+                                    <div class="candidate-body">
+                                        {% for video in box.videos %}
+                                            <div class="ordinary">
+                                                {% if video %}
+                                                    <div class="thumbnails">
+                                                      <a href="{{ video.url_to_play }}" target="_blank">
+                                                        <img class="episode" src="{{ video.h_image }}"
+                                                             title="{{ video.title }}"
+                                                             alt="http://static.youku.com/index/img/2013/video/video_default_420x240.png">
+                                                          </a>
+                                                    </div>
+                                                    <div class="v-meta">
+                                                        <div class="v-meta-title">
+                                                            {{ video.title }}
+                                                        </div>
+                                                        <div class="v-meta-entry">
+                                                            播放: 18万
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="thumbnails">
+                                                        <img class="episode" title="这个位置还没有东西额～"
+                                                             src="http://static.youku.com/index/img/2013/video/video_default_420x240.png">
+                                                    </div>
+                                                    <div class="v-meta">
+                                                        <div class="v-meta-title">
+                                                            {% if forloop.parentloop.last and rec_flag %}
+                                                                此处数据来自大数据团队(´･_･`)
+                                                            {% else %}{% endif %}
+                                                        </div>
+                                                        <div class="v-meta-entry">
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    </div>
+
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.carousel').carousel();
+            var caption = $('div.item:nth-child(1) .carousel-caption');
+            $('.carousel-title').html(caption.html());
+            caption.css('display', 'none');
+
+            $(".carousel").on('slide.bs.carousel', function (evt) {
+                var caption = $('div.item:nth-child(' + ($(evt.relatedTarget).index() + 1) + ') .carousel-caption');
+                $('.carousel-title').html(caption.html());
+                caption.css('display', 'none');
+            });
+
+            var previewTop = $(document.getElementById("preview")).offset().top;
+            var footerTop = $(document.getElementsByTagName("footer")).offset().top;
+            var distance = footerTop - previewTop - 20;
+            if (distance > 580) {
+                if (distance > 740) {
+                    distance = 740;
+                }
+                $(document.getElementById("previewPage")).animate({height: distance});
+            }
+
+        })
+    </script>
+{% endblock %}

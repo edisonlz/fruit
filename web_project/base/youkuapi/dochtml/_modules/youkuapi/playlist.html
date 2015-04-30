@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>youkuapi.playlist &mdash; YoukuAPI 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="YoukuAPI 1.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">YoukuAPI 1.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for youkuapi.playlist</h1><div class="highlight"><pre>
+<span class="c">#coding=utf-8</span>
+
+<span class="kn">from</span> <span class="nn">base</span> <span class="kn">import</span> <span class="n">BaseApi</span>
+<span class="kn">import</span> <span class="nn">settings</span>
+
+<div class="viewcode-block" id="PlaylistApi"><a class="viewcode-back" href="../../index.html#youkuapi.playlist.PlaylistApi">[docs]</a><span class="k">class</span> <span class="nc">PlaylistApi</span><span class="p">(</span><span class="n">BaseApi</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get PlayList API</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">HOST</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">OpenAPI_HOST</span>
+    <span class="n">client_id</span><span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">OpenAPIClientID</span>
+
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="PlaylistApi.get_playlist_info"><a class="viewcode-back" href="../../index.html#youkuapi.playlist.PlaylistApi.get_playlist_info">[docs]</a>    <span class="k">def</span> <span class="nf">get_playlist_info</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">playlist_id</span> <span class="p">,</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        类方法</span>
+<span class="sd">        参数：</span>
+<span class="sd">        playlist_id: 专辑id</span>
+<span class="sd">        count: 读取数量 default 1</span>
+<span class="sd">        kwargs: 其他查询参数</span>
+
+<span class="sd">        :param str playlist_id: youku playlist id</span>
+<span class="sd">        :param str fd: field description default cls.fd</span>
+<span class="sd">        :param int count: limit select count</span>
+<span class="sd">        :param dict kwargs: params</span>
+<span class="sd">        :raises ValueError: if the playlist_id is None</span>
+<span class="sd">        :return wiki: http://wiki.1verge.net/webdev:openapi:v2:playlists:videos?s[]=v2&amp;s[]=playlists&amp;s[]=videos&amp;s[]=json</span>
+<span class="sd">        get video info api code sample::</span>
+<span class="sd">            PlaylistApi.get_playlist_info(&quot;18969513&quot;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">PATH</span> <span class="o">=</span> <span class="s">&#39;/v2/playlists/videos.json&#39;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;playlist_id&quot;</span><span class="p">:</span> <span class="n">playlist_id</span><span class="p">,</span> <span class="s">&quot;count&quot;</span><span class="p">:</span> <span class="n">count</span><span class="p">,</span> <span class="s">&quot;client_id&quot;</span><span class="p">:</span> <span class="n">cls</span><span class="o">.</span><span class="n">client_id</span><span class="p">}</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;X-Forwarded-For&#39;</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;ip&quot;</span><span class="p">)}</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">get_json</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">HOST</span><span class="p">,</span> <span class="n">PATH</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;videos&#39;</span><span class="p">,</span> <span class="p">[{},])[</span><span class="mi">0</span><span class="p">]</span>
+
+    </div></div>
+<span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">PlaylistApi</span><span class="o">.</span><span class="n">get_playlist_info</span><span class="p">(</span><span class="s">&#39;18969513&#39;</span><span class="p">)</span>
+    <span class="k">print</span> <span class="n">ret</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">YoukuAPI 1.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, edisonlz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

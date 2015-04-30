@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load bootstrap_toolkit %}
+
+
+{% block content %}
+            <div class="row-fluid">
+            <h4>应用列表</h4>
+            <hr>
+                <div class="span3" style="margin-top: 15px">
+                    <form class="form-search">
+                      <div class="input-append">
+                        <input name='search_kw' type="text" class="search-query span8" placeholder="按应用名进行搜索">
+                        <button type="submit" class="btn">搜索</button>
+                      </div>
+                    </form>
+                </div>
+
+                <div class="span3">
+
+                </div>
+
+                <div class="span2">
+
+                </div>
+
+                <div class="span3" style="margin-top: 15px">
+                    <a href="/app/add?type=add" class="btn span6 btn-success pull-right"><i class="icon-plus-sign icon-white"></i>  添加应用</a>
+                </div>
+
+                <div class="span1">
+
+                </div>
+            </div>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th style="text-align:center">ID</th>
+                  <th style="text-align:center">应用名</th>
+                  <th style="text-align: center">所属平台</th>
+                  <th style="text-align:center">LOGO</th>
+                  <th style="text-align:center">新轮播图</th>
+                  <th style="text-align:center">其他属性</th>
+                  <th style="text-align:center">蓝汛是否同步完成</th>
+                  <th style="text-align:center">上传时间</th>
+                  <th style="text-align:center">操作</th>
+                  <th>给前一天下载的用户push</th>
+                </tr>
+              </thead>
+
+              <tbody>
+              {% for line in lines %}
+
+                <tr>
+                    <td style="text-align:center;padding-top: 30px">
+                        <a href="/app/edit?id={{ line.id }}"><strong>{{ line.id }}</strong></a>
+                    </td>
+                  <td style="text-align:center;padding-top: 30px">
+                     <a href="/app/edit?id={{ line.id }}"><strong>{{ line.appname }}</strong></a>
+                  </td>
+                  <td style="text-align:center;padding-top: 30px">
+                     <a href="/app/edit?id={{ line.id }}"><strong>{% if line.platform == 0 %}Android{% else %}iOS{% endif %}</strong></a>
+                  </td>
+                  <td style="text-align:center;padding-top: 20px">
+                     <a href="/app/edit?id={{ line.id }}"><img class="img-rounded" height="50" width="50" src="{{ line.logo }}" alt=""></a>
+                  </td>
+                  <td style="text-align:center;padding-top: 20px">
+                     <img class="img-rounded" height="100" width="120" src="{{ line.scoller2 }}" alt="">
+                  </td>
+                  <td style="text-align:center;padding-top: 20px">
+                    <div class="row-fluid">
+                        <div class="span12">
+                            <ul class='unstyled'>
+                                <li>
+                                   <div class="row-fluid">
+                                        <div class="span6 text-right">
+                                            <span>version:</span>
+                                        </div>
+                                        <div class="span6">
+                                            <span class="label label-success">{{ line.version }}</span>
+                                        </div>
+                                    </div>
+                                </li>
+
+                               <li>
+                                   <div class="row-fluid">
+                                        <div class="span6 text-right">
+                                            <span>点击下载量:</span>
+                                        </div>
+                                        <div class="span6">
+                                            <span class="label label-success">{{ line.stats.total_downloads }}</span>
+                                        </div>
+                                    </div>
+                               </li>
+                               <li>
+                                   <div class="row-fluid">
+                                        <div class="span6 text-right">
+                                            <span>下载成功量:</span>
+                                        </div>
+                                        <div class="span6">
+                                            <span class="label label-success">{{ line.stats.download_success }}</span>
+                                        </div>
+                                    </div>
+                               </li>
+                            </ul>
+                        </div>
+                    </div>
+                  </td>
+
+                  <td style="text-align:center;padding-top: 20px">
+                      {% if line.finished == False  %}
+                           <span class="label label-important">同步中...</span>
+                      {% endif %}
+                      {% if line.finished == True  %}
+                           <span class="label label-success">已完成</span>
+                      {% endif %}
+                  </td>
+
+                  <td style="text-align:center;padding-top: 20px">
+                      <span class="label label-important">{{ line.upload_time }}</span>
+                  </td>
+
+                  <td style="padding-top: 20px">
+                      <a href="/app/edit?id={{ line.id }}" class="btn btn-primary">编辑</a>
+                  </td>
+
+                  <td style="padding-top: 20px">
+                      <a href="/app/push/info?gameid={{ line.id }}" class="btn span10 btn-primary">push</a>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+            {% bootstrap_pagination lines extra="pz=20"%}
+
+{% endblock %}

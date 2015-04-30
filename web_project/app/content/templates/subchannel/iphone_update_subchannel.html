@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% load util_tags %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid">
+
+            <h3>更新子频道标签</h3>
+
+            <form role="form" method="post" action="{% url 'iphone_update_sub_channel' %}" id="create_sub">
+                <div class="form-group">
+                    <label for="id">子频道ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                           value="{{ subchannel.id }}" readonly>
+                    <input type="hidden" class="form-control" id="channe_id" name="channel_id" value="{{ channel_id }}">
+                    <input type="hidden" class="form-control" id="cid" name="cid" value="{{ cid }}">
+                </div>
+                <div class="form-group">
+                    <label for="title">标题</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ subchannel.title }}">
+                </div>
+                <div class="form-group">
+                    <label for="is_choiceness">是否为精选类型</label>
+                    <label style="color: red">(每个频道仅允许建一个精选子频道)</label>
+                    <input type="hidden" id="jx" value="{{ subchannel.is_choiceness }}">
+                    <select class="form-control" id="is_choiceness" name="is_choiceness">
+                        <option value="0">否</option>
+                        {% if not choice_tag %}
+                            <option value="1">是</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="type">子频道类型</label>
+                    <input type="hidden" id="ty" value="{{ subchannel.type }}">
+                    <select class="form-control" id="type" name="type">
+                        <option value="1">人工运营(模块页)</option>
+                        <option value="2">人工运营(列表页)</option>
+                        <option value="3">筛选条件</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="image">图片类型</label>
+                    <input type="hidden" id="img" value="{{ subchannel.image_type }}">
+                    <select class="form-control" id="image_type" name="image_type">
+                        <option value="1">横图</option>
+                        <option value="2">竖图</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="condition" hidden="true">
+                    <label for="condition">筛选条件</label>
+                    {% if filter_list %}
+                        {% for kind,value in filter_list.items %}
+                            <div style="margin-left: 80px;">
+                                <div>
+                                    <span style="margin-right: 10px;">{{ value.title }}</span>
+                                    <select class="form-control" id="filter_{{ kind }}" name="filter_{{ kind }}">
+                                        <option value="" {% if value.current == '' %}selected="selected"{% endif %}>全部
+                                        </option>
+                                        {% for k,v in value.items %}
+                                            <option value="{{ v }}"
+                                                    {% if value.current == v %}selected="selected"{% endif %}>
+                                                {{ k }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="{{ kind }}"></label>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="video_count">视频个数</label>
+                    <input type="hidden" id="num" value="{{ subchannel.video_count }}">
+                    <select class="form-control" id="video_count" name="video_count">
+                        {% for value in 31|times:"1 10" %}
+                            <option value="{{ value }}">{{ value }}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-success">更新</button>
+                <a class="btn btn-default" href="{% url 'iphone_sub_channels' %}?select_channel={{ channel_id }}">返回</a>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% block js %}
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var type_sel = $("#type");
+
+            $("#create_sub").submit(function () {
+                //remove the disabled attr else the value can't be transform
+                type_sel.removeAttr('disabled');
+            });
+
+            $("#li_iphone_module").addClass('active');
+            var val = $("#ty").val();
+            $("select[name=type] option[value=" + val + "]").attr("selected", "selected");
+
+            var is_choiceness = $("#jx").val();
+            $("select[name=is_choiceness] option[value=" + is_choiceness + "]").attr("selected", "selected");
+            if (is_choiceness == '1') {
+                type_sel.attr('disabled', 'disabled').children("option[value='1']").attr("selected", "selected");
+            }
+
+            var img = $("#img").val();
+            $("select[name=image_type] option[value=" + img + "]").attr("selected", "selected");
+
+            var num = $("#num").val();
+            $("select[name=video_count] option[value=" + num + "]").attr("selected", "selected");
+
+            var area = $("#filter_area").val();
+            $("select[name=area] option[value=" + area + "]").attr("selected", "selected");
+
+            var video_type = $("#filter_videotype").val();
+            $("select[name=video_type] option[value=" + video_type + "]").attr("selected", "selected");
+
+            var year = $("#filter_year").val();
+            $("select[name=year] option[value=" + year + "]").attr("selected", "selected");
+
+
+            type_sel.change(function () {
+                var type_val = $(this).children('option:selected').val();
+                if (type_val == 3) {
+                    $("#condition").show();
+                } else {
+                    $("#condition").hide();
+                }
+            });
+            type_sel.trigger('change');
+
+            $("#is_choiceness").change(function () {
+                var is_choice = $(this).val();
+                if (is_choice == '1') {
+                    type_sel.attr('disabled', 'disabled').children("option[value='1']").attr("selected", "selected");
+                    type_sel.trigger('change');
+                } else {
+                    type_sel.removeAttr('disabled');
+                    type_sel.trigger('change');
+                }
+            });
+
+        });
+    </script>
+
+    {% include "subchannel/subchannel_validate.html" %}
+
+{% endblock %}
+

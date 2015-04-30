@@ -1,0 +1,43 @@
+======== 1. 开发注意事项 ========
+
+======== 2. 约定 ========
+** 1. 返回boolean的函数命名(这里如果有更好的约定方式可以提出来) **
+在ruby中返回boolean的函数用 xx? 的形式( 如 valid? );  我们现在使用 check_xx 的形式( 如 check_valid )
+
+** 2. 记录add/list **
+新增记录时(eg: video/module/channel/sub_channel):
+  state = 0
+  position = model.where(conditions).max(position) + 1
+显示记录列表：
+  按照position降序排列
+
+** 3. 记录的开启、关闭、删除、唯一性 **
+  频道、子频道、抽屉、视频 新建时全部默认关闭(state = 0;需要在列表页手动开启), 默认不删除(is_delete = False)
+  游戏没有开启关闭状态，默认不删除(is_delete=False)
+  视频需要验证唯一性(video_id + video_type + game_attached_type)
+  游戏需要验证唯一性(game_original_id)
+  另外，video/tag中存储的game_id是game表的id，不是game_original_id
+
+** 4. 新接口返回结构 **
+   {status: "", results: "", code: ""}
+
+** 5. cms意见反馈流程 **
+    TODO: ...
+
+======== 3. TODOs ========
+#personal
+*** . add lost video_types support: android_game(game_details/game_download/video+game)/ios_game(game_details/video+game)/video_list **
+** . move max_video_count to settings **
+** . change copyright/paid's view **
+** . fix bug: when I add a url type video, get a show-type-video in ipad subchannelitem's  **
+** . fix bug: cannot upload image when add url-type-video  **
+** . cannot save duplicate video  **
+** . complete draggalbe's logic **
+** . distingush ios&android game **
+** . 让页面支持多个图片上传/优化js结构 **
+** . add preview? **
+** . remove pagenator? 做发布，不需要分页: 保持最后m(m=50)个视频，取其中需要的前n个视频发布 **
+#hpp
+** . consider images' deal **
+sudo pip install apscheduler
+** . 运行同步, app文件夹下运行python manage.py sync_data

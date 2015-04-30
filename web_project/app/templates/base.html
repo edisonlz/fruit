@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load permission_tags %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>CMS内容管理系统</title>
+    <meta name="viewport" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- CSS -->
+    <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/hint.min.css" rel="stylesheet">
+{#    <link href="{{ STATIC_URL }}bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet"#}
+{#          media="screen">#}
+{#    <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet">#}
+
+{#    <link href="{{ STATIC_URL }}css/jquery-ui.css" rel="stylesheet">#}
+    <link href="{{ STATIC_URL }}jquery-ui-1.10.4/css/ui-lightness/jquery-ui-1.10.4.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="{{ STATIC_URL }}js/html5shiv.js"></script>
+    <![endif]-->
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144"
+          href="{{ STATIC_URL }}ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114"
+          href="{{ STATIC_URL }}ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72"
+          href="{{ STATIC_URL }}ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="{{ STATIC_URL }}ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="{{ STATIC_URL }}ico/favicon.png">
+
+    <script src="{{ STATIC_URL }}js/jquery.js"></script>
+{#    <script src="{{ STATIC_URL }}js/jquery-sortable.js"></script>#}
+    <script src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+    <script src="{{ STATIC_URL }}js/line_basic.js"></script>
+    {#    <script src="{{ STATIC_URL }}js/bootstrap.js"></script>#}
+
+    <style type="text/css">
+{#        .well-small {#}
+{#            margin-top: 10px;#}
+{#            padding-bottom: 10px;#}
+{#            padding-top: 20px;#}
+{#        }#}
+
+{#        .time {#}
+{#            margin-bottom: 10px;#}
+{#        }#}
+        .action_tag{
+            width: 20px;
+            height: 20px;
+        }
+        .navigation-div {
+            color: black;
+            font-size: 18px;
+{#            margin-bottom: 20px;#}
+{#            margin-top: 10px;#}
+        }
+
+        #myModal .modal-body {
+            max-height: 530px;
+        }
+
+        .modal-backdrop {
+            background-color: #ccc;
+        }
+
+        .form_date input {
+            max-width: 90px;
+        }
+
+        hr {
+            margin: 3px 0;
+        }
+
+        body {
+            _width: expression(this.parentNode.clientWidth);
+            font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;
+            padding-top: 0;
+            background: #fafafa;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        footer {
+            height: 25px;
+            background: #000;
+            margin: -28px auto 0 auto;
+            color: #FFF;
+        }
+        
+        p {
+            margin: 0;
+        }
+
+        .table {
+{#            width: auto;#}
+        }
+
+        .table td {
+            font-size: 13px;
+            word-break: break-all;
+            max-width: 250px;
+        }
+
+        .row-fluid {
+            width: auto;
+        }
+
+        #content {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            _height: 100%;
+        }
+
+{#        #content {#}
+{#            margin: 0 auto -25px;#}
+{#            padding: 0;#}
+{#            min-width: 70%;#}
+{#            height: 100%;#}
+{#            min-height: 100%;#}
+{#            _height: 100%;#}
+{#        }#}
+
+        #main-content {
+            padding-top: 40px;
+            padding-bottom: 40px;
+            padding-right: 10px;
+        }
+        #nav-left {
+{#            max-width: 230px;#}
+{#            min-width: 170px;#}
+{#            min-width: 220px;#}
+        }
+        #content-box {
+            max-width: 82%;
+            width: auto;
+            min-width: 720px;
+{#            overflow: auto;#}
+        }
+{#        .tooltip-inner {#}
+{#            color: #3A87AD;#}
+{#            background-color: #D9EDF7;#}
+{#            border-color: #BCE8F1;#}
+{#        }#}
+        .breadcrumb {
+            padding: 8px 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+    <!-- css link block -->
+    {% block link %}
+    {% endblock %}
+
+</head>
+
+<body>
+{% block body %}
+    <!-- Part 1: Wrap all page content here -->
+
+    <div id="content">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+                <a class="brand" href="/" style="color: #e9cbc1;">移动APP CMS管理系统</a>
+
+                <div class="nav-collapse collapse">
+
+                    <ul class="nav navbar-nav">
+{#                        {% show_user_top_menu %}#}
+                    </ul>
+
+                    
+                    <p class="navbar-text pull-left">
+{#                        <a href="/" class="navbar-link">返回首页</a>#}
+                    </p>
+
+                    <p class="navbar-text pull-right">
+                        Logged in as {{ request.user }}({{ request.user.role_name }})| <a href="/signout/" class="navbar-link">注销</a>
+                        {% if user.is_super %}|&nbsp;<a class="navbar-link" href="{% url 'user_list' %}" >用户权限</a>{% endif %}
+                    </p>
+
+                </div>
+                <!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid" id="main-content">
+        <div class="row-fluid">
+
+            <!-- left bar -->
+            <div class="span2" id="nav-left">
+                {% block sidebar %}
+                    {% ifequal is_index 1 %}
+                    {% else %}
+{#                        {% show_user_left_navi %}#}
+{#                        {% show_user_left_navi_temp %}#}
+                        {% show_user_left_navi_temp2 %}
+                    {% endifequal %}
+                {% endblock %}
+            </div>
+
+            <div class="span10" id="content-box">
+                {% block navigation %}{% endblock %}
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                            <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% block content %}{% endblock %}
+            </div>
+
+            <!--/span-->
+        </div>
+        <!--/row-->
+
+
+    </div><!--/.fluid-container-->
+    <div><a href="#"><img id="backtotop" src="http://r3.ykimg.com/0510000054AA1E5A6714C00847071557"
+                          style="display: none;position:fixed" title="返回顶部"></a> </div>
+    </div>
+    <footer>
+        <hr>
+        <p>© Company youku and tudou 2015</p>
+    </footer>
+    <script src="{{ STATIC_URL }}js/bootstrap-transition.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap-alert.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap-modal.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap-dropdown.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap-scrollspy.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap-tab.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap-tooltip.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap-popover.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap-button.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap-collapse.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap-carousel.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap-typeahead.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"
+            charset="UTF-8"></script>
+    <script type="text/javascript"
+            src="{{ STATIC_URL }}bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js"
+            charset="UTF-8"></script>
+
+    <script type="text/javascript">
+          $('input').tooltip() {#  用于修改input title属性显示样式    #}
+{#        $('.form_date').datetimepicker({#}
+{#            language: 'zh-CN',#}
+{#            weekStart: 1,#}
+{#            todayBtn: 1,#}
+{#            autoclose: 1,#}
+{#            todayHighlight: 1,#}
+{#            startView: 2,#}
+{#            minView: 2,#}
+{#            forceParse: 0#}
+{#        });#}
+        $('#myTab a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+
+        $(document).ready(function() {
+            var topValue = 0,   // 上次滚动条到顶部的距离
+                interval = null;// 定时器
+            window.onscroll = function () {
+                if (interval == null)
+                    interval = setInterval(test, 150);
+                topValue = document.documentElement.scrollTop;
+            };
+            $(document).bind('scroll', function(){
+                var top_distance = $(this).scrollTop();
+                var img = $("img#backtotop");
+                if (top_distance > 200) {
+                    var float_nav = $("div#nav-left");
+                    var left_pos = float_nav.offset().left + float_nav.width() - 32;
+                    var footer = $("footer");
+                    if (img.offset().top + 52  > footer.offset().top ) {
+                        img.css({left: left_pos, bottom: '45px'}).show();
+                    } else {
+                        img.css({left: left_pos, bottom: '20px'}).show();
+                    }
+                } else {
+                    img.hide();
+                }
+            });
+
+            function test() {
+                // 判断此刻到顶部的距离是否和0.15秒前的距离相等
+                if (document.documentElement.scrollTop == topValue) {
+                    $("div#nav-left").css('position', 'relative').animate({top: document.body.scrollTop, opacity: 'show'}, 300);
+                    clearInterval(interval);
+                    interval = null;
+                }
+            }
+
+{#            //设置主内容区域和表格同宽#}
+{#            var main_table = $(document.getElementsByClassName('table')[0]);#}
+{#            if (main_table.width() < 720) {#}
+{#                main_table.animate({width: 720});#}
+{#                main_table.parent().animate({display:'inline-block', width:720});#}
+{#            } else {#}
+{#                main_table.parent().css('display', 'inline-block');#}
+{#            }#}
+
+        });
+    </script>
+
+
+    {% block js %}
+
+    {% endblock %}
+
+
+    </body>
+{% endblock %}
+</html>

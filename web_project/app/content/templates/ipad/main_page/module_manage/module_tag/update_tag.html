@@ -1,0 +1,133 @@
+{% load util_tags %}
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">首页抽屉tag</h3>
+</div>
+<div class="modal-body">
+    <table id='tag_details_table' class="table table-hover table-striped">
+        <input type="hidden" id="tag_box_id" name="tag_box_id" value="{{ module.id }}">
+        <input type="hidden" id="modify_tag_id" name="modify_tag_id" value="{{ tag.id }}">
+        <input type="hidden" id="module_tag_total_titles"  value="">
+        <tbody>
+        <tr>
+            <td>抽屉位置：</td>
+            <td>
+                {{ module.title }} -
+                {{ module.box_id }}(box_id) -
+                {{ module.cid }}(cid)
+            </td>
+        </tr>
+        <tr id='tag_title_tr' title="抽屉标签总字数不能超过10个，否则导致无法完整显示 。">
+            <td>
+                tag标题：
+            </td>
+            <td>
+                <input type="text" id="tag_title" name="title" value="{{ tag.title }}" {% if tag.tag_type == 'title' %} disabled="true" {% endif %}>
+                {% if tag.tag_type == 'normal' %}<label style="margin-top:10px;color:red;">抽屉标签总字数不能超过10个，否则导致无法完整显示 。</label>{% endif %}
+            </td>
+        </tr>
+        <tr id='jump_type_tr'>
+            <td>
+                跳转方式:
+            </td>
+            <td>
+                <select id="tag_jump_type">
+                    {% for k,v in tag_type_list %}
+                        {% if k == tag.jump_type %}
+                            <option value="{{ k }}" selected="selected">{{ v }}</option>
+                        {% else %}
+                            <option value="{{ k }}">{{ v }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+
+                <div id='jump_type_support_div' style="display:none">
+                    <select>
+                        <option value="no_jump">无跳转</option>
+                    </select>
+                </div>
+            </td>
+        </tr>
+        <tr id='jump_info_tr'>
+            <td>
+                跳转到:
+            </td>
+            <td>
+                <div id='cid_info'>
+                    频道:
+                    <select id="tag_cid" name="tag_cid">
+                        {% for channel in channels %}
+                            {% if tag.cid|to_int == channel.cid %}
+                                <option value="{{ channel.cid }}" selected="selected">{{ channel.title }}</option>
+                            {% else %}
+                                <option value="{{ channel.cid }}">{{ channel.title }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div id='sub_channel_id_info'>
+                    频道:
+                    <select id="channel_page_id" name="channel_page_id">
+                        {% for channel in channels %}
+                            {% if tag.cid == channel.id %}
+                                <option value="{{ channel.id }}" checked="checked">{{ channel.title }}</option>
+                            {% else %}
+                                <option value="{{ channel.id }}">{{ channel.title }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <br>
+                    子频道: <select id="sub_channel_id"></select>
+                </div>
+                <div id='hotword_info'>
+                    热词: <input name="hotword" id="tag_hotword" value="{{ tag.hot_word }}">
+                </div>
+            </td>
+        </tr>
+
+        {% include "iphone/main_page/module_manage/game/ios_game_update_detail.html" with game=game %}
+        <tr>
+            <td>
+                <button type="submit" class="btn" id="modify_tag_submit_btn">提交</button>
+                <button class="btn" id='modify_tag_cancel_btn' data-dismiss="modal" aria-hidden="true">关闭</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    $.ajax({
+        url: "/content/ipad/info/sub_channel_options",
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            sub_channel_id: {{ tag.sub_channel_id|to_int}},
+            channel_entity_id: $('#channel_page_id').val(),
+        },
+        success: function (data) {
+            $("#sub_channel_id").html(data.options);
+            return $('#channel_page_id').val(data.channel_id);
+        }
+    });
+    if ($('#tag_jump_type').val() === "6") {
+        $('#game_id_tr').show('fast');
+        $('#game_information_area').show('fast');
+    } else {
+        $('#game_id_tr').hide('fast');
+        $('#game_information_area').hide('fast');
+    }
+    if ($('#tag_jump_type').val() === "1" || $('#tag_jump_type').val() === "5" || $('#tag_jump_type').val() === "6") {
+        $('#jump_info_tr').hide('fast');
+    } else {
+        $('#jump_info_tr').show('fast');
+        if ($('#tag_jump_type').val() === "2") {
+            $('#cid_info').show().siblings().hide();
+        }
+        if ($('#tag_jump_type').val() === "3") {
+            $('#sub_channel_id_info').show().siblings().hide();
+        }
+        if ($('#tag_jump_type').val() === "4") {
+            $('#hotword_info').show().siblings().hide();
+        }
+    }
+</script>

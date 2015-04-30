@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load bootstrap_toolkit %}
+
+
+{% block content %}
+            <div class="row-fluid">
+            <h4>应用列表</h4>
+            <hr>
+
+                <div class="span3">
+                    <form class="form-search">
+                      <div class="input-append">
+                        <input name='search_kw' type="text" class="search-query span8" placeholder="按应用名进行搜索">
+                        <button type="submit" class="btn">搜索</button>
+                      </div>
+                    </form>
+                </div>
+
+                <div class="span3">
+
+                </div>
+
+                <div class="span2">
+
+                </div>
+
+                <div class="span3">
+                    <a href="/app/add?type=add" class="btn span6 btn-success pull-right"><i class="icon-plus-sign icon-white"></i>  添加应用</a>
+                </div>
+
+                <div class="span1">
+
+                </div>
+            </div>
+            <hr>
+            <div class="row-fluid">
+                    <div class="span2 text-center">
+                        <h5>应用名</h5>
+                    </div>
+
+                    <div class="span1 text-center">
+                        <h5>LOGO</h5>
+                    </div>
+
+                    <div class="span2 text-center">
+                        <h5>轮播图</h5>
+                    </div>
+
+                    <div class="span3 text-center">
+                        <h5>其他属性</h5>
+                    </div>
+
+                    <div class="span1 text-center">
+                        <h5 class="pull-right">上传时间</h5>
+                    </div>
+
+                    <div class="span2 pull-right">
+                        <h5>操作</h5>
+                    </div>
+
+            </div>
+
+            <hr>
+
+            {% for line in lines %}
+                <div class="row-fluid">
+
+                    <div class="span2 text-center">
+                        <a href="/app/edit?id={{ line.id }}"><p class="span8" style="word-break:break-all; word-wrap:break-word"><strong>{{ line.appname }}</strong></p></a>
+                    </div>
+
+                    <div class="span1 text-center">
+                        <a href="/app/edit?id={{ line.id }}"><img class="img-rounded" height="100" width="90" src="{{ line.logo }}" alt=""></a>
+                    </div>
+
+                    <div class="span2 text-center">
+                        <img class="img-rounded" height="100" width="120" src="{{ line.scoller }}" alt="">
+                    </div>
+
+                    <div class="span3 text-center">
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <ul class='unstyled'>
+                                    <li>
+                                       <div class="row-fluid">
+                                            <div class="span6 text-right">
+                                                <span>version:</span>
+                                            </div>
+                                            <div class="span6">
+                                                <span class="label label-success">{{ line.version }}</span>
+                                            </div>
+                                        </div>
+                                    </li>
+
+                                   <li>
+                                       <div class="row-fluid">
+                                            <div class="span6 text-right">
+                                                <span>实际下载量:</span>
+                                            </div>
+                                            <div class="span6">
+                                                <span class="label label-success">{{ line.stats.total_downloads }}</span>
+                                            </div>
+                                        </div>
+                                   </li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="span1 text-center">
+                        <span class="label label-important">{{ line.upload_time }}</span>
+                    </div>
+
+                    <div class="span2 pull-right">
+                        <a href="/app/edit?id={{ line.id }}" class="btn span8 btn-primary">编辑</a>
+                    </div>
+
+                </div>
+              <hr style="margin-bottom: 5px">
+            {% endfor %}
+            {% bootstrap_pagination lines extra="pz=20"%}
+
+{% endblock %}

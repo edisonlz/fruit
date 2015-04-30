@@ -1,0 +1,175 @@
+{% block link %}
+<style type="text/css">
+        #preview {
+            background-color: #EEEEEE;
+            position: fixed;
+            top: 150px;
+            left: 320px;
+            width: 363px;
+            max-height: 65%;
+            min-height: 450px;
+            height: 565px;
+             border-color: #1B1B1B;
+            border-style: solid;
+            border-width: 0 6px 6px 6px;
+            border-radius: 5px 5px 5px 5px;
+            z-index: 10;
+        }
+
+        #preview_head {
+            height: 20px;
+            background-color: #1B1B1B;
+{#            border-radius: 5px 5px 0 0;#}
+            color: white;
+            padding: 5px 0 0 0;
+        }
+
+        #preview_wrapper {
+            overflow: auto;
+            margin: 0;
+            position: absolute;
+            top: 25px;
+            bottom: 25px;
+            left: 0;
+            right: 0;
+        }
+
+        .preview_item {
+            display: inline-block;
+            padding: 4px;
+            font-size: 10px;
+            box-shadow: rgba(133, 133, 133, 0.1) 0 0 5px 2px, rgba(133, 133, 133, 0.3) 0 0 2px;
+
+        }
+        .preview_item  img {
+            border-bottom: 0;
+            border-bottom-color: #fff;
+        }
+
+        .item_img {
+            border: 1px solid white;
+            width: 134px;
+            height: 75px;
+            overflow: hidden;
+        }
+
+        .dropped-active {
+            border: 2px blueviolet solid;
+        }
+
+        .start-active {
+            border: 2px white solid;
+        }
+
+{#        .drag-active {#}
+{#            border: 2px #1B1B1B solid;#}
+{#        }#}
+
+        #closeSign {
+            float: right;
+            vertical-align: top;
+            margin-right: 7px;
+            cursor: pointer;
+        }
+
+        .preview_wrapper  h3 {
+            margin: 10px 0 10px 8px;
+        }
+        #preview_footer {
+            position: absolute;
+            bottom: 0;
+        }
+
+        .candidate_head {
+            margin-left: 14px;
+            vertical-align: middle;
+        }
+
+        .carousel-caption {
+            width:200px;
+            height: 20px;
+            padding: 0;
+            margin: auto;
+        }
+        .carousel-inner {
+            height: 120px;
+            width: 200px;
+            float: left;
+            margin: 0;
+{#            margin: auto;#}
+        }
+        #myCarousel {
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+            width: 300px;
+            height: 135px;
+            background-color: white;
+            box-shadow: rgba(133, 133, 133, 0.3) 0 0 2px 3px;
+        }
+        #dot-list {
+            bottom: 0 !important;
+            left: 112px;
+            top: 120px;
+        }
+        .carousel-indicators {
+            width: 80px;
+        }
+        .carousel-indicators li {
+            background-color: #dddddd;
+        }
+        .carousel-indicators .active {
+            background-color: black;
+        }
+        .carousel-indicators li:hover {
+            cursor: pointer;
+        }
+        a.direction {
+            padding: 60px 0 60px 0;
+            width: 50px;
+        }
+        p {
+            font-size: 10px;
+        }
+
+        div.explain {
+            background-color: white;
+            height: 20px;
+            width: 145px;
+            overflow: hidden;
+        }
+        span.move-control:hover{
+            cursor: pointer;
+        }
+        span#preview_move {
+            cursor: move;
+        }
+
+        span#preview_move:active {
+            cursor: crosshair;
+        }
+        div.arrow {
+            float:right;
+            width:20px;
+            height:15px;
+            margin: 0 5px 0 5px;
+        }
+</style>
+{% endblock %}
+<div id="preview" style="display: none;">
+    <div id="preview_head">
+
+        <span id="preview_move" style="margin-left:10px;">iPhone首页预览[按住拖动]</span><span id="closeSign">✕</span>
+    <div class="arrow"><span id="forward" class="icon-arrow-right icon-white move-control" style="margin-right: 8px;float: right;display: none;position: relative;"></span></div>
+     <div class="arrow"><span id="backward" class="icon-arrow-left icon-white move-control" style="margin-right: 8px;float: right;display: none;position: relative;"></span></div>
+    </div>
+
+    <div id="preview_wrapper">
+
+
+    </div>
+    <div id="preview_footer">
+        <button class="btn-mini btn-inverse" id="preview_save">保存</button>
+        <button class="btn-mini" id="preview_cancel">取消</button>
+    </div>
+</div>

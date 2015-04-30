@@ -1,0 +1,162 @@
+<!-- Modal -->
+{% load util_tags %}
+<div id="myModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">创建子频道抽屉</h3>
+    </div>
+
+    <div class="modal-body">
+        <form role="form" id="create_mod" method="post" action="{% url 'android_add_sub_channel_module' %}">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <td><label for="module_type">子频道抽屉类型</label></td>
+                    <td><input type="hidden" class="form-control" id="cid" name="cid" value="{{ this_channel.cid }}">
+                        <label for="module_type">
+                            <select class="form-control" id="module_type" name="module_type">
+                                {% for k,v in box_types %}
+                                    <option value="{{ k }}">{{ v }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="title"><span style="color: orangered">*</span>标题</label></td>
+                    <td><input type="text" class="form-control" id="title" name="title" placeholder=""></td>
+                </tr>
+                <tr>
+                    <td><label for="count">单元个数</label></td>
+                    <td><select class="form-control" id="count" name="count">
+                        {% for value in 12|times:"2 2" %}
+                            <option value="{{ value }}">{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="unit_type">单元类型</label>
+                    </td>
+                    <td>
+                        {% for value in 11|times:"1 1" %}
+                            <div class="form-group" id="unit_type_div_{{ value }}">
+                                <span style="margin-right:10px;display: inline-block;vertical-align: top;">
+                                    第{{ value }}单元的类型</span>
+                                <select class="form-control" id="unit_type_select_{{ value }}"
+                                        name="unit_type_div_{{ value }}">
+                                    <option value="quarters">田字格结构</option>
+                                    <option value="halfs">左右结构</option>
+                                </select>
+                            </div>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr id="slider_video_count_tr">
+                    <td><label for="slider_video_count">轮播图个数</label></td>
+                    <td><select class="form-control" id="slider_image_count" name="slider_video_count">
+                        {% for value in 6|times:"1 1" %}
+                            <option value="{{ value }}">{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                    </td>
+                </tr>
+
+                <tr id="title_jump_type_tr">
+                    <td><label for="jump_type">点击title后的跳转</label></td>
+                    <td>
+                        <div class="form-group" >
+                            <span style="margin-right: 10px;display: inline-block;vertical-align: top;">跳转方式</span>
+                            <select class="form-control" id="jump_type" name="jump_type">
+                                <option value="no_jump">无跳转</option>
+                                <option value="by_sub_channel">跳转到子频道</option>
+                                <option value="by_filter">跳转到全部的筛选结果</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="display: none;" id="jump_to_subchannel">
+                            <span style="margin-right: 10px;display: inline-block;vertical-align: top;">跳转到哪个子频道</span>
+                            <select class="form-control" id="sub_channel_id_for_link" name="sub_channel_id_for_link">
+                                {% for jump_channel in jump_channels %}
+                                    <option value="{{ jump_channel.id }}">{{ jump_channel.title }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="sub_channel_id_for_link"></label>
+                        </div>
+                        <div class="form-group" id="condition" hidden="true">
+                            <label for="condition">筛选条件</label>
+                            {% if areas %}
+                                <div >
+                                    <div>
+                                        <span style="margin-right: 10px;">地区</span>
+                                        <select class="form-control" id="area" name="{{ areas.cat }}">
+                                            <option value="" selected="selected">全部</option>
+                                            {% for area in areas.items %}
+                                                <option value="{{ area.value }}">{{ area.title }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label for="area"></label>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if video_types %}
+                                <div >
+                                    <div>
+                                        <span style="margin-right: 10px;">类型</span>
+                                        <select class="form-control" id="video_type" name="{{ video_types.cat }}">
+                                            <option value="" selected="selected">全部</option>
+                                            {% for video_type in video_types.items %}
+                                                <option value="{{ video_type.value }}">{{ video_type.title }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label for="video_type"></label>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if years %}
+                                <div >
+                                    <div>
+                                        <span style="margin-right: 10px;">上映</span>
+                                        <select class="form-control" id="year" name="{{ years.cat }}">
+                                            <option value="" selected="selected">全部</option>
+                                            {% for year in years.items %}
+                                                <option value="{{ year.value }}">{{ year.title }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label for="year"></label>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if pay_kinds %}
+                                <div >
+                                    <div>
+                                        <span style="margin-right: 10px;">:</span>
+                                        <select class="form-control" id="pay_kind" name="{{ pay_kinds.cat }}">
+                                            <option value="" selected="selected">全部</option>
+                                            {% for pay_kind in pay_kinds.items %}
+                                                <option value="{{ pay_kind.value }}">{{ pay_kind.title }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label for="pay_kind"></label>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                        </div>
+                    </td>
+                </tr>
+
+            </table>
+            <button type="submit" class="btn btn-success">创建</button>
+            <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+            {#            <a class="btn btn-default"#}
+            {#               href="{% url 'android_sub_channel_modules' %}?select_channel={{ this_channel.id }}&select_subchannel={{ this_subchannel.id }}">返回</a>#}
+            <input name="channel_id" type="hidden" value="{{ this_channel.id }}"/>
+            <input name="subchannel_id" type="hidden" value="{{ this_subchannel.id }}"/>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+
+    </div>
+
+</div>

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block link %}
+    <style type="text/css">
+
+    .carousel-indicators.middle {
+        left: 0;
+        right: 0;
+        top: auto;
+        bottom: 15px;
+        text-align: center;
+    }
+    .carousel-indicators.middle li {
+        float: none;
+        display: inline-block;
+
+    }
+    .title{
+        margin-top: 0px;
+        margin-bottom: 4px;
+        padding:5px 9px;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        background-color: #d3d3d3;
+    }
+
+    .ipad_top_bar{
+       width: 832px;
+       height: 34px;
+       background-image: url(/static/img/ipad.png);
+     }
+    .module{
+        margin-top: 0px;
+        margin-bottom: 4px;
+        padding:5px 9px;
+        background-color: #808080;
+    }
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+    <div class="row" style="width: 1100px;">
+        <div style="width: 1100px; margin-left: 5%;">
+            {% for module in modules  %}
+            {% ifequal module.module_type 2 %}
+
+           <div id="myCarousel" class=" span6 carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators middle">
+                    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                    <li data-target="#myCarousel" data-slide-to="1"></li>
+                    <li data-target="#myCarousel" data-slide-to="2"></li>
+                </ol>
+                <!-- Carousel items -->
+                <div class="carousel-inner"  >
+                    {% for item in module.items_ordered %}
+                        {% if forloop.first %}
+                            <div class="active item"><img src="{{item.h_image }}" style="width: 100%;height: 300px;"></div>
+
+                        {% else %}
+                            <div class="item"><img src="{{item.h_image }}" style="width: 100%;height: 300px"></div>
+                        {% endif %}
+
+                    {% endfor %}
+                </div>
+            <!-- Carousel nav -->
+                <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+                <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+        </div>
+
+            {% endifequal %}
+        {% endfor %}
+
+    <div class="span5" style="margin-left: 30px;">
+        <ul class="thumbnails">
+            {% for module in modules %}
+            {% ifequal module.module_type 3 %}
+
+               {% for item in module.items_ordered %}
+                  <li class="span6" style="margin-left: 1%;margin-bottom: 0px;">
+                    <div><img src="{{ item.h_image }}" width="100%" height="110px"></div>
+                    <div class="title">{{ item.title }}</div>
+                  </li>
+               {% endfor %}
+
+        {% endifequal %}
+        {% endfor %}
+        </ul>
+    </div>
+  </div>
+
+
+
+        {% for module in modules %}
+          {% ifequal module.module_type 1 %}
+
+               <div class="span11 module" style='margin-left: 5%;'>
+                   {{ module.title }}
+               </div>
+
+                <ul class="thumbnails" style="margin-left: 5%;" >
+                   {% for item in module.items_ordered %}
+                          <li class="span3" style="margin-left: 0px;margin-right: 1.32%;">
+                            <div>
+                              <img src="{{ item.h_image }}" width="100%" height="110px">
+                            </div>
+                            <div class="title">{{ item.title }}</div>
+                          </li>
+                   {% endfor %}
+                </ul>
+
+            {% endifequal %}
+            {% endfor %}
+
+
+
+   </div>
+
+
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.carousel').carousel({
+              interval: 2000
+            })
+
+        });
+    </script>
+
+
+{% endblock %}

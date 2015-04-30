@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ccsc>
+    <cust_id>{{ custom_id }}</cust_id>
+    <passwd>{{ passwd }}</passwd>
+    <item_id value="{{ item_id }}">
+        <source_path>{{ source_path }}</source_path>
+        <publish_path>{{ publish_path }} </publish_path>
+        <md5>{{ md5 }}</md5>
+        <file_size>{{ file_size }}</file_size>
+        <unzip>{{ unzip }}</unzip>
+    </item_id>
+</ccsc>
+

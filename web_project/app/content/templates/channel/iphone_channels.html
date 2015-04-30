@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block link %}
+    <link href="{{ STATIC_URL }}select2/select2.css" rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}select2/select2.js"></script>
+    <link href="{{ STATIC_URL }}select2/select2-bootstrap.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <style type="text/css">
+        {% include "common_module/sort_img.css" %}
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="row-fluid">
+        <h3>iPhone频道管理</h3>
+    </div>
+
+    <div class="row-fluid">
+        <table class="table table-striped">
+            <thead>
+            <th>频道ID</th>
+            <th>CID</th>
+            <th>标题</th>
+            <th>精选状态(iphone3.2.2及以上)</th>
+            <th>全部开关(iphone3.4及以上)</th>
+            <th>精选图片</th>
+            <th>全部图片</th>
+            <th>状态管理(ipad及iphone3.2以下)</th>
+            <th>状态管理(ipad及iphone3.2及以上)</th>
+            <th>操作</th>
+            </thead>
+            <tbody id="sortable">
+            {% for channel in channels %}
+                <tr id="module_{{ channel.id }}" value="{{ channel.id }}" class="sort-item">
+                    <td>{{ channel.channel_id }}</td>
+                    <td>{{ channel.cid }}</td>
+                    <td>{{ channel.title }}</td>
+
+
+                    <td>
+                        <a class="select_pick" href="#" id="switch_choiceness" data-type="select"
+                           data-pk="{{ channel.id }}" data-url="/content/iphone/update_status/channel" data-title="精选开关"
+                           data-value={{ channel.switch_choiceness }}></a>
+                    </td>
+                    <td>
+                        <a class="select_pick" href="#" id="switch_all" data-type="select" data-pk="{{ channel.id }}"
+                           data-url="/content/iphone/update_status/channel" data-title="全部开关"
+                           data-value={{ channel.switch_all }}></a>
+                    </td>
+                    <td>
+                        <a class="image_pick" href="#" id="image_type_choiceness" data-type="select"
+                           data-pk="{{ channel.id }}" data-url="/content/iphone/update_status/channel" data-title="精选图片"
+                           data-value={{ channel.image_type_choiceness }}></a>
+                    </td>
+                    <td>
+                        <a class="image_pick" href="#" id="image_type_all" data-type="select" data-pk="{{ channel.id }}"
+                           data-url="/content/iphone/update_status/channel" data-title="全部图片"
+                           data-value={{ channel.image_type_all }}></a>
+                    </td>
+
+                    <td>
+                        <a class="select_pick" href="#" id="state" data-type="select" data-pk="{{ channel.id }}"
+                           data-url="/content/iphone/update_status/channel" data-title="状态管理(iphone及iphone3.2以下)"
+                           data-value={{ channel.state }}></a>
+                    </td>
+                    <td>
+                        <a class="select_pick" href="#" id="state_iphone_3_2" data-type="select"
+                           data-pk="{{ channel.id }}" data-url="/content/iphone/update_status/channel"
+                           data-title="状态管理(iphone及iphone3.2及以上)" data-value={{ channel.state_iphone_3_2 }}></a>
+                    </td>
+                    <td colspan="1"><a href="{% url "iphone_query_channel" channel.id %}">修改</a> <a
+                            href="{% url "iphone_delete_channel" channel.id %}" class="del">删除</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if not channels %}
+        <div class="row-fluid">
+            <div class="col-sm-8">
+                <div class="alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Warning!</strong> iPhone频道数据为空,请创建数据。
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+
+    <div class="row-fluid">
+        <form method="post" id="save_position_form">
+            <input name="platform" type="hidden" value="{{ platform }}"/>
+            <input type="hidden" name="channel_ids" id="item_ids"/>
+            <a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal">创建iPhone频道</a>
+            <input type="submit" value="保存顺序" class="btn btn-primary" id="save_position_btn"/>
+        </form>
+    </div>
+
+    <div class="row-fluid">
+        {% include  'channel/iphone_add_channel.html' %}
+    </div>
+
+    <!-- Modal -->
+    <div id="formErrorModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">提示(Esc关闭)</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-error">提示消息</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+
+
+{% block js %}
+
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+
+    <script type="text/javascript">
+
+    {% include "common_module/sort_edit_del.js" %}
+    {% include "common_module/image_upload.js" %}
+     $(function(){
+
+            $('.image_pick').editable({
+                showbuttons: false,
+                source: [
+                    {value: 1, text: '竖图'},
+                    {value: 0, text: '横图'}
+                ]
+            });
+
+            var img_upload_arr = ['normal', 'normal-selected', 'small', 'small-selected'];
+            for (var index = 0; index < img_upload_arr.length; index++) {
+                add_upload_handler(generate_upload_dict(img_upload_arr[index]));
+            }
+
+        });
+
+
+    </script>
+
+    {% include "channel/channel_validate.html" %}
+    <link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css"
+          rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+
+{% endblock %}

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+    
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:layout_margin="0dp" >
+
+
+
+
+    <LinearLayout
+		android:id="@+id/scrollHomeView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/activity_vertical_margin">
+
+
+
+        
+         <EditText
+                        style="@style/RoboTheme"
+                        android:inputType="number"
+                        android:text="移动APP概要统计"
+                        android:textSize="24sp"
+                        android:enabled="false"
+                        android:layout_marginBottom="1dp"
+                       />
+         
+         <EditText
+                        style="@style/RoboTheme"
+                        android:id="@+id/dateText"
+                        android:layout_marginTop="2dp"
+                        android:inputType="number"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:enabled="false"
+                       />
+
+        <com.yalantis.phoenix.PullToRefreshView
+            android:id="@+id/pull_to_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+         <!--  数据表 -->
+         <ListView
+		        android:id="@+id/dataListView"
+                android:divider="@null"
+                android:dividerHeight="0dp"
+                android:background="#000"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        >
+    	</ListView>
+
+        </com.yalantis.phoenix.PullToRefreshView>
+    </LinearLayout>
+
+
+    <ProgressBar android:id="@+id/ajax_loading"
+	      android:layout_width="wrap_content" 
+	      android:layout_height="wrap_content"    
+	      android:layout_gravity="center_vertical|center_horizontal"
+	      android:indeterminateDrawable="@drawable/loading"
+          android:indeterminateOnly="true"
+          android:indeterminateBehavior="repeat" 
+	      />
+    
+</FrameLayout>
+   

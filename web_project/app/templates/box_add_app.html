@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <form role="form" action="/app/box/addgame" id='box_add' method="POST">
+        <table class="table table-condensed table-hover">
+            <tr>
+                <td>
+                    <div class="name">
+                        <span class="add-on">抽屉名称：{{ box.name }}</span>
+                        <div class="controls input-append">
+                            <input hidden="hidden" size="10" type="hidden" value="{{ box.id }}" id='name' name='box'> </input>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="input-prepend">
+                        <span class="add-on">游戏：</span>
+                        <select id='app' class="span8" name='app'>
+                            <option value="0">无</option>
+                            {% for ele in apps %}
+                                <option value="{{ ele.id }}">{{ ele.appname }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                </td>
+        </table>
+        <div class="row-fluid">
+            <div class="span12 text-center">
+                <button type="button" class="btn btn-info" id='cancel_btn' time_type='0'>返回</button>
+                <button type="button" class="btn btn-success" id='query_btn' time_type='0'>添加</button>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+
+    $('#query_btn').click(function (e) {
+        if ($("#app").val()!="0")
+        {
+            $('#box_add').submit();
+        }
+        else
+        {
+            alert("游戏不能为空");
+        }
+
+    });
+    $("#cancel_btn").click(function(e){
+        window.location.href = "/app/box/index";
+    });
+    </script>
+{% endblock %}

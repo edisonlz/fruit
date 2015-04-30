@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+    
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                 >
+                
+              <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1" >
+               
+                <TextView
+                    android:id="@+id/textName"
+                    style="@style/RoboTheme"
+                    android:layout_margin="4dp"
+                    android:textColor="#57a000"
+                    android:text="优酷"/>
+
+            </LinearLayout>
+            
+             <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1" >
+               
+                <TextView
+                    android:id="@+id/textUV"
+                    style="@style/RoboTheme"
+                    android:layout_margin="4dp"
+                    android:text="0"/>
+
+            </LinearLayout>
+            
+            <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1" >
+			   
+                
+                 <com.github.mikephil.charting.charts.LineChart
+                     android:layout_width="40dp"
+		        android:layout_height="20dp"
+		        android:id="@+id/graphViewUV"
+		        android:gravity="center"
+		         />
+                
+            </LinearLayout>
+            
+            
+            
+           <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1" >
+                
+			   <TextView
+	                    android:id="@+id/textVV"
+	                    style="@style/RoboTheme"
+	                    android:layout_margin="4dp"
+	                    android:text="0"/>
+			</LinearLayout>
+			
+           <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1" >
+            
+           <com.github.mikephil.charting.charts.LineChart
+                     android:layout_width="40dp"
+		        android:layout_height="20dp"
+		        android:id="@+id/graphViewVV"
+		        android:gravity="center"
+		         />
+           </LinearLayout>
+            
+           <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1" >
+                
+			   <TextView
+	                    android:id="@+id/textUVVV"
+	                    style="@style/RoboTheme"
+	                    android:layout_margin="4dp"
+	                    android:text="0"/>
+			</LinearLayout>
+			
+           <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                     >
+			   
+            
+           <com.github.mikephil.charting.charts.LineChart
+                    android:layout_width="40dp"
+		        	android:layout_height="20dp"
+		        	android:id="@+id/graphViewUVVV"
+		        	android:gravity="center"
+		        	android:adjustViewBounds="true" 
+		         />
+           </LinearLayout>
+			
+           
+</LinearLayout>
+ 
+

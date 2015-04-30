@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block link %}
+    <link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css"
+          rel="stylesheet"/>
+    <style type="text/css">
+        #htop {
+            display: inline-block;
+            margin-top: 0;
+            margin-bottom: 0;
+            vertical-align: -5px;
+        }
+
+        #headBtn {
+            margin: 10px 0;
+            overflow: auto;
+        }
+
+        .btn-top {
+            float: right;
+            display: inline-block;
+        }
+
+        .btn-top > .btn {
+            margin-left: 10px;
+        }
+
+        .alert-info {
+            margin-top: 20px;
+        }
+
+        .ui-autocomplete {
+            max-height: 180px;
+            max-width: 350px;
+            width: 100%;
+            overflow-y: auto;
+            /* prevent horizontal scrollbar */
+            overflow-x: hidden;
+            z-index: 2000;
+        }
+
+        /* IE 6 doesn't support max-height */
+        * html .ui-autocomplete {
+            height: 180px;
+        }
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="row-fluid">
+        <div id="headBtn">
+            <h4 id="htop">同步任务管理 - {{ platform }} 平台</h4>
+
+            <div class="btn-top">
+                <a class="btn"
+                   href="
+                    {% if platform == 'android' %}
+                        {% if module %}
+                        {% url "android_sub_channel_modules" %}?select_channel={{ channel.id }}&select_subchannel={{ subchannel.id }}&select_module={{ module.id }}&platform={{ platform }}
+                        {% else %}
+                        {% url "android_sub_channel" %}?select_channel={{ channel.id }}&select_subchannel={{ subchannel.id }}&select_module={{ module.id }}&platform={{ platform }}
+                        {% endif %}
+                    {% elif platform == 'iphone' %}
+                        {% if module %}
+                        {% url "iphone_sub_channel_modules" %}?select_channel={{ channel.id }}&select_subchannel={{ subchannel.id }}&select_module={{ module.id }}&platform={{ platform }}
+                        {% else %}
+                        {% url "iphone_sub_channels" %}?select_channel={{ channel.id }}&select_subchannel={{ subchannel.id }}&select_module={{ module.id }}&platform={{ platform }}
+                        {% endif %}
+                    {% elif platform == 'ipad' %}
+                        {% if module %}
+                        {% url "ipad_sub_channel_modules" %}?select_channel={{ channel.id }}&select_subchannel={{ subchannel.id }}&select_module={{ module.id }}&platform={{ platform }}
+                        {% else %}
+                        {% url "ipad_sub_channels" %}?select_channel={{ channel.id }}&select_subchannel={{ subchannel.id }}&select_module={{ module.id }}&platform={{ platform }}
+                        {% endif %}
+                {% endif %}">
+                    <i class="icon-circle-arrow-left"></i>返回</a>
+                <a href="#syncJobModal" role="button" class="btn" data-toggle="modal"><i class="icon-plus"></i>新增抓取</a>
+                <a href="{% url "show_all_virtual_name" %}" role="button" class="btn" data-toggle="modal"><i class="icon-folder-close"></i>查看虚拟名称</a>
+            </div>
+        </div>
+        <div class="row-fluid input-prepend">
+
+            {% if channel %}
+                <span class="add-on">频道:</span>
+                <select class="col-sm-8" id="select_channel" name="select_channel" disabled="disabled">
+                    <option value="1" selected="selected">
+                        {{ channel.title }}({% if channel.state == 1 %}开启{% else %}关闭{% endif %})
+                    </option>
+                </select>
+                {% if subchannel %}
+                    <span class="add-on" style="margin-left: 5px;">子频道:</span>
+                    <select class="col-sm-8" id="select_subchannel" name="select_subchannel" disabled="disabled">
+                        <option value="1" selected="selected">
+                            {{ subchannel.title }}({% if subchannel.state == 1 %}开启{% else %}关闭{% endif %})
+                        </option>
+                    </select>
+                    {% if module %}
+                        <span class="add-on" style="margin-left: 5px;">子频道模块:</span>
+                        <select class="col-sm-8" id="select_module" name="select_module" disabled="disabled">
+                            <option value="1" selected="selected">
+                                {{ module.title }}({% if module.state == 1 %}开启{% else %}关闭{% endif %})
+                            </option>
+                        </select>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+
+    {% if jobs %}
+        <table class="table table-striped">
+            <thead>
+            <th>任务id</th>
+            <th>虚拟名称</th>
+            <th>运行类型</th>
+            <th>时间间隔/定期时间</th>
+            <th>操作</th>
+            </thead>
+
+            <tbody id="sortable">
+            {% for job in jobs %}
+                <tr id="module_{{ item.id }}" value="{{ job.id }}">
+                    <td>{{ job.id }}</td>
+                    <td>{{ job.virtual_name }}</td>
+                    <td>{% if job.cron %}每天固定时间{% else %}间隔时间{% endif %}</td>
+                    <td>{% if job.cron %}每天{{ job.cron }}{% else %}每{{ job.interval }}分钟{% endif %}</td>
+                    <td colspan="2">
+                        <a  class="btn btn-small btn-success run" data-toggle="tooltip" data-job="{{ job.id }}"  data-title="999" >
+                            <span class="glyphicon glyphicon-play"></span>立即执行</a>
+                        <a href="{% url "update_sync_plan" job.id %}?channel_id={{ channel.id }}&subchannel_id={{ subchannel.id }}&module_id={{ module.id }}&platform={{ platform }}"
+                           class="btn btn-small btn-warning">
+                            <span class="glyphicon glyphicon-play"></span>修改</a>
+                        <a href="{% url "del_sync_plan" job.id %}?channel_id={{ channel.id }}&subchannel_id={{ subchannel.id }}&module_id={{ module.id }}&platform={{ platform }}"
+                           class="del btn btn-small btn-danger">
+                            <span class="glyphicon glyphicon-play">删除</span></a>
+                        <a href="{% url 'fetch_job_log_watch' job.id %}" class="btn btn-small btn-info">
+                            <span class="glyphicon glyphicon-play">查看日志</span></a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    {% else %}
+        <div>
+            <div class="alert alert-info">
+                <i class="icon-info-sign"></i>没有同步任务!
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row-fluid">
+        {% include "syncjob/add_syncjob.html" %}
+    </div>
+    <div class="row-fluid">
+        {% include "syncjob/edit_syncjob.html" %}
+    </div>
+    {% include "syncjob/add_syncjob.html" %}
+{% endblock %}
+
+
+{% block js %}
+    <script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#create_job").bind('click', function(e){
+                e.preventDefault();
+                var form = $(this).closest('form');
+                var objs = $("#select_channel").add($("#select_subchannel")).add($("#select_module"));
+                var category_name = objs.map(function () {
+                    return $(this).children('option:selected').text().replace(/\s+/g, '');
+                }).get().join('->');
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'category_name',
+                    value: category_name
+                }).appendTo(form);
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    data:  form.closest('form').serialize(),
+                    url: '{% url "add_sync_plan" %}',
+                    success: function(data){
+                        if (data.status == 'success') {
+                            location.reload();
+                        } else {
+                            alert(data.msg);
+                        }
+                    }
+                })
+            });
+
+            $("#virtual_name").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "{% url "virtual_name_autocomplete" %}",
+                        dataType: "json",
+                        type: 'post',
+                        data: {
+                            'q': $("#virtual_name").val()
+                        },
+                        success: function (data) {
+                            return response(data);
+                        }
+                    });
+                },
+                minLength: 1,
+                autoFocus: true
+            });
+
+            $('.run').bind('click', function () {
+                var obj = $(this);
+                $.ajax({
+                    url: "/content/sync/runatonce/plan/" + obj.data('job'),
+                    dataType: "json",
+                    data: {'id': obj.data('job')},
+                    type: 'post',
+                    success: function (data) {
+                        obj.tooltip({
+                            title: data.status
+                        }).tooltip('show');
+                        setTimeout(function () {
+                            obj.tooltip('hide').tooltip('destroy');
+                        }, 1000);
+                    }
+                });
+            });
+
+            var run_type = $('#run_type');
+            run_type.change(function () {
+                if ($(this).val() === 'interval') {
+                    $('#interval_type').show();
+                    $('#cron_type').hide();
+                } else {
+                    $('#interval_type').hide();
+                    $('#cron_type').show();
+                }
+            });
+            run_type.triggerHandler('change');
+
+            $(".data_tip").tooltip();
+
+            $(".del").click(function () {
+
+                var statu = confirm("确认删除吗?");
+                if (!statu) {
+                    return false;
+                }
+            });
+
+            $(function () {
+                $.fn.editable.defaults.mode = 'popup';
+                $('.select_pick').editable({
+                    showbuttons: false,
+                    source: [
+                        {value: 1, text: '开启'},
+                        {value: 0, text: '关闭'}
+                    ]
+                });
+            });
+
+        });
+    </script>
+
+    {% include "syncjob/_sync_plan_validate.html" %}
+
+
+{% endblock %}

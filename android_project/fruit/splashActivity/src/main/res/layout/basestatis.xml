@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+    
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:layout_margin="0dp" >
+              
+
+
+    <LinearLayout
+		android:id="@+id/scrollHomeView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
+
+        <LinearLayout
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal">
+		        <TextView
+	             style="@style/RoboTheme"
+	             android:text="产品:"
+	             android:textSize="22sp"
+	             android:layout_width="wrap_content"
+	              />
+            <TextView
+	             style="@style/RoboTheme"
+	             android:id="@+id/productText"
+	             android:text=""
+	             android:textSize="22sp"
+	             android:layout_width="wrap_content"
+	              />
+		</LinearLayout>
+        <LinearLayout
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal">
+		    
+            
+            
+            <TextView
+	             style="@style/RoboTheme"
+	             android:text="时间:"
+	             android:textSize="22sp"
+	             android:layout_width="wrap_content"
+	              />
+        
+	         <EditText
+	                        style="@style/RoboTheme"
+	                        android:id="@+id/startdateText"
+	                        android:layout_marginTop="2dp"
+	                        android:inputType="number"
+	                        android:text=""
+	                        android:textSize="18sp"
+	                        
+	                        android:layout_marginBottom="2dp"
+	                        android:layout_width="wrap_content"
+	                       />
+	         
+	         <TextView
+	             style="@style/RoboTheme"
+	             android:text="到"
+	             android:textSize="22sp"
+	             android:layout_width="wrap_content"
+	              >
+	         </TextView>
+	         
+	         <EditText
+	                        style="@style/RoboTheme"
+	                        android:id="@+id/enddateText"
+	                        android:layout_marginTop="2dp"
+	                        android:inputType="text"
+	                        android:text=""
+	                        android:textSize="18sp"
+	                        android:layout_marginBottom="2dp"
+	                        android:layout_width="wrap_content"
+	                       />
+         </LinearLayout>
+         
+        
+        <LinearLayout
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal">
+	         
+          <TextView
+	             style="@style/RoboTheme"
+	             android:text="平台"
+	             android:textSize="16sp"
+	             android:layout_width="wrap_content"
+	             android:paddingBottom="10dp"
+	             android:padding="4dp"
+	             android:layout_marginTop="1dp"
+	              >
+	         </TextView>
+        <Spinner android:id="@+id/platformSpinner"   
+           android:layout_width="wrap_content"  
+           android:layout_height="wrap_content"
+           android:entries="@array/deivce_platform"
+           ></Spinner>
+        
+        <TextView
+	             style="@style/RoboTheme"
+	             android:text="设备"
+	             android:padding="4dp"
+	             android:paddingBottom="10dp"
+	             android:textSize="16sp"
+	             android:layout_width="wrap_content"
+	             android:layout_marginTop="1dp"
+	              >
+	         </TextView>
+        <Spinner android:id="@+id/deivceSpinner"   
+           android:layout_width="wrap_content"  
+           android:layout_height="wrap_content"
+           android:entries="@array/deivce_array"
+           ></Spinner>
+        
+        
+        <Button   
+    		android:id="@+id/doButton" 
+    		android:text=" 查询 " 
+    		android:layout_width="wrap_content"   
+    		android:layout_height="wrap_content" ></Button>
+        
+        </LinearLayout>  
+        
+         <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+	          
+			    <ListView
+			        android:id="@+id/chartlistView"
+			        android:layout_width="match_parent"
+			        android:layout_height="match_parent" >
+			    </ListView>
+                
+          </LinearLayout>
+          
+        
+    	            
+    </LinearLayout>
+
+
+    <ProgressBar android:id="@+id/ajax_loading"
+	      android:layout_width="wrap_content" 
+	      android:layout_height="wrap_content"    
+	      android:layout_gravity="center_vertical|center_horizontal"
+	      android:indeterminateDrawable="@drawable/loading"
+          android:indeterminateOnly="true"
+          android:indeterminateBehavior="repeat" 
+	      />
+    
+</FrameLayout>
+   

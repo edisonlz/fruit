@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <div id="container">
+        <form method="post">
+            <div id="div_for_video_type" >
+                <h5>视频类型:</h5>
+                <select class="form-control" id="video_type" name="video_type" placeholder="">
+                {% for type in video_type_list %}
+                    <option value="{{ type.name }}"
+                       {% ifequal type.id 1 %}
+                            selected="selected"
+                       {% endifequal %}
+                            >
+                        {{ type.desc }}</option>
+                {% endfor %}
+                </select>
+            </div>
+            <input type="hidden" name="box_id" value="{{ current_box_id }}">
+            <!-- <textarea for="url_filed" name="url" cols="3" rows="6"></textarea> -->
+            <div id="div_for_video_type_field"></div>
+
+
+            <div id="footer">
+                <button type="submit" class="btn btn-danger">提交</button>
+                <a class="btn btn-primary" href="{% url "winphone_main_page_videos" %}?box_id={{ current_box_id }}">返回</a>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#video_type").change(function () {
+                selected_video_type = $("#video_type").val();
+                console.info("...." + selected_video_type);
+                $("#div_for_video_type_field").load("/content/win_phone/main_page/add/video_field",
+                        {
+                            "video_type": selected_video_type
+                        });
+            });
+
+            $("#video_type").trigger('change');
+        })
+    </script>
+    <script>
+        function get_game_info(){
+                var game_id = $("#game_id").val();
+                $.get('/content/get_game_info', {game_id: game_id, product: 'iPad'},
+                        function(response, status, xhr){
+                            if (status == 'success') {
+                                $("#game_name").val(response["appname"]);
+                                $("#game_version").val(response["version"]);
+                                $("#itunes_id").val(response["itunesid"]);
+                                $("#logo").val(response["logo"]);
+                                $("#scroll").val(response["scroller"]);
+                                $("#score").val(response["score"]);
+                                $("#url").val(response["url"]);
+                                $("#desc").val(response["desc"]);
+                                $("#upload_time").val(response["upload_time"]);
+                                $("#size").val(response["size"]);
+                                $("#charge_type").val(response["charge"]);
+                                $("#redirect_type").val(response["redirect_type"]);
+                                $("#recommend_type").val(response["recommend_type"]);
+                                $("#redirect_url").val(response["redirect_url"]);
+                                $("#categories").val(response["categories"]);
+                            }
+                        }, dataType="json"
+                );
+                event.preventDefault();
+            }
+    </script>
+{% endblock %}
+
+

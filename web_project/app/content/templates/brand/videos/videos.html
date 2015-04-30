@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% load util_tags %}
+{% block link %}
+    <link href="{{ STATIC_URL }}select2/select2.css" rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}select2/select2.js"></script>
+    <link href="{{ STATIC_URL }}select2/select2-bootstrap.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <style type="text/css">
+        {% include "common_module/sort_img.css" %}
+        div.navigation-div [class^="icon-"] {
+            display: inline-block;
+            margin: 0 5px 0 5px;
+            width: 14px;
+        }
+        .right {
+            text-align: right;
+            display: inline-block;
+            float: right;
+        }
+        .table {
+            width: auto;
+        }
+    </style>
+{% endblock %}
+{% block navigation %}
+    <div class="navigation-div">
+        <ul class="breadcrumb">
+            <li>品牌官网<span class="divider">/</span></li>
+            <li class="active">{{ module.title }}-内容列表</li>
+        </ul>
+    </div>
+{% endblock %}
+{% block content %}
+    {% box_btns_show_perm module.id request.user 5 as perm_flag %}
+    <div class="row-fluid">
+        <div style="overflow: auto;">
+        <div class="pull-left">
+            <a href="{% url 'brand_modules' %}" class="btn" data-toggle="modal"><i class="icon-circle-arrow-left"></i>返回</a>
+        </div>
+        <div class="pull-right">
+        {% if perm_flag %}
+            <div class="right">
+                <a href="{% url 'brand_add_video' %}?module_id={{ module_id }}" role="button" class="btn"
+                   data-toggle="modal"><i class="icon-plus"></i>新增内容</a>
+            </div>
+            <div class="right">
+                <input type="hidden" name="item_ids" id="item_ids"/>
+                <button type="button" class="btn" id="save_position_btn"><i class="icon-sort"></i>保存顺序</button>
+            </div>
+        {% endif %}
+        </div>
+        </div>
+        <table class="table table-striped table-hover table-condensed">
+            <thead>
+            <th><input type="checkbox" id="state-all-pick"></th>
+            <th>类型</th>
+            <th>id/url/game_title</th>
+            <th>标题</th>
+            <th>副标题</th>
+            <th>图片</th>
+            <th>创建时间</th>
+            <th>应用到</th>
+            {% if perm_flag %}
+                <th>操作</th>
+            {% endif %}
+            </thead>
+            <tbody id="sortable">
+            {% for video in videos %}
+                <tr id="channel_{{ video.id }}" value="{{ video.id }}" class="sort-item">
+                    <td><input type="checkbox" class="channel-state-tag"></td>
+                    <td>{{ video.video_type|dic_get_readable_type }}</td>
+                    <td>{{ video.id|get_id_url_or_game_title }}</td>
+                    <td>{{ video.title }}</td>
+                    <td>{{ video.subtitle }}</td>
+                    <td><img src="{{ video.h_image }}" style="height: 60px"/></td>
+                    <td>{{ video.created_at }}</td>
+                    <td>
+                        <div style="width: 85px">
+                            <div class="pull-left" style="width: 50px">android:</div>
+                            <div style="margin-left:5px ">
+                                {% if perm_flag %}
+                                    <a class="select_pick" style="padding-right: 8px" href="#"
+                                       id="state_for_android" data-type="select"
+                                       data-pk="{{ video.id }}"
+                                       data-url="/content/brand/brand_video/update_status"
+                                       data-title="状态管理"
+                                       data-value={{ video.state_for_android }}></a>
+                                {% else %}
+                                    {% if video.state_for_android == 1 %}开启{% else %}关闭{% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div style="width: 85px">
+                            <div class="pull-left" style="width: 50px">iphone:</div>
+                            <div style="margin-left:5px ">
+                                {% if perm_flag %}
+                                    <a class="select_pick" style="padding-right: 8px" href="#"
+                                       id="state_for_iphone" data-type="select"
+                                       data-pk="{{ video.id }}"
+                                       data-url="/content/brand/brand_video/update_status"
+                                       data-title="状态管理"
+                                       data-value={{ video.state_for_iphone }}></a>
+                                {% else %}
+                                    {% if video.state_for_iphone == 1 %}开启{% else %}关闭{% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div style="width: 85px">
+                            <div class="pull-left" style="width: 50px">ipad:</div>
+                            <div style="margin-left:5px ">
+                                {% if perm_flag %}
+                                    <a class="select_pick" style="padding-right: 8px" href="#"
+                                       id="state_for_ipad" data-type="select"
+                                       data-pk="{{ video.id }}"
+                                       data-url="/content/brand/brand_video/update_status"
+                                       data-title="状态管理"
+                                       data-value={{ video.state_for_ipad }}></a>
+                                {% else %}
+                                    {% if video.state_for_ipad == 1 %}开启{% else %}关闭{% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    {% if perm_flag %}
+                        <td colspan="1">
+                            <a class="btn btn-small btn-table"
+                               href="{% url "brand_update_video" video.id %}?module_id={{ module_id }}">
+                                <li class="icon-edit"></li>
+                                修改</a>
+                            <a class="btn btn-small btn-danger btn-table del"
+                               href="{% url "brand_delete_video" video.id %}?module_id={{ module_id }}">
+                                <li class="icon-trash"></li>
+                                删除</a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if not videos %}
+        <div class="row-fluid">
+            <div class="col-sm-8">
+                <div class="alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Warning!</strong> 数据为空,请创建数据。
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+
+    <div id="formErrorModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">提示(Esc关闭)</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-error">提示消息</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+
+{% block js %}
+
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+    <script type="text/javascript">
+        {% include "common_module/sort_edit_del.js" %}
+        {% include "common_module/image_upload.js" %}
+    </script>
+
+    <link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css"
+          rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+
+{% endblock %}

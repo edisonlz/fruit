@@ -1,0 +1,129 @@
+<!-- Modal -->
+<div id="myModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">创建iPhone频道</h3>
+    </div>
+
+    <div class="modal-body">
+        <form role="form" id="create_cha" method="post" action="{% url "iphone_add_channel" %}">
+            <div class="form-group">
+                <label for="channel_id">ID</label>
+                <input type="number" class="form-control" id="channel_id" name="channel_id" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="cid">CID</label>
+                <input type="number" class="form-control" id="cid" name="cid" placeholder="" value=""> (对应的主站cid)
+            </div>
+
+            <div class="form-group">
+                <label for="title">频道名称</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="color">标题色值</label>
+                <input type="text" class="form-control" id="color" name="color" placeholder=""> (如："color：17/171/21")
+            </div>
+
+            <div class="form-group ordinary">
+                <label for="image">精选图片类型</label>
+                <select class="form-control" id="image_type_choiceness" name="image_type_choiceness" >
+                    <option value="0">横图</option>
+                    <option value="1">竖图</option>
+                </select>
+            </div>
+            <div class="form-group ordinary">
+                <label for="image">全部图片类型(iphone3.2.2+有效)</label>
+                <select class="form-control" id="image_type_all" name="image_type_all" >
+                    <option value="0">横图</option>
+                    <option value="1">竖图</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+            <label for="normal-input" class="control-label">图标</label>
+            <div class="controls">
+                <span id="normal-button" class="btn btn-success fileinput-button  btn-large ">
+                     <span>+ 上传截图...</span>
+                     <input id="normal-upload" type="file" name="files[]" multiple>
+                </span>
+                <div id="normal-success" class="alert alert-success">
+                    <button type="button" class="close">&times;</button>
+                    <img id='normal-content' src="" class="img-polaroid">
+                </div>
+                <div id="normal-progress" class="progress progress-success progress-striped  active"
+                     style="display: none">
+                    <div class="bar"></div>
+                </div>
+                <input type='hidden' id='normal-input' name='normal-img' value="" height="100" width="100"/>
+            </div>
+        </div>
+            <div class="control-group">
+            <label for="normal-selected-input" class="control-label">图标</label>
+            <div class="controls">
+                <span id="normal-selected-button" class="btn btn-success fileinput-button  btn-large ">
+                     <span>+ 上传截图...</span>
+                     <input id="normal-selected-upload" type="file" name="files[]" multiple>
+                </span>
+                <div id="normal-selected-success" class="alert alert-success">
+                    <button type="button" class="close">&times;</button>
+                    <img id='normal-selected-content' src="" class="img-polaroid">
+                </div>
+                <div id="normal-selected-progress" class="progress progress-success progress-striped  active"
+                     style="display: none">
+                    <div class="bar"></div>
+                </div>
+                <input type='hidden' id='normal-selected-input' name='selected-img' value="" height="100"
+                       width="100"/>
+            </div>
+        </div>
+            <div class="control-group ordinary">
+            <label for="small-input" class="control-label">图标(普通)</label>
+            <div class="controls">
+                <span id="small-button" class="btn btn-success fileinput-button  btn-large ">
+                     <span>+ 上传截图...</span>
+                     <input id="small-upload" type="file" name="files[]" multiple>
+                </span>
+                <div id="small-success" class="alert alert-success">
+                    <button type="button" class="close">&times;</button>
+                    <img id='small-content' src="" class="img-polaroid">
+                </div>
+                <div id="small-progress" class="progress progress-success progress-striped  active"
+                     style="display: none">
+                    <div class="bar"></div>
+                </div>
+                <input type='hidden' id='small-input' name='small-img' value="" height="100" width="100"/>
+            </div>
+        </div>
+            <div class="control-group ordinary">
+            <label for="small-selected-input" class="control-label">图标(选中)</label>
+            <div class="controls">
+                <span id="small-selected-button" class="btn btn-success fileinput-button  btn-large ">
+                     <span>+ 上传截图...</span>
+                     <input id="small-selected-upload" type="file" name="files[]" multiple>
+                </span>
+                <div id="small-selected-success" class="alert alert-success">
+                    <button type="button" class="close">&times;</button>
+                    <img id='small-selected-content' src="" class="img-polaroid">
+                </div>
+                <div id="small-selected-progress" class="progress progress-success progress-striped  active"
+                     style="display: none">
+                    <div class="bar"></div>
+                </div>
+                <input type='hidden' id='small-selected-input' name='selected-img-small' value="" height="100"
+                       width="100"/>
+            </div>
+        </div>
+
+
+            <button type="submit" class="btn btn-success">创建</button>
+            <a class="btn btn-default" href="{% url 'iphone_channels' %}">返回</a>
+            <input name="platform" type="hidden" value="{{ platform }}"/>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+    </div>
+
+</div>

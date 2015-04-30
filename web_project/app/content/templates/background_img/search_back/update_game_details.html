@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% load util_tags %}
+{% block link %}
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}switchery/dist/switchery.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}app/content/module/update.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">
+    <script src="{{ STATIC_URL }}switchery/dist/switchery.js"></script>
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid">
+            <h3>更新视频</h3>
+            <form role="form" method="post" action="{% url 'search_back_img_update_video' video.id %}?device_type={{ device_type }}">
+                <input type="hidden" name="box_id" value="{{ video.box_id }}">
+                <input type="hidden" name="video_type" value="{{ video.video_type }}">
+                <input type="hidden" class="form-control" id="id" name="id" value="{{ video.id }}">
+                <!-- <textarea for="url_filed" name="url" cols="3" rows="6"></textarea> -->
+                <table class="table table-striped table-hover">
+                    <tr>
+                        <td style="width: 200px"><span style="color: orangered">*</span>标题:</td>
+                        <td><input type="text" id="title" name="title" value="{{ video.title }}"></td>
+                    </tr>
+                    <tr>
+                        <td><label><span style="color: orangered">*</span>
+                        图片{% if device_type == 'phone' %}(720*212) {% elif device_type == 'pad' %}
+                        (1280*172) {% endif %}</label></td>
+                        <td>
+                            <div class="controls">
+                                <span id="screen_button" class="btn btn-success fileinput-button  btn-small ">
+                                    <span>+ 上传图片...</span>
+                                    <input id="screen-img-upload" type="file" name="files[]" multiple>
+                                </span>
+
+                                <div id="screen-success" class="alert alert-success"
+                                     style="font-size: 20px;margin-top: 10px;width: 165px;">
+                                    <button type="button" class="close">&times;</button>
+                                    <img id='img-content' src="{{ video.h_image }}" class="img-polaroid">
+                                </div>
+                                <div id="screen-progress" class="progress progress-success progress-striped  active"
+                                     style="display: none">
+                                    <div class="bar"></div>
+                                </div>
+                                <input type='hidden' id='screen-input' name='h_image' value="{{ video.h_image }}"
+                                       height="80" width="60"/>
+                            </div>
+
+                        </td>
+                    </tr>
+                    {% include "android/main_page/module_manage/game/android_game_update_detail.html" with game=game original_game_id=game.original_game_id %}
+                    <input type="hidden" name="platform" id="platform" value="android">
+
+                </table>
+
+                <div id="footer">
+                    <button type="submit" class="btn btn-default"><li class="icon-ok-sign"></li>提交</button>
+                    <a class="btn btn-default"
+                       href="{% url 'search_back_img_manage' %}?device_type={{ device_type }}"><i class="icon-circle-arrow-left"></i>返回</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+
+{% block js %}
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script src="{{ STATIC_URL }}jquery-validate/jquery.validate.js"></script>
+    <script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+    <script type="text/javascript">
+        {% include "brand/videos/_update_video_validate.js" %}
+        function get_game_info() {
+            var game_id = $("#game_id").val();
+            $.get('/content/get_game_info', {game_id: game_id, product: 'iPad'},
+                    function (response, status, xhr) {
+                        if (status == 'success') {
+                            $("#game_name").val(response["appname"]);
+                            $("#game_version").val(response["version"]);
+                            $("#itunes_id").val(response["itunesid"]);
+                            $("#logo").val(response["logo"]);
+                            $("#scroll").val(response["scroller"]);
+                            $("#score").val(response["score"]);
+                            $("#url").val(response["url"]);
+                            $("#desc").val(response["desc"]);
+                            $("#upload_time").val(response["upload_time"]);
+                            $("#size").val(response["size"]);
+                            $("#charge_type").val(response["charge"]);
+                            $("#redirect_type").val(response["redirect_type"]);
+                            $("#recommend_type").val(response["recommend_type"]);
+                            $("#redirect_url").val(response["redirect_url"]);
+                            $("#categories").val(response["categories"]);
+                        }
+                    }, dataType = "json"
+            );
+            event.preventDefault();
+        }
+
+        $(function () {
+            //调整页面 在每个tr填入一个td占位
+            $('table tr').each(function(){
+                $(this).prepend("<td style='width:150px'></td>")
+            })
+
+            $(".alert button").click(function () {
+                var btn = $(this);
+                $(btn).next().attr("src", "");
+                parent = $(btn).parent();
+                //隐藏
+                parent.hide();
+                //设置hidden input的值
+                if (parent.next().next()) parent.next().next().val("");
+                //显示上传按钮
+                $(parent.parent().children()[0]).show();
+
+            });
+
+            var url = '/content/img/upload';
+            //初始化，主要是设置上传参数，以及事件处理方法(回调函数)
+
+            $('#screen-img-upload').fileupload({
+                autoUpload: true,//是否自动上传
+                url: url,//上传地址
+                dataType: 'json',
+                acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+                maxFileSize: 1048576,
+
+
+                add: function (e, data) {
+{#                    data.formData = {#}
+{#                        'type': $('#select-img-type').val()#}
+{#                    };#}
+                    var uploadErrors = [];
+                    var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
+                    if ('type' in data.originalFiles[0] && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+                        uploadErrors.push('上传图片格式错误!');
+                    }
+
+                    if ('size' in data.originalFiles[0] && data.originalFiles[0]['size'] > 1048576) {
+                        uploadErrors.push('上传图片需要小于1M!');
+                    }
+
+                    if (uploadErrors.length > 0) {
+                        show_error_msg(uploadErrors.join("\n"));
+                    } else {
+                        data.submit();
+                    }
+                },
+
+                done: function (e, data) {//设置文件上传完毕事件的回调函数
+
+                    if ("e" in data.result && data.result["e"]["code"] < 0) {
+                        $("#screen_button").show();
+                        $("#screen-progress").hide();
+                        show_error_msg("upload error:" + data.result["e"]["code"] + ':' + data.result["e"]["info"]);
+                        return;
+                    }
+
+                    $.each(data.result.files, function (index, file) {//
+                        $("#img-content").attr("src", file.url);
+                        $("#img-content").show();
+                        scoller_input = $("#screen-input")
+                        scoller_input.attr('value', file.url)
+                    });
+
+                    $("#screen-progress").hide();
+                    $("#screen-success").show();
+                },
+
+                progressall: function (e, data) {//设置上传进度事件的回调函数
+
+                    $("#screen_button").hide();
+                    $("#screen-progress").show();
+
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    $('#scoller-progress .bar').css(
+                            'width',
+                            progress + '%'
+                    );
+                }
+
+            });
+
+
+        });
+
+
+        function show_error_msg(msg) {
+
+            $("#formErrorModal .modal-body p").text(msg);
+            $("#formErrorModal").modal();
+
+        }
+
+    </script>
+
+
+{% endblock %}
