@@ -320,7 +320,7 @@ def profile_patch(execute):
 
 def load_api_doc(path, debug=False):
     from view import doc
-    from api.handler import service, ipad, iphone, helloworld, brand, rank
+    from api.handler import helloworld #service, ipad, iphone, helloworld, brand, rank
 
     apiurls = api_manager.get_urls()
     apiurls = [(r'{0}\.?(json|xml|text)?'.format(i), j) for (i, j) in apiurls]

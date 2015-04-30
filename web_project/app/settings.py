@@ -7,7 +7,6 @@ sys.path.insert(0, os.path.join(PROJECT_ROOT, os.pardir))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, "site-packages"))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, "..", ".."))
 
-from menu import Menus, New_Menus, FRESH_MENU
 
 
 def load_settings(settings, debug=True, **kwargs):
@@ -48,7 +47,7 @@ def load_settings(settings, debug=True, **kwargs):
             'STATICFILES_DIRS': (
                 os.path.join(PROJECT_ROOT, 'statics'),
             ),
-            # "STATIC_ROOT": os.path.join(PROJECT_ROOT, 'statics'),
+            "STATIC_ROOT": os.path.join(PROJECT_ROOT, 'statics'),
             'TEMPLATE_CONTEXT_PROCESSORS': (
                 "django.core.context_processors.debug",
                 "django.core.context_processors.i18n",
@@ -84,7 +83,6 @@ def load_settings(settings, debug=True, **kwargs):
                 'django.contrib.admindocs',
                 'app.user',
                 'south',
-                'app.permission',
                 'app.content',
                 'app.bootstrap_toolkit',
                 'django_extensions',
@@ -92,9 +90,6 @@ def load_settings(settings, debug=True, **kwargs):
             
             "LOGIN_URL": "/signin",
             "LOGIN_REDIRECT_URL": "/",
-            "MENU_CONFIG": Menus,
-            "NEW_MENU_CONFIG": New_Menus,
-            "FRESH_MENU_CONFIG": FRESH_MENU,
             "FUNC_INIT_DOWNLOAD_AMOUNT": lambda: random.randint(5000, 9999),
             "ALWAYS_ALLOWED_PERMS": ("signout/$", "signin/$"),
 

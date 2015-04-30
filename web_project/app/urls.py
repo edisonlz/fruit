@@ -19,10 +19,8 @@ urlpatterns = patterns('',
 
     url(r'^$', 'content.views.module.cms_module', name=u'首页'),
 
-    url(r'^signin/$', 'django.contrib.auth.views.login', {'template_name': 'signin.html'}, name="signin"),
+    url(r'^signin/$', 'django.contrib.auth.views.login', {'template_name': 'signin2.html'}, name="signin"),
     url(r'^signout/$', 'django.contrib.auth.views.logout_then_login',  name="signout"),
-
-    url(r"^perm", include("app.permission.urls")),
 
     url(r'^content/', include('app.content.urls')),
 
@@ -36,5 +34,6 @@ urlpatterns = patterns('',
     #url(r'^static/(?P<path>.*)$', 'django.views.static.serve', { 'document_root': settings.STATIC_ROOT,}),
 
 )
+
 if settings.DEBUG is False:
    urlpatterns += patterns('',url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}))
