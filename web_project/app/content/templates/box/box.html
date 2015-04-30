@@ -1,0 +1,315 @@
+{% extends "base.html" %}
+{% load util_tags %}
+
+{% block link %}
+
+    <link href="{{ STATIC_URL }}select2/select2.css" rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}select2/select2.js"></script>
+    <link href="{{ STATIC_URL }}select2/select2-bootstrap.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">
+    <style type="text/css">
+        div.nav-group {
+            position: relative;
+        }
+
+        div.tool-box {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        a.btn-table {
+            padding: 2px 5px;
+            margin-right: 5px;
+        }
+
+        div.pull-right a.btn {
+            margin-left: 5px;
+            margin-bottom: 10px;
+        }
+
+        div.navigation-div [class^="icon-"] {
+            display: inline-block;
+            margin: 0 5px 0 5px;
+            width: 14px;
+        }
+
+        #save_position_form {
+            margin: 0 0 10px;
+            display: inline-block;
+            vertical-align: top;
+        }
+    </style>
+{% endblock %}
+
+{% block navigation %}
+    <div class="navigation-div">
+        <ul class="breadcrumb">
+            <li><a style="text-decoration: none;">内容管理</a><span class="divider">/</span></li>
+            <li class="active">抽屉列表</li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row-fluid">
+        <div class="nav-group" id="nav-buttons">
+            
+            <div class="pull-right">
+
+                    <a class="btn module-state" value="1" href="#"><i class="icon-ok"></i>开启</a>
+                    <a class="btn module-state" value="0" href="#"><i class="icon-off"></i>关闭</a>
+
+                    <form method="post" id="save_position_form">
+                        <input type="hidden" name="box_ids" id="item_ids"/>
+                        <button type="button" class="btn" id="save_position_btn"><i class="icon-sort"></i>保存顺序</button>
+                    </form>
+
+                    <a href="#myModal" role="button" class="btn" data-toggle="modal"><i class="icon-plus"></i>新增抽屉</a>
+            </div>
+
+        </div>
+
+
+        <table class="table table-striped table-hover">
+            <thead>
+            <th>
+                <input type="checkbox" style="margin-right: 2px;margin-bottom: 2px" id="state-all-pick"></th>
+                <th>序号</th>
+                <th>标题</th>
+                <th>抽屉类型</th>
+                <th>item个数</th>
+                <th>状态</th>
+                <th>操作</th>
+            </thead>
+
+            <tbody id="sortable">
+            {% for box in boxes %}
+                <tr class="sort-item" id="module_{{ module.id }}" value="{{ module.id }}">
+                    <td><input type="checkbox" class="module-status-tag"></td>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ box.title }}</td>
+                    <td>{{ box_type_hash|dict_get:box.box_type }}</td>
+                    
+                    <td>{{ module.icount }}</td>
+
+                    <td id="status_{{ module.id }}">
+                        {{ module_state_hash|dict_get:box.state }}
+                    </td>
+
+                    <td colspan="1">
+                    
+                        <a class="btn btn-small btn-info btn-table"
+                           href="{% url "iphone_main_page_videos" %}?box_id={{ module.id }}">
+                            <i class="icon-film"></i> 内容 </a>
+
+                            <a class="btn btn-small btn-table" href="{% url "iphone_query_module" module.id %}" title="修改">
+                                <i class="icon-edit"></i> 
+                                修改</a>
+
+                            <a class="btn btn-small btn-danger btn-table del"
+                               href="{% url "iphone_delete_module" module.id %}"
+                               title="删除">
+                                <i class="icon-trash"></i> 删除</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if not modules %}
+        <div class="row-fluid">
+            <div class="col-sm-8">
+                <div class="alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Warning!</strong> 相关首页模块数据为空,请创建模块数据。
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+
+    <div class="row-fluid">
+        {% include  'iphone/main_page/module_manage/module/add_module.html' %}
+    </div>
+
+    <div class="row-fluid">
+        {% include  'iphone/main_page/module_manage/module/_publish_modal.html' %}
+    </div>
+
+{% endblock %}
+
+
+
+
+{% block js %}
+    <script src="{{ STATIC_URL }}select2/select2.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script src="{{ STATIC_URL }}jquery-validate/jquery.validate.js"></script>
+    <script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+    <script type="text/javascript">
+        function save_position_btn_func() {
+            var item_ids = $('#item_ids').val();
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: '/content/iphone/main_page/uniq_modules',
+                data: {
+                    item_ids: item_ids
+                },
+                success: function (data) {
+                    if (data.status === 'success') {
+                        $().toastmessage({
+                            position: 'middle-center'
+                        });
+                        $().toastmessage('showSuccessToast', '操作成功');
+                        setTimeout(function () {
+                            location.reload()
+                        }, 1000);
+                    } else {
+                        $().toastmessage('showErrorToast', "操作失败")
+                    }
+                }
+
+            })
+        }
+        
+        {% include "common_module/sort_edit_del.js" %}
+        {% include "common_module/image_upload.js" %}
+        {% include "iphone/main_page/module_manage/module/_add_module_validate.js" %}
+        {% include 'iphone/main_page/module_manage/module/_change_module_attributes.js' %}
+        {% include "common_module/set_table_width.js" %}
+
+
+        function collect_change_module_ids() {
+            var module_id_array = [];
+            var module_ids;
+            $("input:checkbox:checked.module-status-tag").each(function () {
+                module_id_array.push($(this).parent().parent().attr('value'))
+            });
+            module_ids = module_id_array.join(",");
+            return module_ids;
+        }
+
+        function collect_change_module_titles() {
+            var module_title_array = [];
+            var module_titles = [];
+            $("input:checkbox:checked.module-status-tag").each(function () {
+                module_title_array.push($(this).parent().next().next().text())
+            })
+            module_titles = module_title_array.join(", ");
+            return module_titles
+        }
+
+        $(function () {
+
+            var img_upload_arr = ['normal'];
+            for (var index = 0; index < img_upload_arr.length; index++) {
+                add_upload_handler(generate_upload_dict(img_upload_arr[index]));
+            }
+
+            change_content_according_to_box_type();
+
+            $.fn.editable.defaults.mode = 'popup';
+            console.log("in module select_pick")
+            $('.select_pick').editable({
+                showbuttons: false,
+                source: [
+                    {value: 1, text: '开启'},
+                    {value: 0, text: '关闭'}
+                ]
+            });
+            $('.youku_channel_pick').editable({
+                showbuttons: false,
+                source: [
+                    {value: 1, text: '是'},
+                    {value: 0, text: '否'}
+                ]
+            });
+
+            $('#state-all-pick').click(function () {
+                if ($(this).is(':checked')) {
+                    $("input:checkbox.module-status-tag").prop("checked", true)
+                } else {
+                    $("input:checkbox:checked.module-status-tag").attr("checked", false)
+                }
+            })
+
+            $('.module-state').click(function () {
+                var module_ids = ""
+                var val = $(this).attr("value")
+                var source = {
+                    '1': '开启',
+                    '0': '关闭'
+                }
+                module_ids = collect_change_module_ids()
+                if (module_ids.length > 0) {
+                    $.ajax({
+                        url: '/content/iphone/main_page/update_status/module',
+                        type: "POST",
+                        dataType: 'json',
+                        data: {
+                            module_ids: module_ids,
+                            value: val
+                        },
+                        success: function (data) {
+                            $().toastmessage({
+                                position: 'middle-center'
+                            });
+                            if (data.status == 'success') {
+                                 for (var i = 0; i < data.module_ids.length; i++) {
+                                    $('#status_' + data.module_ids[i]).html(source[val])
+                                 }
+                                 $().toastmessage('showSuccessToast', '操作成功');
+                            }else{
+                                $().toastmessage('showErrorToast', data.msg);
+                            }
+                            $("input:checkbox.module-status-tag").prop('checked', false);
+                            $('#state-all-pick').prop("checked", false)
+                        }
+                    })
+                }
+            })
+           
+            $('#box_type').change(function () {
+                change_content_according_to_box_type()
+            })
+
+        })
+
+        $(function(){
+            var nav_btns = $('#nav-buttons');
+            var fixmeTop = nav_btns.offset().top - $(".navbar-fixed-top").height();
+            $(window).scroll(function () {
+                var curTop = $(this).scrollTop();
+                if (curTop > fixmeTop) {
+                    if ($("#storePos").length === 0) {
+                        var stick = $('<div id="storePos"><div>').css({'height': nav_btns.height(), 'width': nav_btns.width()});
+                        nav_btns.parent().prepend(stick)
+                    }
+                    nav_btns.css({width: nav_btns.width(), position: 'fixed', top: 41, 'background-color': '#fafafa',
+                        'box-shadow': '0 2px 8px -2px #888', 'padding-top': 5})
+                            .children(':first').css('margin-left', 5).end().children().eq(1).css('margin-right', 5);
+                } else {
+                    $("#storePos").remove();
+                    nav_btns.css({width: 'inherit', position: 'static', 'padding-top': 0, 'box-shadow': 'none'});
+                }
+            });
+
+        })
+
+    </script>
+    
+
+    <link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css"
+          rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+
+{% endblock %}
