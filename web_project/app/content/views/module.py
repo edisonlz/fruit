@@ -17,9 +17,11 @@ def update_box_position(request):
             item_ids = map(int, item_ids.split(',')) or []
             position = 1
             for item_id in reversed(item_ids):
+
                 item = Box.objects.get(id=item_id)
                 item.position = position
                 item.save()
+                
                 position += 1
 
         response = {'status': 'success'}
@@ -34,7 +36,7 @@ def cms_module(request):
         navigation_list = ["内容管理", "抽屉列表"]
 
         boxes = Box.objects.filter(is_delete=False).order_by('-position')
-        return render(request, 'iphone/main_page/module_manage/module/uniq_modules.html', {
+        return render(request, 'base2.html', {
             'modules': boxes,
             'navigation_list': enumerate(navigation_list)
         })

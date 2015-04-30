@@ -7,12 +7,6 @@ from django.contrib.auth.backends import ModelBackend
 from app.user.lib.ldapauth2 import validate_user, ServerIsBusy
 from django.core.exceptions import PermissionDenied
 
-# import logging
-# logger = logging.getLogger()
-# formatter = logging.Formatter('%(name)-12s %(asctime)s %(levelname)-8s %(message)s', '%a, %d %b %Y %H:%M:%S',)
-# file_handler = logging.FileHandler("/tmp/rdm.log")
-# file_handler.setFormatter(formatter)
-# logger.addHandler(file_handler)
 
 
 class LDAPBackend(ModelBackend):
