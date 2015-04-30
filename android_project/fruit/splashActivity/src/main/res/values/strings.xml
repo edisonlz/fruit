@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources >
+
+    <string name="app_name" >移动APP统计</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title">RangeBar</string>
+    <string name="tickCount">tickCount = 7</string>
+    <string name="tickHeight">tickHeight = 24</string>
+    <string name="barWeight">barWeight = 2</string>
+    <string name="barColor">barColor = #CCCCCC</string>
+    <string name="connectingLineWeight">connectingLineWeight = 4</string>
+    <string name="connectingLineColor">connectingLineColor = #33B5E5</string>
+    <string name="thumbRadius">thumbRadius = N/A</string>
+    <string name="thumbColorNormal">thumbColorNormal = N/A</string>
+    <string name="thumbColorPressed">thumbColorPressed = N/A</string>
+    <string name="confirmNewColor">New</string>
+    <string name="confirmDefaultColor">Default</string>
+    <string name="colorPickerTitle">Select a Color</string>
+    <string name="resetThumbColors">Reset Thumb Colors</string>
+    <string name="leftIndexValue">0</string>
+    <string name="leftIndex">leftIndex</string>
+    <string name="rightIndexValue">6</string>
+    <string name="rightIndex">rightIndex</string>
+    <string name="refresh">Refresh Indices</string>
+    
+    <string-array name="deivce_array">
+	    <item>全部</item>
+	    <item>phone</item>
+	    <item>pad</item>
+	</string-array>
+	
+    <string-array name="deivce_platform">
+	    <item>全部</item>
+	    <item>android</item>
+	    <item>ios</item>
+	    <item>wp</item>
+	</string-array>
+
+    <string-array name="channels">
+        <item>全部</item>
+        <item>电视剧</item>
+        <item>综艺</item>
+        <item>电影</item>
+        <item>资讯</item>
+        <item>音乐</item>
+        <item>纪录片</item>
+        <item>游戏</item>
+        <item>娱乐</item>
+        <item>动漫</item>
+        <item>广告</item>
+        <item>微电影</item>
+        <item>亲子</item>
+        <item>教育</item>
+        <item>汽车</item>
+        <item>生活</item>
+        <item>搞笑</item>
+        <item>汽车</item>
+        <item>拍客</item>
+        <item>体育</item>
+        <item>自拍</item>
+        <item>网剧</item>
+        <item>创意视频</item>
+        <item>时尚</item>
+        <item>旅游</item>
+        <item>时尚</item>
+        <item>科技</item>
+    </string-array>
+
+</resources>

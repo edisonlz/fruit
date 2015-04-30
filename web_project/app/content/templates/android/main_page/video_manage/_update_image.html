@@ -1,0 +1,18 @@
+<div class="controls">
+    <span id="normal_button" class="btn btn-success fileinput-button  ">
+        <span>+ 上传截图...</span>
+        <input id="normal-upload" type="file" name="files[]" multiple>
+    </span>
+
+    <div id="normal-success" class="alert alert-success"
+         style="font-size: 20px;margin-top: 10px;width: 165px; {% if not  image_url %} display:none;{% endif %}">
+        <button type="button" class="close">&times;</button>
+        <img id='normal-content' src="{{ image_url }}" class="img-polaroid">
+    </div>
+    <div id="normal-progress" class="progress progress-success progress-striped  active"
+         style="display: none">
+        <div class="bar"></div>
+    </div>
+    <input type='hidden' id='normal-input' name='{{ image_name }}' value="{{ image_url }}" height="100"
+           width="100"/>
+</div>

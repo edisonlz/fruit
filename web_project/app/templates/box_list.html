@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3><strong>首页抽屉列表</strong></h3>
+{% if errors %}<h5 class="text-error">{{ errors }}</h5> {% endif %}
+<div class="row-fluid">
+    <div class="span3" style="margin-top: 15px">
+    </div>
+
+    <div class="span3">
+
+    </div>
+
+    <div class="span2">
+
+    </div>
+
+    <div class="span3" style="margin-top: 15px">
+        <a href="/app/box/new" class="btn span6 btn-success pull-right"><i class="icon-plus-sign icon-white"></i>添加抽屉</a>
+    </div>
+
+    <div class="span1">
+
+    </div>
+</div>
+<br>
+<ul class="nav nav-tabs">
+    {% for product in products%}
+    <li {% if title == product %} class="active" {% endif%} ><a href="/app/box/index?product={{product.id}}">{{ product.name }}</a></li>
+    {% endfor%}
+</ul>
+<form id='box-list' action="/app/box/index" method="POST">
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>抽屉名</th>
+            <th>排序</th>
+            <th>应用数量</th>
+            <th>状态</th>
+            <th>编辑</th>
+            <th>删除</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for box in boxes %}
+        <tr>
+            <td>
+                {{ box.id }}
+            </td>
+            <td>
+                {{ box.name }}
+            </td>
+            <td>
+                <input class="span3" type="text" name="{{ box.id }}" placeholder="{{ box.seq }}" value="{{ box.seq }}"/>
+            </td>
+            <td>
+                {{ box.boxgames_set.all|length }}
+            </td>
+            <td>
+                <a class="btn" type="button" href="/app/box/chgstatus?box={{box.id}}">{% if box.get_status_bool %}开启{% else %}关闭{% endif %}</a>
+            </td>
+            <td>
+                <a class="btn" type="button" href="/app/box/detail?box={{box.id}}">编辑</a>
+            </td>
+            <td>
+                <a class="btn" type="button" onclick="delaciton('{{ box.id }}', '{{ box.name }}')">删除</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <input type="submit" class="btn btn-primary">
+
+    <!-- Modal -->
+    <div id="formErrorModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">提示(Esc关闭)</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-error">提示消息</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+    </div>
+
+    <div id="delboxconfirm" class="modal hide fade">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>删除抽屉</h3>
+        </div>
+        <div class="modal-body">
+            <p>你确认删除抽屉<span id="delboxname" style="font-weight: bold; color: red"></span> 吗？（该操作不可回退）</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#" data-dismiss="modal" aria-hidden="true" class="btn">取消</a>
+            <a id="delconfirmbtn" name="delconfirmbtn" href="#" class="btn btn-primary btn-danger">确认删除</a>
+        </div>
+    </div>
+</form>
+
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+    $('#delboxconfirm').modal({
+        show: false
+    })
+    function delaciton(boxid, boxname) {
+        $('#delconfirmbtn').attr('href', '/app/box/delete?box='+boxid);
+        $('#delboxname').text(boxname);
+        $('#delboxconfirm').modal('show')
+    }
+    $("#box-list").submit(function (event) {
+        var tbody = $("#box-list tbody");
+        var seq_dict = {};
+        var trs = $(tbody).find("tr");
+        for (var j = 0; j < trs.length; j++) {
+            tr = trs[j];
+            seq = $(tr).find("input").val();
+            if (isNaN(seq)){
+                show_error_msg("顺序中包含非数字符号");
+                return false;
+            }
+            if (seq_dict[seq]) {
+                show_error_msg("同一Product下不能出现相同序号的抽屉");
+                return false;
+            }
+            seq_dict[seq] = true;
+            console.log(seq_dict);
+        }
+    });
+    function show_error_msg(msg){
+
+        $("#formErrorModal .modal-body p").text(msg);
+        $("#formErrorModal").modal();
+
+    }
+</script>
+{% endblock %}

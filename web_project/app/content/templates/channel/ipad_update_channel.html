@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block link %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row-fluid">
+            <h3>更新iPad频道数据</h3>
+
+            <form role="form" id="create_cha" method="post" action="{% url "ipad_update_new_channel" %}">
+                <div class="form-group">
+                    <label for="title">频道名称</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ channel.title }}">
+                    <input type="hidden" class="form-control" id="id" name="id" value="{{ channel.id }}">
+                </div>
+                <div class="form-group">
+                    <label for="channel_type">频道类型</label>
+                    {% ifequal channel.for_sale 0 %}
+                        <span class="input uneditable-input">频道(非营销频道)</span>
+                    {% else %}
+                        <span class="input-xlarge uneditable-input">频道(营销频道)</span>
+                    {% endifequal %}
+                </div>
+                <div class="form-group">
+                    <label for="cid">频道CID</label>
+                    <input type="number" class="form-control" id="cid" name="cid" value="{{ channel.cid }}">
+                </div>
+
+                <div class="control-group">
+                    <label for="normal-input" class="control-label">正常图标(大)</label>
+
+                    <div class="controls">
+
+                <span id="normal-button" class="btn btn-success fileinput-button  btn-large"
+                      {% if channel.icon_big %}style="display:none;"{% endif %}>
+                     <span>+ 上传截图...</span>
+                     <input id="normal-upload" type="file" name="files[]" multiple>
+                </span>
+
+                        <div id="normal-success" class="alert alert-success"
+                             style="font-size: 20px;margin-top: 10px;width:150px;
+                                     {% if not channel.icon_big %}display:none;{% endif %}">
+                            <button type="button" class="close">&times;</button>
+                            <img id='normal-content' src="{% if channel.icon_big %}{{ channel.icon_big }}{% endif %}"
+                                 class="img-polaroid">
+                        </div>
+                        <div id="normal-progress" class="progress progress-success progress-striped  active"
+                             style="display: none">
+                            <div class="bar"></div>
+                        </div>
+                        <input type='hidden' id='normal-input' name='icon_big'
+                               value="{% if channel.icon_big %}{{ channel.icon_big }}{% endif %}" height="100"
+                               width="100"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="selected-input" class="control-label">选中图标(大)</label>
+
+                    <div class="controls">
+
+                <span id="normal-selected-button" class="btn btn-success fileinput-button  btn-large"
+                      {% if channel.icon_big_selected %}style="display:none;"{% endif %}>
+                     <span>+ 上传截图...</span>
+                     <input id="normal-selected-upload" type="file" name="files[]" multiple>
+                </span>
+
+                        <div id="normal-selected-success" class="alert alert-success"
+                             style="font-size: 20px;margin-top: 10px;width:150px;
+                                     {% if not channel.icon_big_selected %}display:none;{% endif %}">
+                            <button type="button" class="close">&times;</button>
+                            <img id='normal-selected-content'
+                                 src="{% if channel.icon_big_selected %}{{ channel.icon_big_selected }}{% endif %}"
+                                 class="img-polaroid">
+                        </div>
+                        <div id="normal-selected-progress" class="progress progress-success progress-striped  active"
+                             style="display: none">
+                            <div class="bar"></div>
+                        </div>
+                        <input type='hidden' id='normal-selected-input' name='icon_big_selected'
+                               value="{% if channel.icon_big_selected %}{{ channel.icon_big_selected }}{% endif %}"
+                               height="100" width="100"/>
+                    </div>
+                </div>
+                {% ifequal channel.for_sale 0 %}
+                    <div class="control-group ordinary">
+                        <label for="small-input" class="control-label">正常图标(小)</label>
+
+                        <div class="controls">
+
+                <span id="small-button" class="btn btn-success fileinput-button  btn-large "
+                      {% if channel.icon_small %}style="display:none;"{% endif %}>
+                     <span>+ 上传截图...</span>
+                     <input id="small-upload" type="file" name="files[]" multiple>
+                </span>
+
+                            <div id="small-success" class="alert alert-success"
+                                 style="font-size: 20px;margin-top: 10px;width:150px;
+                                         {% if not channel.icon_small %}display:none;{% endif %}">
+                                <button type="button" class="close">&times;</button>
+                                <img id='small-content'
+                                     src="{% if channel.icon_small %}{{ channel.icon_small }}{% endif %}"
+                                     class="img-polaroid">
+                            </div>
+                            <div id="small-progress" class="progress progress-success progress-striped  active"
+                                 style="display: none">
+                                <div class="bar"></div>
+                            </div>
+                            <input type='hidden' id='small-input' name='icon_small'
+                                   value="{% if channel.icon_small %}{{ channel.icon_small }}{% endif %}" height="100"
+                                   width="100"/>
+                        </div>
+                    </div>
+                    <div class="control-group ordinary">
+                        <label for="selected-input" class="control-label">选中图标(小)</label>
+
+                        <div class="controls">
+
+                <span id="small-selected-button" class="btn btn-success fileinput-button  btn-large "
+                      {% if channel.icon_small_selected %}style="display:none;"{% endif %}>
+                     <span>+ 上传截图...</span>
+                     <input id="small-selected-upload" type="file" name="files[]" multiple>
+                </span>
+
+                            <div id="small-selected-success" class="alert alert-success"
+                                 style="font-size: 20px;margin-top: 10px;width:150px;
+                                         {% if not channel.icon_small_selected %}display:none;{% endif %}">
+                                <button type="button" class="close">&times;</button>
+                                <img id='small-selected-content'
+                                     src="
+
+
+
+                                             {% if channel.icon_small_selected %}{{ channel.icon_small_selected }}{% endif %}"
+                                     class="img-polaroid">
+                            </div>
+                            <div id="small-selected-progress" class="progress progress-success progress-striped  active"
+                                 style="display: none">
+                                <div class="bar"></div>
+                            </div>
+                            <input type='hidden' id='small-selected-input' name='icon_small_selected'
+                                   value="
+
+
+
+                                           {% if channel.icon_small_selected %}{{ channel.icon_small_selected }}{% endif %}"
+                                   height="100" width="100"/>
+                        </div>
+                    </div>
+
+{#                    <div class="form-group">#}
+{#                        <label for="image_type_choiceness">精选图片</label>#}
+{#                        <select class="form-control" id="image_type_choiceness" name="image_type_choiceness">#}
+{#                            {% if channel.icon_big_jin %}#}
+{#                                <option value="1">竖图</option>#}
+{#                                <option value="0">横图</option>#}
+{#                            {% else %}#}
+{#                                <option value="0">横图</option>#}
+{#                                <option value="1">竖图</option>#}
+{#                            {% endif %}#}
+{#                        </select>#}
+{#                    </div>#}
+{#                    <div class="form-group">#}
+{#                        <label for="image_type_all">全部图片</label>#}
+{#                        <select class="form-control" id="image_type_all" name="image_type_all">#}
+{#                            {% if channel.icon_big_all %}#}
+{#                                <option value="1">竖图</option>#}
+{#                                <option value="0">横图</option>#}
+{#                            {% else %}#}
+{#                                <option value="0">横图</option>#}
+{#                                <option value="1">竖图</option>#}
+{#                            {% endif %}#}
+{#                        </select>#}
+{#                    </div>#}
+                {% else %}
+                    <div class="form-group">
+                        <label for="image_type_sale">营销图片类型</label>
+                        <select class="form-control" id="image_type_sale" name="image_type_sale">
+                            {% if channel.image_type_sale %}
+                                <option value="1">竖图</option>
+                                <option value="0">横图</option>
+                            {% else %}
+                                <option value="0">横图</option>
+                                <option value="1">竖图</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                {% endifequal %}
+
+                <button type="submit" class="btn btn-default">更新</button>
+                <a class="btn btn-default" href="{% url 'ipad_channels' %}">返回</a>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script type="text/javascript">
+        {% include "common_module/image_upload.js" %}
+
+        $(document).ready(function () {
+            $("#li_ipad_module").addClass('active');
+
+            var img_upload_arr = ['normal', 'normal-selected', 'small', 'small-selected'];
+            for (var index = 0; index < img_upload_arr.length; index++) {
+                add_upload_handler(generate_upload_dict(img_upload_arr[index]));
+            }
+
+        });
+
+
+    </script>
+    {% include "channel/channel_validate.html" %}
+{% endblock %}

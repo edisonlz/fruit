@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% load bootstrap_toolkit %}
+
+
+{% block content %}
+    <div class="row-fluid">
+        <h4>应用分类</h4>
+        <hr>
+        <div class="span3" style="margin-top: 15px">
+            <form class="form-search">
+                <div class="input-append">
+                    <input name='search_kw' type="text" class="search-query span8" placeholder="按分类名进行搜索">
+                    <button type="submit" class="btn">搜索</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="span3">
+
+        </div>
+
+        <div class="span2">
+
+        </div>
+
+        <div class="span3" style="margin-top: 15px">
+            <a href="/app/add_category" class="btn span6 btn-success pull-right"><i
+                    class="icon-plus-sign icon-white"></i> 添加分类</a>
+        </div>
+
+        <div class="span1">
+
+        </div>
+    </div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th style="text-align:center">ID</th>
+            <th style="text-align:center">分类名</th>
+            <th style="text-align:center">分类简称</th>
+            <th style="text-align:center">分类icon</th>
+            <th style="text-align:center">代表游戏</th>
+            <th style="text-align:center">游戏数量</th>
+            <th style="text-align:center">状态</th>
+            <th style="text-align:center">排序值</th>
+            <th style="text-align:center">操作</th>
+        </tr>
+        </thead>
+
+        <tbody id="listbody">
+        {% for category in categories %}
+
+            <tr>
+                <td style="text-align:center;padding-top: 20px">
+                    <a href="/app/edit_category?id={{ category.id }}"><strong>{{ category.id }}</strong></a>
+                </td>
+                <td style="text-align:center;padding-top: 20px">
+                    <a href="/app/edit_category?id={{ category.id }}"><strong>{{ category.name }}</strong></a>
+                </td>
+                <td style="text-align:center;padding-top: 20px">
+                    <strong>{{ category.short_name }}</strong>
+                </td>
+                <td style="text-align:center;padding-top: 20px">
+                    {% for k,v in icon_dict.iteritems %}
+                        {% ifequal k category.id %}
+                            {% if v %}
+                                <img id='logo-img-content' src="{{ v }}" height="40" width="40"/>
+                            {% endif %}
+                        {% endifequal %}
+                    {% endfor %}
+                </td>
+                <td style="text-align:center;padding-top: 20px;width: 130px">
+                    <strong>{{ category.category_describe }}</strong>
+                </td>
+                <td style="text-align:center;padding-top: 20px;width: 60px">
+                    <strong>{{ category.app_count }}</strong>
+                </td>
+                <td style="text-align:center;padding-top: 20px">
+                    <a type="button"
+                       {% if not category.app_count%}
+                            {% if not category.status %}
+                                class="btn hint hint--left" data-hint="应用数为零，不能开启" disabled>
+                            {% else %}
+                                class="btn" href="/app/chg_category_status?category={{category.id}}">{% endif %}
+                       {% else %}class="btn" href="/app/chg_category_status?category={{category.id}}">{% endif %}
+
+                        {% if category.status %}开启{% else %}关闭{% endif %}</a>
+                </td>
+                <td style="text-align:center;padding-top: 20px">
+                    <form role="form" action="/app/category" id='index_query' onsubmit="return check_input();"
+                          sub_type='add_nums_{{ category.id }}'>
+                        <div id="edit_page">
+                            <div id="showpage" class="input-prepend input-append">
+                                <input type="hidden" name="category_id" id="rank_{{ category.id }}"
+                                       value="{{ category.id }}">
+                                <span class="add-on">排序值</span>
+                                <input type="text" name="set_rank" value="{{ category.rank }}" maxlength="8"
+                                       id="add_nums_{{ category.id }}" style="width: 70px;">
+                                <button type="submit" class="btn btn-success" id='query_btn_{{ category.id }}'>设置
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </td>
+                <td style="text-align:center;padding-top: 20px">
+                    <a href="/app/edit_category?id={{ category.id }}" class="btn btn-primary">编辑</a>
+                    <a href="/app/apps_in_category/{{ category.id }}" class="btn btn-primary">应用</a>
+                    {# <a href="/app/delete_category?id={{ category.id }}" class="btn span4 btn-danger">删除</a> #}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% bootstrap_pagination categories extra="pz=10" %}
+
+    <!-- Modal -->
+    <div id="formErrorModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">提示(Esc关闭)</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-error">提示消息</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+
+        function show_error_msg(msg){
+            $("#formErrorModal .modal-body p").text(msg);
+            $("#formErrorModal").modal();
+        }
+
+        //判断只能输入正整数，并且长度不能大于8位
+        $("input[name='set_rank']").keyup(function () {
+            var tmptxt = $(this).val();
+            $(this).val(tmptxt.replace(/\D|/g, ''));
+        }).bind("paste",function () {
+                    var tmptxt = $(this).val();
+                    $(this).val(tmptxt.replace(/\D|^0/g, ''));
+                }).css("ime-mode", "disabled");
+
+{#        function check_input(e) {#}
+{#            var tempval = $("#" + $(e).attr("sub_type")).val();#}
+{#            if (tempval == "") {#}
+{#                alert("请输入你要设置的排序数!");#}
+{#                return false;#}
+{#            }#}
+{#        }#}
+
+        function check_input() {
+            if($(this).find("[name='set_rank']").val() == ''){
+                show_error_msg("排序值不能为空");
+                return false;
+            }
+            tbody = $('#listbody');
+            inputs = $(tbody).find("[name='set_rank']");
+            if (inputs.length > 0) {
+                var seq_dict = {};
+                for (i = 0; i < inputs.length; i++) {
+                    input = inputs[i];
+                    seq = $(input).val();
+                    if (isNaN(seq)){
+                        show_error_msg("顺序中包含非数字符号");
+                        return false;
+                    }
+                    if (seq_dict[seq]) {
+                        show_error_msg("存在重复排序值");
+                        return false;
+                    }
+                    seq_dict[seq] = true;
+                }
+            }
+        };
+    </script>
+{% endblock %}

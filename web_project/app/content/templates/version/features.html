@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load util_tags %}
+{% block link %}
+    <link href="{{ STATIC_URL }}select2/select2.css" rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}select2/select2.js"></script>
+    <link href="{{ STATIC_URL }}select2/select2-bootstrap.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <style type="text/css">
+        {% include "common_module/sort_img.css" %}
+
+    </style>
+{% endblock %}
+{% block navigation %}
+    <div class="navigation-div">
+        {% if navigation_list %}
+            <ul class="breadcrumb">
+            {% for idx,val in navigation_list %}
+                {% if forloop.last %}
+                    <li class="active">{{ val }}</li>
+                {% else %}
+                    <li><a style="text-decoration: none;">{{ val }}</a><span class="divider">/</span></li>
+                {% endif %}
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="row-fluid">&nbsp;</div>
+    <div class="row-fluid">
+
+        <form id="add-version" action="{% url 'feature_add' %}" method="post" onsubmit="return checkSubmit();">
+            <div class="span12">
+                <h5 class="span2"><strong>添加类型支持</strong></h5>
+                平台：<select name="platform_id" id="platform_id" class="form-control span2">
+                        <option value="1">Android</option>
+                        <option value="2">iPad</option>
+                        <option value="3">iPhone</option>
+                        <option value="4">WinPhone</option>
+                    </select>
+                &nbsp;起始版本号：<select name="version_begin" id="version_begin" class="form-control span2">
+                                    {% for version in versions %}
+                                        <option value="{{ version }}">{{ version }}</option>
+                                    {% endfor %}
+                                </select>
+                &nbsp;结束版本号：<select name="version_end" id="version_end" class="form-control span2">
+                                    {% for version in versions %}
+                                        <option value="{{ version }}">{{ version }}</option>
+                                    {% endfor %}
+                                </select>
+                &nbsp;特性：<select name="feature_type" id="feature_type" class="span2">
+                                <option value="box_type" selected>盒子类型</option>
+                                <option value="video_type">视频类型</option>
+                            </select>
+                &nbsp;类型：<select name="feature_value" id="feature_value" class="span2">
+                                {% for box_type_feature in box_type_features %}
+                                    <option value="{{ box_type_feature.name }}">{{ box_type_feature.desc }}</option>
+                                {% endfor %}
+                            </select>
+                <button type="submit" class="btn">添加</button>
+            </div>
+        </form>
+    </div>
+    <div class="row-fluid">
+    <div class="span12">
+        <h4 class="span2"><strong>各平台版本号</strong></h4>
+    </div>
+    <div class="span12">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th class="span2">平台</th>
+            <th class="span2">版本号</th>
+            <th class="span2">特性类型</th>
+            <th class="span2">特性值</th>
+            <th class="span2">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for i in features %}
+            <tr>
+                <td class="span2">{% if 1 == i.platform %} Android {% elif 2 == i.platform %} iPad {% elif 3 == i.platform %}
+                    iPhone {% else %} WinPhone {% endif %}</td>
+                <td class="span2">{{ i.version_begin }} ~ {{ i.version_end }}</td>
+                <td class="span2">{% if i.feature == 'video_type' %}视频类型{% elif i.feature == 'box_type'%}盒子类型{% endif %}</td>
+                <td class="span2">
+                    {% for k, v in feature_value_dict.items %}
+                        {% if i.value == k %}{{ v }}{% endif %}
+                    {% endfor %}
+                </td>
+                <td class="span2">
+                    <a href="{% url 'feature_delete' %}?id={{ i.id }}" class="btn btn-danger">删除</a>
+                </td>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+
+    <link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css"
+          rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+    <script type="text/javascript">
+        $('#feature_type').change(function(){
+            var feature_value = $('#feature_type').val();
+            var feature_select = document.getElementById('feature_value');
+            feature_select.options.length = 0;
+            if(feature_value=='box_type'){
+                {% for box_type_feature in box_type_features %}
+                    feature_select.options.add(new Option('{{ box_type_feature.desc }}', '{{ box_type_feature.name }}'));
+                {% endfor %}
+            }else if(feature_value=='video_type'){
+                {% for video_type_feature in video_type_features %}
+                    feature_select.options.add(new Option('{{ video_type_feature.desc }}', '{{ video_type_feature.name }}'));
+                {% endfor %}
+            }
+        });
+        function checkSubmit(){
+            if($('#version_begin').val() > $('#version_end').val()){
+                alert("起始版本号不能大于结束版本号");
+                return false;
+            }
+        }
+    </script>
+
+{% endblock %}

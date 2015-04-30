@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load bootstrap_toolkit %}
+
+
+{% block content %}
+    <div class="row-fluid">
+        <h4>搜索热词</h4>
+        <hr>
+        <div class="span3" style="margin-top: 15px">
+            <form class="form-search">
+                <div class="input-append">
+                    <input name='search_kw' type="text" class="search-query span8" placeholder="按热词进行搜索">
+                    <button type="submit" class="btn">搜索</button>
+                </div>
+            </form>
+        </div>
+        <div class="span3" style="margin-top: 15px">
+            <form id="select_form" action="/app/hotsearch">
+                <div class="input-prepend">
+                    <span class="add-on">所属产品：</span>
+                    <select id='product_id' class="span8" name='product_id'>
+                        {% for product in products %}
+                            {% if product.selected %}
+                                <option value="{{ product.product_id }}"
+                                        selected='{{ product.selected }}'>{{ product.product_name }}</option>
+                            {% else %}
+                                <option value="{{ product.product_id }}">{{ product.product_name }}</option>
+                            {% endif %}
+
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="span3" style="margin-top: 15px">
+            <a href="/app/add_hotsearch" class="btn span6 btn-success pull-right"><i
+                    class="icon-plus-sign icon-white"></i> 添加热词</a>
+        </div>
+
+        <div class="span1">
+
+        </div>
+    </div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th style="text-align:center">ID</th>
+            <th style="text-align:center">搜索热词</th>
+            <th style="text-align:center">排序值</th>
+            <th style="text-align:center">操作</th>
+        </tr>
+        </thead>
+
+        <tbody id="listbody">
+        {% for hotword in hotwords %}
+
+            <tr>
+                <td style="text-align:center">
+                    <strong>{{ hotword.id }}</strong>
+                </td>
+                <td style="text-align:center">
+                    <form role="form" action="/app/hotsearch" id='index_query' sub_type='add_nums_{{ hotword.id }}'>
+                        <div id="edit_page">
+                            <div id="showpage" class="input-prepend input-append">
+                                <input type="hidden" name="hotword_id" id="rank_{{ hotword.id }}"
+                                       value="{{ hotword.id }}">
+                                <input type="text" name="set_word" value="{{ hotword.word }}" style="width:120px;"
+                                       maxlength="16" id="add_nums_{{ hotword.id }}" style="width: 70px;">
+                                <button type="submit" class="btn btn-success" id='query_btn_{{ category.id }}'>修改热词
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </td>
+
+                <td style="text-align:center">
+                    <form role="form" action="/app/hotsearch" id='index_query' onsubmit="return check_input(this);"
+                          sub_type='add_nums_{{ hotword.id }}'>
+                        <div id="edit_page">
+                            <div id="showpage" class="input-prepend input-append">
+                                <input type="hidden" name="hotword_id" id="rank_{{ hotword.id }}"
+                                       value="{{ hotword.id }}">
+                                <span class="add-on">设置排序值:</span>
+                                <input type="text" name="set_rank" value="{{ hotword.count }}"
+                                       maxlength="8" id="add_nums_{{ hotword.id }}"
+                                       style="width: 70px;">
+                                <button type="submit" class="btn btn-success" id='query_btn_{{ category.id }}'>设置
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </td>
+                <td style="text-align:center">
+                    <a href="/app/delete_hotword?id={{ hotword.id }}" class="btn btn-danger">删除</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% bootstrap_pagination hotwords extra="pz=10" %}
+
+    <!-- Modal -->
+    <div id="formErrorModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">提示(Esc关闭)</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-error">提示消息</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+    </div>
+
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+
+        function show_error_msg(msg){
+            $("#formErrorModal .modal-body p").text(msg);
+            $("#formErrorModal").modal();
+        }
+
+        $("#product_id").change(function () {
+
+            $('#select_form').submit();
+        });
+
+        //判断只能输入正整数，并且长度不能大于8位
+        $("input[name='set_rank']").keyup(function () {
+            var tmptxt = $(this).val();
+            $(this).val(tmptxt.replace(/\D|/g, ''));
+        }).bind("paste",function () {
+                    var tmptxt = $(this).val();
+                    $(this).val(tmptxt.replace(/\D|^0/g, ''));
+                }).css("ime-mode", "disabled");
+
+        function check_input(e) {
+            if($(this).find("[name='set_rank']").val() == ''){
+                show_error_msg("排序值不能为空");
+                return false;
+            }
+            tbody = $('#listbody');
+            inputs = $(tbody).find("[name='set_rank']");
+            if (inputs.length > 0) {
+                var seq_dict = {};
+                for (i = 0; i < inputs.length; i++) {
+                    input = inputs[i];
+                    seq = $(input).val();
+                    if (isNaN(seq)){
+                        show_error_msg("顺序中包含非数字符号");
+                        return false;
+                    }
+                    if (seq_dict[seq]) {
+                        show_error_msg("存在重复排序值");
+                        return false;
+                    }
+                    seq_dict[seq] = true;
+                }
+            }
+        }
+    </script>
+{% endblock %}

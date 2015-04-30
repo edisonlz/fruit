@@ -1,0 +1,447 @@
+{% extends "base.html" %}
+{% load util_tags %}
+
+{% block link %}
+
+    {#    <link href="{{ STATIC_URL }}select2/select2.css" rel="stylesheet"/>#}
+    {#    <link href="{{ STATIC_URL }}select2/select2-bootstrap.css" rel="stylesheet"/>#}
+    {#    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">#}
+    {#    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">#}
+    {#    <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">#}
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
+    <style type="text/css">
+        .active-item-shadow {
+            box-shadow: rgba(133, 133, 133, 0.1) 0 0 5px 2px, rgba(133, 133, 133, 0.3) 0 0 2px;
+        }
+
+        div.nav-group {
+            position: relative;
+            height: 40px;
+        }
+
+        .nav-group .btn {
+            margin-left: 5px;
+        }
+
+        div.tool-box {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        a.btn-table {
+            padding: 2px 5px;
+        }
+
+        div.pull-right a.btn {
+            margin-left: 5px;
+            margin-bottom: 10px;
+        }
+
+        div.navigation-div [class^="icon-"] {
+            display: inline-block;
+            margin: 0 5px 0 5px;
+            width: 14px;
+        }
+
+        .btn-block {
+            float: right;
+            display: inline-block;
+            width: auto;
+        }
+
+        #save_position_form {
+            margin: 0 0 10px;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        #save_position_form {
+            display: inline-block;
+            margin-bottom: 0;
+        {#            text-align: right;#} {#            margin: 0 0 10px;#}
+        }
+
+        #save_position_form a.btn {
+        {#            margin-bottom: 10px;#} margin: 0;
+        }
+
+        #save_position_form input {
+            margin-bottom: 0;
+        }
+
+        #selectWrap {
+            display: inline-block;
+        }
+
+        table {
+            font-size: 13px;
+        }
+
+        td.canBeEdit {
+            max-width: 195px;
+            min-width: 130px;
+        }
+
+        .text-block {
+            display: none;
+        }
+
+        .text-block > textarea {
+            font-size: 13px;
+            padding: 0;
+            margin: 0;
+            display: block;
+            max-height: 100px;
+            resize: vertical;
+            width: 100%;
+        }
+
+        .text-block > button {
+            float: right;
+            margin-left: 3px;
+            margin-top: 2px;
+        }
+
+        .td-vid {
+            min-width: 75px;
+        }
+
+        .td-type {
+            min-width: 84px;
+        }
+
+        .td-manage {
+{#            min-width: 56px;#}
+            min-width: 105px;
+        }
+
+        .td-state {
+            min-width: 26px;
+        }
+
+        #batch {
+            display: inline;
+            margin-left: 5px;
+        }
+    </style>
+
+
+{% endblock %}
+{% block navigation %}
+    <div class="navigation-div">
+        {% if navigation_list %}
+            <ul class="breadcrumb">
+                {% for idx,val in navigation_list %}
+                    {% if forloop.last %}
+                        <li class="active">{{ val }}</li>
+                    {% else %}
+                        <li><a href="/content/ipad/main_page/uniq_modules"
+                               style="text-decoration: none;">{{ val }}</a><span class="divider">/</span></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div style="width: auto;overflow: auto">
+        <div class="nav-group" id="nav-buttons">
+
+            <div class="pull-left">
+                <a class="btn" href="{% url 'ipad_uniq_modules' %}"><i class="icon-circle-arrow-left"></i>返回</a>
+            </div>
+            <div class="btn-block">
+                {% box_btns_show_perm current_box_id request.user as perm_flag %}
+                {% if perm_flag %}
+                    <div id="batch">
+                        <form method="post" id="save_position_form">
+                            <input type="hidden" name="item_ids" id="item_ids"/>
+                            <input type="hidden" name="box_id" id="box_id" value="{{ current_box_id }}"/>
+                            <a class="btn" href="{% url 'ipad_main_page_add_video' %}?box_id={{ current_box_id }}"><i
+                                    class="icon-plus"></i>新增内容</a>
+                            <button type='button' style="margin-left: 5px;" class="btn"
+                                    id="save_position_btn"><i class="icon-sort"></i>保存顺序
+                            </button>
+                        </form>
+                    </div>
+                    <a class="btn video-state" value="1"><i class="icon-ok-circle"></i>开启</a>
+                    <a id='sync_button' role="button" value="0" class="btn video-state"><i class="icon-off"></i>关闭</a>
+                {% endif %}
+            </div>
+        </div>
+        <div style="width: 1070px">
+            <table class="table table-striped table-hover table-condensed">
+                <thead>
+                <th><input type="checkbox" style="margin-right: 2px;margin-bottom: 2px" id="state-all-pick"></th>
+                <th>内容ID</th>
+                <th>类型</th>
+                <th>标题</th>
+                <th>子标题</th>
+                <th>腰封</th>
+                <th>版权</th>
+                <th>付费类型</th>
+                {% if slider_tag %}
+                    <th>轮播图</th>
+                {% else %}
+                    <th>横图</th>
+                {% endif %}
+                {#                <th>竖图</th>#}
+                <th>状态</th>
+                {% if perm_flag %}
+                    <th>操作</th>
+                {% endif %}
+                </thead>
+                <tbody id="sortable">
+                {% for video in videos %}
+                    <tr id="box_{{ video.box_id }}" value="{{ video.id }}" class="sort-item">
+                        <td><input type="checkbox" class="video-status-tag"></td>
+                        {% if video.video_type == 4 %}
+                            <td class="td-vid"><a class="data_tip" href="#" data-toggle="tooltip"
+                                                  title="{{ video.url }}">{{ video.url | slice:"10" }}...</a></td>
+                        {% else %}
+                            <td class="td-vid">{{ video.video_id }}</td>
+                        {% endif %}
+                        <td>{{ video.video_type_for_view }}</td>
+                        <td class="canBeEdit">
+                            <div class="text-block">
+                                <label for="title-{{ video.id }}"></label>
+                                <textarea cols="3" rows="2" class="edit-area"
+                                          id="title-{{ video.id }}">{{ video.title }}</textarea>
+                                <button type="button" class="modify-text  btn btn-mini btn-info">确认</button>
+                                <button type="button" class="recover-text btn btn-mini">取消</button>
+                            </div>
+                            <div class="text-piece">{{ video.title }}</div>
+                        </td>
+                        <td class="canBeEdit text-sub">
+                            <div class="text-block">
+                                <label for="subtitle-{{ video.id }}"></label>
+                                <textarea cols="3" rows="2" class="edit-area"
+                                          id="subtitle-{{ video.id }}">{{ video.subtitle }}</textarea>
+                                <button type="button" class="modify-text  btn btn-mini btn-info">确认</button>
+                                <button type="button" class="recover-text btn btn-mini">取消</button>
+                            </div>
+                            <div class="text-piece">{{ video.subtitle }}</div>
+                        </td>
+                        <td class="canBeEdit text-sub">
+                            <div class="text-block">
+                                <label for="intro-{{ video.id }}"></label>
+                                <textarea cols="3" rows="2" class="edit-area"
+                                          id="intro-{{ video.id }}">{{ video.intro }}</textarea>
+                                <button type="button" class="modify-text  btn btn-mini btn-info">确认</button>
+                                <button type="button" class="recover-text btn btn-mini">取消</button>
+                            </div>
+                            <div class="text-piece">{{ video.intro }}</div>
+                        </td>
+                        <td>{{ video.copyright_for_view }}</td>
+                        <td>{{ video.pay_type_for_view }}</td>
+                        {% if slider_tag %}
+                            <td>{% if video.s_image %}
+                                <a target="_blank" href="{{ video.url_to_play }}"><img src="{{ video.s_image }}"
+                                                                                       style="height: 60px"
+                                                                                       title="{{ video.title }}"
+                                                                                       class="img-polaroid"/></a>{% endif %}
+                            </td>
+                        {% else %}
+                            <td>{% if video.h_image %}
+                                <a target="_blank" href="{{ video.url_to_play }}"><img src="{{ video.h_image }}"
+                                                                                       title="{{ video.title }}"
+                                                                                       style="height: 60px"
+                                                                                       class="img-polaroid"/></a>{% endif %}
+                            </td>
+                        {% endif %}
+                        {#                        <td><img src="{{ video.v_image }}" style="height: 60px" class="img-polaroid"/></td>#}
+                        <td id="status_{{ video.id }}">
+                            {{ video_state_hash|dict_get:video.state }}
+                        </td>
+                        {% if perm_flag %}
+                            <td colspan="2" class="td-manage">
+                                <a class="btn btn-small btn btn-table" href="{% url "ipad_query_video" video.id %}"><i
+                                        class="icon-edit"></i>修改</a>
+                                <a class="btn btn-small btn-danger btn-table del"
+                                   href="{% url  "ipad_delete_video" video.id %}"
+                                   title="删除">
+                                    <i class="icon-trash"></i>删除</a>
+                            </td>
+                        {% endif %}
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if not videos %}
+        <div class="row-fluid">
+            <div class="col-sm-8">
+                <div class="alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Warning!</strong> 相关首页视频模块数据为空,请创建视频数据。
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+
+{% block js %}
+    <script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+    <script type="text/javascript">
+        $('#state-all-pick').click(function () {
+            if ($(this).is(':checked')) {
+                $("input:checkbox.video-status-tag").prop("checked", true)
+            } else {
+                $("input:checkbox:checked.video-status-tag").attr("checked", false)
+            }
+        })
+        function collect_selected_checkbox_value() {
+            var video_ids_array = []
+            var video_ids = ''
+            $("input:checkbox:checked.video-status-tag").each(function () {
+
+                video_ids_array.push($(this).parent().parent().attr("value"));
+                video_ids = video_ids_array.join(",");
+
+            });
+            return video_ids;
+        }
+        ;
+        function save_position_btn_func() {
+            var item_ids = $("#item_ids").val();
+            var box_id = $('#box_id').val();
+            $.ajax({
+                url: '/content/ipad/main_page/videos',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    item_ids: item_ids,
+                    box_id: box_id
+                },
+                success: function (data) {
+                    if (data.status === 'success') {
+                        $().toastmessage({
+                            position: 'middle-center'
+                        });
+                        $().toastmessage('showSuccessToast', '操作成功');
+                        setTimeout(function () {
+                            location.reload()
+                        }, 1000);
+                    } else {
+                        $().toastmessage('showErrorToast', "操作失败")
+                    }
+                }
+            })
+        }
+        $('.video-state').click(function () {
+            var video_ids = ""
+            var val = $(this).attr("value")
+            var source = {
+                '1': '开启',
+                '0': '关闭'
+            }
+            video_ids = collect_selected_checkbox_value()
+            if (video_ids.length > 0) {
+                $.ajax({
+                    url: '/content/ipad/main_page/update_status/video',
+                    type: "POST",
+                    dataType: 'json',
+                    data: {
+                        video_ids: video_ids,
+                        value: val
+                    },
+                    success: function (data) {
+                        for (var i = 0; i < data.video_ids.length; i++) {
+                            $('#status_' + data.video_ids[i]).html(source[val])
+                        }
+                        $().toastmessage({
+                            position: 'middle-center'
+                        });
+                        $().toastmessage('showSuccessToast', '操作成功');
+                        $("input:checkbox.video-status-tag").prop('checked', false);
+                        $('#state-all-pick').prop("checked",false)
+                    }
+                })
+            }
+        });
+
+        {% include "common_module/sort_edit_del.js" %}
+
+        $(document).ready(function () {
+
+            var nav_btns = $('#nav-buttons');
+            var fixmeTop = nav_btns.offset().top - $(".navbar-fixed-top").height();
+            $(window).scroll(function () {
+                var curTop = $(this).scrollTop();
+                if (curTop > fixmeTop) {
+                    if ($("#storePos").length === 0) {
+                        var stick = $('<div id="storePos"><div>').css({'height': nav_btns.height(), 'width': nav_btns.width()});
+                        nav_btns.parent().prepend(stick)
+                    }
+                    nav_btns.css({width: nav_btns.width(), position: 'fixed', top: 41, 'background-color': '#fafafa',
+                        'box-shadow': '0 2px 8px -2px #888', 'padding-top': 5})
+                            .children(':first').css('margin-left', 5).end().children().eq(1).css('margin-right', 5);
+                } else {
+                    $("#storePos").remove();
+                    nav_btns.css({width: 'inherit', position: 'static', 'padding-top': 0, 'box-shadow': 'none'});
+                }
+            });
+
+            //switch the textarea and text
+            $(".canBeEdit").dblclick(function () {
+
+                $(this).children('div.text-block').width($(this).width() - 2).show();
+                $(this).children('div.text-piece').hide();
+            });
+
+            $(".recover-text").click(function () {
+                var textarea_div = $(this).parent();
+                textarea_div.hide().next().show();
+            });
+
+            $(".modify-text").click(function () {
+                var textarea = $(this).prevAll('textarea');
+                var id_arr = textarea.attr('id').split('-');
+                var module_id = $('#this_module_id').val();
+                var attr = id_arr[0];
+                var video_id = id_arr[1];
+                var value = textarea.val();
+                $.ajax({
+                    url: '/content/ipad/main_page/update_video_value',
+                    type: "POST",
+                    dataType: 'json',
+                    data: {
+                        channel_id: "{{ current_box_id }}",
+                        module_id: module_id,
+                        video_id: video_id,
+                        attribute: attr,
+                        value: value
+                    },
+                    success: function (data) {
+                        $().toastmessage({
+                            position: 'middle-center'
+                        });
+                        if (data.status === 'success') {
+                            textarea.parent().hide().nextAll('.text-piece').text(value).show();
+                            $().toastmessage('showSuccessToast', '操作成功');
+                        } else {
+                            $().toastmessage('showErrorToast', '操作失败');
+                        }
+                    }
+                })
+            });
+
+            $(".edit-area").keydown(function (e) {
+                if (e.ctrlKey && e.keyCode == 13) {
+                    $(this).nextAll('.modify-text').triggerHandler('click');
+                }
+            });
+        });
+    </script>
+    <link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css"
+          rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+
+{% endblock %}

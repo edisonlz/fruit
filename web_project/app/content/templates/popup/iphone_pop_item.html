@@ -1,0 +1,246 @@
+{% load util_tags %}
+
+{% if slider_list %}
+    <div id="candidate_id_{{ slider_list.module_id }}">
+<div id="myCarousel" class="carousel slide">
+      <ol class="carousel-indicators" id="dot-list">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1" class=""></li>
+        <li data-target="#myCarousel" data-slide-to="2" class=""></li>
+          <li data-target="#myCarousel" data-slide-to="3" class=""></li>
+          <li data-target="#myCarousel" data-slide-to="4" class=""></li>
+      </ol>
+
+   <div class="arrow-block" style="float:left; width:50px;height: 135px;"> <a class="direction" href="#myCarousel" data-slide="prev" style="float: left;"><span class="icon-chevron-left"></span></a></div>
+    <div class="arrow-block" style="float:right; width:50px;height: 135px;"><a class="direction"  href="#myCarousel" data-slide="next" style="float: right;"><span class="icon-chevron-right" style="float: right;"></span></a></div>
+      <div class="carousel-inner">
+      {% if slider_list.videos %}
+        {% for video in slider_list.videos %}
+            {% if forloop.counter == 1 %}
+          <div class="item main active">
+           {% else %}
+              <div class="item">
+              {% endif %}
+            <div class="carousel-caption">
+              <p>{{ video.title }}</p>
+            </div>
+            <img title="{{ video.title }}" {% if video.h_image %} src="{{ video.h_image }}"{% else %} src="http://static.youku.com/index/img/2013/video/video_default_200x110.png" {% endif %}
+                    alt="" style="margin: auto;">
+        </div>
+          {% endfor %}
+          {% endif %}
+
+          {% if slider_list.len > 0 %}
+              {% for value in slider_list.len|times:"1 0" %}
+                  {% if slider_list.len == 5 and forloop.counter == 1 %}
+                  <div class="item active">
+                  {% else %}
+                      <div class="item ">
+                      {% endif %}
+                      <img src="http://static.youku.com/index/img/2013/video/video_default_200x110.png"
+                           title="这个位置还是空缺的">
+                  </div>
+              {% endfor %}
+          {% endif %}
+
+      </div>
+    </div>
+    </div>
+{% endif %}
+
+{% for content in contents %}
+    <div id="candidate_id_{{ content.module_id }}" class="block" >
+    <div class="candidate_head">
+    <img src="http://r2.ykimg.com/0510000054BC8CF16714C07FF5078C57" style="vertical-align: text-bottom;">
+        <a class="box_link" href="{% url 'iphone_preview_box' %}?box_id={{ content.module_id }}">
+        <h4 style="clear:right;line-height: 20px;margin-left: 2px;display: inline-block;"> {{ content.title }} </h4><span class="icon-play" style="vertical-align:baseline;"></span>
+        </a>
+    </div>
+    {% for video in content.videos %}
+        <div class="preview_item {% if content.module_id == box_id %}move_item{% endif %}"
+              {% if forloop.counter|divisibleby:2 %}
+
+             style="position: relative; margin: 4px 8px 4px 4px;"
+              {% else %}
+               style="position:relative;margin:4px 4px 4px 12px;"
+               {% endif %}
+               >
+        <img alt=""  entity_id="{{ video.pk }}" title="{{ video.title }}" style="height: 82px;width:145px;"
+                {% if video.h_image %}     src="{{ video.h_image }}"{% else %} title="这个位置还是空缺的，赶紧拖进来一个啊亲！" {% endif %}
+              class="candidate_thumbnail ui-draggable ui-droppable ">
+        <div class="explain">
+            {{ video.title }}
+        </div>
+        </div>
+    {% endfor %}
+{% if content.len > 0 %}
+    {% for value in content.len|times:"1 0" %}
+        <div class="preview_item"
+                {% if forloop.counter|divisibleby:2 %}
+
+             style="position: relative; margin: 4px 8px 4px 4px;"
+              {% else %}
+               style="position:relative;margin:4px 4px 4px 12px;"
+               {% endif %}
+               >
+            <img src="http://static.youku.com/index/img/2013/video/video_default_200x110.png"  style="height: 82px;width:145px;" entity_id="-1"
+                 title="这个位置还是空缺的，赶紧拖进来一个啊亲！"
+                  class="candidate_thumbnail ui-draggable ui-droppable ">
+        </div>
+    {% endfor %}
+{% endif %}
+    </div>
+{% endfor %}
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#preview_wrapper').bind('mousewheel DOMMouseScroll', function (e) {
+            var scrollTo = null;
+            if (e.type == 'mousewheel') {
+                scrollTo = (e.originalEvent.wheelDelta * -1);
+            }
+            else if (e.type == 'DOMMouseScroll') {
+                scrollTo = 40 * e.originalEvent.detail;
+            }
+            if (scrollTo) {
+                e.preventDefault();
+                $(this).scrollTop(scrollTo + $(this).scrollTop());
+            }
+        });
+
+        var wrapper_obj = $("div#preview_wrapper");
+        var go_obj = $("span#forward");
+        var back_obj = $("span#backward");
+        var store = [];
+        store[0] = {'content': wrapper_obj.html()};
+
+        $(document).on('click', '.box_link', function (e) {
+            e.preventDefault();
+            store[0]['pos'] = wrapper_obj.scrollTop();
+            $.ajax({
+                type: "POST",
+                url: $(this).attr('href'),
+                dataType: "html",
+                success: function (data) {
+                    store[1] = {'content': data};
+                    set_content(data);
+                    back_obj.show();
+                    go_obj.hide();
+                    console.log('ajax end');
+                }
+            })
+        });
+
+        $(document).on('mouseenter', 'div.arrow-block', function(){
+            $(this).css('background-image', 'linear-gradient(180deg, #ddd, #fff)');
+        }).on('mouseleave', 'div.arrow-block', function(){
+            $(this).css('background-image', 'none');
+        });
+
+        back_obj.on('click', function () {
+            console.log('backward');
+            store[1]['pos'] = wrapper_obj.scrollTop();
+            $(this).toggle();
+            go_obj.toggle();
+            set_content(store[0].content, store[0].pos);
+            make_drag();
+            make_drop();
+            make_carousel();
+        });
+
+        go_obj.click(function () {
+            console.log('forward');
+            $(this).toggle();
+            back_obj.toggle();
+            set_content(store[1].content, store[1].pos);
+            return false;
+        });
+
+        function set_content(mes, position) {
+            var pos = arguments[1] ? arguments[1] : 0;
+            wrapper_obj.empty();
+            wrapper_obj.append(mes);
+            wrapper_obj.scrollTop(pos);
+        }
+
+        function make_carousel() {
+            $('.carousel').carousel({
+                interval: 5000,
+                cycle: true
+            });
+        }
+
+        function make_drag() {
+            $(".move_item").draggable({
+                start: function () {
+                    $(this).css('z-index', 10);
+                },
+                drag: function () {
+                },
+                stop: function () {
+                    $(this).css('left', '0').css('top', '0').css('z-index', 0);
+                },
+                containment: "#candidate_id_{{ box_id }}",
+                scroll: false,
+                handle: "img",
+                cursor: "move",
+//        helper: "clone"
+                revert: "invalid"
+            });
+        }
+
+        function make_drop() {
+            $(".move_item").droppable({
+                // accept can use a function return value
+                accept: ".img-polaroid, .move_item",
+                hoverClass: "ui-state-hover",
+                drop: function (event, ui) {
+                    $(this).removeClass('dropped-acitve');
+                    var attr_array = ['src', 'entity_id', 'title'];
+                    var drop_item = $(this).children('img');
+                    if (ui.draggable.hasClass("img-polaroid")) {
+                        var img_item = ui.draggable;
+                        //judge whether the drag item's id exists in the block
+                        var exist_ids = $(".move_item").map(function () {
+                            return $(this).children("img").attr("entity_id");
+                        });
+                        var flag = true;
+                        var drop_img_id = img_item.attr("entity_id");
+                        for (var index = 0; index < exist_ids.length; index++) {
+                            if (exist_ids[index] == drop_img_id) {
+                                flag = false;
+                                return;
+                            }
+                        }
+                        if (flag && drop_img_id != drop_item.attr("entity_id")) {
+                            $.each(attr_array, function (i, attr_name) {
+                                drop_item.attr(attr_name, img_item.attr(attr_name));
+                            });
+                            drop_item.next().text(drop_item.attr('title'));
+                        }
+                    }
+                    else if (ui.draggable.parent('div').attr('id') == $(this).parent('div').attr('id')) {
+                        var drag_item = ui.draggable.children('img');
+                        //not swap image while entity_id of either lt 0
+                        if (drag_item.attr("entity_id") < 0 || drop_item.attr("entity_id") < 0) {
+                            return;
+                        }
+                        $.each(attr_array, function (i, attr_val) {
+                            var drag_id = drag_item.attr(attr_val);
+                            var drop_id = drop_item.attr(attr_val);
+                            drag_item.attr(attr_val, drop_id);
+                            drop_item.attr(attr_val, drag_id);
+                        });
+                        drop_item.next().text(drop_item.attr('title'));
+                        drag_item.next().text(drag_item.attr('title'));
+                    }
+                }
+            });
+        }
+
+        make_drag();
+        make_drop();
+        make_carousel();
+    })
+</script>

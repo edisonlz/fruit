@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% load bootstrap_toolkit %}
+
+{% block link %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
+    <style type="text/css">
+        .del_user {
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header" style="padding-top: 8px; width: auto; padding-bottom: 1px;">
+        {% if src == 'main_page_device' %}
+            <h3><span style="font-weight: normal;margin-right: 10px;">{{ box.title }}</span>首页抽屉权限 - 用户列表</h3>
+        {% elif src == 'main_page_recommend' %}
+            <h3><span style="font-weight: normal;margin-right: 10px;">{{ box.title }}</span>推荐池公共抽屉权限 - 用户列表</h3>
+        {% else %}
+            <h3><span style="font-weight: normal;margin-right: 10px;">{{ box.title }}</span>频道权限 - 用户列表 - {{ platform }}平台
+            </h3>
+        {% endif %}
+
+    </div>
+
+    <div class="row-fluid">
+        <div class="span1"></div>
+        <div class="span11">
+
+            {% if src == 'main_page_device' %}
+
+                <div style="overflow: auto;">
+                    <div class="pull-left"><h4>{{ platform }}平台</h4></div>
+                </div>
+            {% endif %}
+
+            <div class="pull-left">
+
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-filter"></i>用户名筛选</span>
+                    <input type="text" id="filter_user_name">
+                    <label for="filter_user_name"></label>
+                </div>
+
+            </div>
+            <div class="pull-right" style="margin-bottom: 20px;">
+                {% if src == 'main_page_device' %}
+                    <a class="btn" href="/content/{{ platform }}/main_page/uniq_modules"><i
+                            class="icon-arrow-left"></i>返回</a>
+                {% elif src == 'main_page_recommend' %}
+                    <a class="btn" href="{% url "home_common_boxes" %}"><i
+                            class="icon-arrow-left"></i>返回</a>
+                {% elif src == 'iphone_channel' %}
+                    <a class="btn" href="{% url "iphone_new_channels" %}"><i
+                            class="icon-arrow-left"></i>返回</a>
+                {% elif src == 'ipad_channel' %}
+                    <a class="btn" href="{% url "ipad_new_channels" %}"><i
+                            class="icon-arrow-left"></i>返回</a>
+                {% elif src == 'android_channel' %}
+                    <a class="btn" href="{% url "android_new_channels" %}"><i
+                            class="icon-arrow-left"></i>返回</a>
+                {% endif %}
+                <a href="{% url 'add_main_box_perm' %}?box_id={{ box.id }}&platform={{ platform }}&src={{ src }}"
+                   role="button"
+                   class="btn"><i class="icon-plus"></i>给此抽屉添加用户</a>
+            </div>
+            <table class="table table-hover table-bordered">
+                <thead>
+                <tr>
+                    <th width="10%" style="text-align: center;">平台</th>
+                    <th width="15%" style="text-align: center;">抽屉名</th>
+                    <th width="20%" style="text-align: center;">用户名</th>
+                    <th width="20%" style="text-align: center;">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for perm in perm_list %}
+                    <tr>
+                        <td style="word-break:break-all;">{{ platform }}</td>
+                        <td style="word-break:break-all;">{{ box.title }}</td>
+                        <td class="user_name" style="word-break:break-all;">{{ perm.user.username }}</td>
+                        <td>
+                            <div style="text-align: center"><i class="icon-trash del_user" title="删除此用户?"
+                                                               data-value="{{ perm.user.id }}"></i></div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% if not perm_list %}
+                <div class="alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Warning!</strong> 当前没有用户有此抽屉的权限
+                </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+{% endblock %}
+
+
+{% block js %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap-confirmation.js"></script>
+    <script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var init_flag = false;
+            $(".del_user").bind('click', function () {
+                if (!init_flag) {
+                    init_flag = true;
+                    var that = $(this);
+                    $(this).confirmation({
+                        btnOkClass: 'btn-info',
+                        singleton: true,
+                        popout: true,
+                        onConfirm: function () {
+                            var user_id = that.data('value');
+                            $.ajax({
+                                url: "{% url "del_main_box_perm" %}",
+                                dataType: 'json',
+                                type: 'post',
+                                data: {
+                                    box_id: "{{ box.id }}",
+                                    user_id: user_id,
+                                    src: "{{ src }}"
+                                },
+                                success: function (resp) {
+                                    if (resp.status === 'success') {
+                                        $().toastmessage('showToast', {
+                                            text: '删除成功!', type: 'success', position: 'middle-center'
+                                        });
+                                        that.confirmation('hide');
+                                        console.log(that);
+                                        that.closest('tr').remove();
+                                    }
+
+                                }
+                            });
+                        },
+                    }).confirmation('show');
+                }
+            });
+
+            $('#filter_user_name').focus(function () {
+                var pre_name = '';
+                var that = $(this);
+                setInterval(function () {
+                    var v_name = that.val();
+                    if (v_name === '') {
+                        $(".user_name").each(function () {
+                            $(this).parent().show();
+                        })
+                    } else if (v_name !== pre_name) {
+                        pre_name = v_name;
+                        $(".user_name").each(function () {
+                            if ($(this).text().indexOf(v_name) < 0) {
+                                $(this).parent().hide();
+                            } else {
+                                $(this).parent().show();
+                            }
+                        })
+                    }
+                }, 500);
+            });
+
+        });
+    </script>
+{% endblock %}

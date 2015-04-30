@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load bootstrap_toolkit %}
+
+{% block sidebar %}
+<div class="span2">
+    <div class="well sidebar-nav">
+        <ul class="nav nav-list">
+          <li class="nav-header">分类与排行管理</li>
+            <li><a href="/app/category">分类列表</a></li>
+            <li><a href="/app/add_category">添加应用分类</a></li>
+            <li><a href="/app/rank/list">排行榜</a></li>
+
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+            <div class="row-fluid">
+            <h4>分类下应用</h4>
+            <hr>
+                <div class="span3" style="margin-top: 15px">
+                    <form class="form-search">
+                      <div class="input-append">
+                        <input type="hidden" name="id" value="{{ category_id }}">
+                        <input name='search_kw' style="width: 200px" type="text" class="search-query span8" placeholder="按应用名进行搜索">
+                        <button type="submit" class="btn">搜索</button>
+                        <span3 class="text-error" style="font-size: x-large ;font-weight: bold; text-align: right">&nbsp;&nbsp;*&nbsp;注意：应用按照排序值倒序排序（即排序值大的在前）</span3>
+                      </div>
+                    </form>
+                </div>
+
+                <div class="span3">
+
+                </div>
+
+                <div class="span2">
+
+                </div>
+
+                <div class="span1">
+
+                </div>
+            </div>
+
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th style="text-align:center">ID</th>
+                  <th style="text-align:center">应用名称</th>
+                  <th style="text-align:center">分类图标</th>
+                  <th style="text-align:center">上传时间</th>
+                  <th style="text-align:center">点击下载量</th>
+                  <th style="text-align:center">排序值</th>
+                </tr>
+              </thead>
+
+              <tbody>
+              {% for app in apps %}
+
+                <tr>
+                  <td style="text-align:center;padding-top: 20px">
+                      <strong>{{ app.id }}</strong>
+                  </td>
+                  <td style="text-align:center;padding-top: 20px">
+                     <strong>{{ app.name }}</strong>
+                  </td>
+                  <td style="text-align:center;padding-top: 20px">
+                     <img id='logo-img-content' src="{{ app.icon }}" height="40" width="40" />
+                  </td>
+                  <td style="text-align:center;padding-top: 20px">
+                     <span class="label label-important">{{ app.upload_time }}</span>
+                  </td>
+                  <td style="text-align:center;padding-top: 20px">
+                     <span class="label label-success">{{ app.total_downloads }}</span>
+                  </td>
+                  <td style="text-align:center;padding-top: 20px">
+                     <form role="form" action="/app/apps_in_category/{{ category_id }}" id='index_query' onsubmit="return check_input(this);" sub_type='add_nums_{{ app.id }}'>
+                        <div id="edit_page" class="input-prepend input-append">
+                            <div id="showpage">
+                                <input type="hidden" name="app_id" value="{{ app.id }}">
+                                &nbsp;&nbsp; 设置排序值:<input type="text" name="set_rank" value="{{ app.rank }}" maxlength="8" id="add_nums_{{ app.id }}" style="width: 70px;">
+                                <button type="submit" class="btn btn-success" id='query_btn_{{ app.id }}'>设置</button>
+                            </div>
+                        </div>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+    {% bootstrap_pagination apps extra="pz=10" %}
+
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+
+        //判断只能输入正整数，并且长度不能大于8位
+        $("input[name='set_rank']").keyup(function(){
+            var tmptxt=$(this).val();
+            $(this).val(tmptxt.replace(/\D|/g,''));
+        }).bind("paste",function(){
+                    var tmptxt=$(this).val();
+                    $(this).val(tmptxt.replace(/\D|^0/g,''));
+                }).css("ime-mode", "disabled");
+
+        function check_input(e){
+            var tempval=$("#"+$(e).attr("sub_type")).val();
+            if(tempval==""){
+                alert("请输入你要设置的排序数!");
+                return false;
+            }
+        }
+    </script>
+{% endblock %}

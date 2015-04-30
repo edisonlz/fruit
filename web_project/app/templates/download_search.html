@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load bootstrap_toolkit %}
+
+
+{% block content %}
+    <div class="row-fluid">
+    <h4>搜索APP下载</h4>
+    <hr>
+        <form class="form-search">
+          <div class="input-append">
+            <input name='search_kw' type="text" class="search-query span8" placeholder="按应用名进行搜索">
+            <button type="submit" class="btn">搜索</button>
+          </div>
+        </form>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th style="text-align:center">ID</th>
+          <th style="text-align:center">应用名</th>
+          <th style="text-align:center">LOGO</th>
+        </tr>
+      </thead>
+
+      <tbody>
+      {% for line in lines %}
+        <tr>
+            <td style="text-align:center;padding-top: 30px">
+                <a href="/app/edit?id={{ line.id }}"><strong>{{ line.id }}</strong></a>
+            </td>
+          <td style="text-align:center;padding-top: 30px">
+             <a href="/app/edit?id={{ line.id }}"><strong>{{ line.appname }}</strong></a>
+          </td>
+          <td style="text-align:center;padding-top: 20px">
+             <a href="/app/edit?id={{ line.id }}"><img class="img-rounded" height="50" width="50" src="{{ line.logo }}" alt=""></a>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+
+    <div  class="row-fluid">
+        <div class="span4">
+        </div>
+
+        <div class="span4">
+        </div>
+
+        <div class="span4">
+            <a class="btn" type="button" href="/app/push">push给前一天下载改应用的用户</a>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load bootstrap_toolkit %}
+
+
+{% block content %}
+        <h4>数据同步</h4>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th style="text-align:center">源产品</th>
+            <th style="text-align:center">目标产品</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for product in products %}
+            <form role="form" action="/app/sync/data" id='index_query' method="post">
+                <tr>
+                    <td style="text-align:center;padding-top: 20px">
+                        {{ product.product.name }}
+                        <input type="hidden"  value="{{ product.product.id }}" name="src_product_id">
+                    </td>
+
+                    <td style="text-align:center;padding-top: 20px">
+                      <select id="product_select" name="des_product_id" class="input-large">
+
+                        {% for list_product in product.list_products %}
+                            {% if product.selected.des.id == list_product.id %}
+                                <option value="{{ list_product.id }}" selected="selected">{{ list_product.name }}</option>
+                            {% else %}
+                                <option value="{{ list_product.id }}">{{list_product.name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                      </select>
+                    </td>
+                    <td style="text-align:center;padding-top: 20px">
+                       <button type="submit" class="btn btn-success" id='query_btn_{{ category.id }}'>设置</button>
+                    </td>
+                </tr>
+            </form>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
+

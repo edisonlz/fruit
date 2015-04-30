@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load util_tags %}
+{% block link %}
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}app/content/module/update.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}switchery/dist/switchery.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">
+    <script src="{{ STATIC_URL }}switchery/dist/switchery.js"></script>
+
+{% endblock %}
+{% block navigation %}
+    <div class="navigation-div">
+        <h4>修改会员商品页背景图</h4>
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row-fluid">
+
+            <form role="form" method="post" action="{% url 'vip_goods_back_img_update_img' back_img.id %}?device_type={{ device_type }}">
+
+                <table class="table table-hover table-striped table-bordered">
+                    <tr>
+                        <td></td>
+                        <td><label><span style="color: orangered">*</span>
+                            小图</label></td>
+                        <td>
+                            <div class="control-group">
+                                <label for="small-input" class="control-label"></label>
+
+                                <div class="controls">
+                                    <span id="small-button" class="btn btn-success fileinput-button  btn-small ">
+                                        <span>+ 上传截图...</span>
+                                        <input id="small-upload" type="file" name="files[]" multiple>
+                                    </span>
+
+                                    <div id="small-success" class="alert alert-success" style="
+                                        {% if not back_img.vip_img %}display: none;{% endif %} height: 200px; width: 130px">
+                                        <button type="button" class="close">&times;</button>
+                                        <img id='small-content' src="{{ back_img.vip_img }}" class="img-polaroid">
+                                    </div>
+                                    <div id="small-progress" class="progress progress-success progress-striped  active"
+                                         style="display: none">
+                                        <div class="bar"></div>
+                                    </div>
+                                    <input type='hidden' id='small-input' name='vip_img' value="{{ back_img.vip_img }}" height="100"
+                                           width="100"/>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><label><span style="color: orangered">*</span>
+                            大图</label></td>
+                        <td>
+                            <div class="control-group">
+                                <label for="big-input" class="control-label"></label>
+
+                                <div class="controls">
+                                    <span id="big-button" class="btn btn-success fileinput-button  btn-small ">
+                                        <span>+ 上传截图...</span>
+                                        <input id="big-upload" type="file" name="files[]" multiple>
+                                    </span>
+
+                                    <div id="big-success" class="alert alert-success"
+                                         style="{% if not back_img.vip_img_hd %}display: none;{% endif %} height: 420px; width: 200px">
+                                        <button type="button" class="close">&times;</button>
+                                        <img id='big-content' src="{{ back_img.vip_img_hd }}" class="img-polaroid">
+                                    </div>
+                                    <div id="big-progress" class="progress progress-success progress-striped  active"
+                                         style="display: none">
+                                        <div class="bar"></div>
+                                    </div>
+                                    <input type='hidden' id='big-input' name='vip_img_hd' value="{{ back_img.vip_img_hd }}" height="100"
+                                           width="100"/>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <button type="submit" class="btn btn-default">
+                    <li class="icon-ok-sign"></li>
+                    提交
+                </button>
+                <a class="btn btn-default"
+                   href="{% url 'vip_goods_page_back_img_manage' %}?device_type={{ device_type }}">
+                    <li class="icon-circle-arrow-left"></li>
+                    返回</a>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% block js %}
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+    <script src="{{ STATIC_URL }}jquery-validate/jquery.validate.js"></script>
+
+    <script type="text/javascript">
+        {% include "background_img/vip_goods_page_back/_vip_goods_page_back_validate.js"  %}
+        {% include "common_module/image_upload.js" %}
+        $(function () {
+            $(".alert button").click(function () {
+                var btn = $(this);
+                $(btn).next().attr("src", "");
+                parent = $(btn).parent();
+                //隐藏
+                parent.hide();
+                //设置hidden input的值
+                if (parent.next().next()) parent.next().next().val("");
+                //显示上传按钮
+                $(parent.parent().children()[0]).show();
+
+            });
+
+            var img_upload_arr = ['small', 'big'];
+            for (var index = 0; index < img_upload_arr.length; index++) {
+                add_upload_handler(generate_upload_dict(img_upload_arr[index]));
+            }
+
+
+        });
+
+
+    </script>
+{% endblock %}

@@ -1,0 +1,32 @@
+<!-- Modal -->
+<div id="myModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">新增导航</h3>
+    </div>
+
+    <div class="modal-body">
+        <form role="form" id="create_cha" method="post" action="{% url "android_add_channel_navigation" %}">
+
+            <div class="form-group">
+                <label for="title">导航标题</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="title">导航类型</label>
+                <select class="form-control" id="nav-type" name="nav_type" >
+                {% for val,name in nav_types %}
+                    <option value="{{ val }}">{{ name }}</option>
+                {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">创建</button>
+            <a class="btn btn-default" href="{% url 'android_channel_navigation' %}">返回</a>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+    </div>
+
+</div>

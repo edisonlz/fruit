@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block link %}
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}switchery/dist/switchery.css"/>
+    <script src="{{ STATIC_URL }}switchery/dist/switchery.js"></script>
+    <style type="text/css">
+        #footer {
+            margin-top: 20px;
+            margin-left: 180px;
+        }
+        img#normal-content,img#v_image-content,img#s_image-content {
+            max-height: 170px;
+            max-width: 200px;
+        }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid">
+            <h3 class="page-header">新增子频道视频</h3>
+
+            <form method="post">
+                <div id="div_for_video_type" style="margin-bottom: 30px;margin-left:180px" >
+                    <h5>视频类型:</h5>
+
+                <select class="form-control" id="video_type" name="video_type" placeholder="">
+                {% for type in video_type_list %}
+                    <option value="{{ type.name }}"
+                       {% ifequal type.id 1 %}
+                            selected="selected"
+                       {% endifequal %}
+                            >
+                        {{ type.desc }}</option>
+                {% endfor %}
+                </select>
+                </div>
+                <input type="hidden" name="channel_id" value="{{ current_channel_id }}">
+                <input type="hidden" name="subchannel_id" value="{{ current_subchannel_id }}">
+                <input type="hidden" name="module_id" value="{{ current_module_id }}">
+                <!-- <textarea for="url_filed" name="url" cols="3" rows="6"></textarea> -->
+                <div id="div_for_video_type_field" style="margin-left: 180px"></div>
+
+
+                <div id="footer">
+                    <button type="submit" class="btn"><i class="icon-ok-sign"></i>确定</button>
+                    <a class="btn" href="{% url "android_sub_channel_module_items"  %}?select_channel={{ current_channel_id }}&select_subchannel={{ current_subchannel_id }}&select_module={{ current_module_id }}"><i class="icon-circle-arrow-left"></i>返回</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% block js %}
+
+
+    <script src="{{ STATIC_URL }}jquery-validate/jquery.validate.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script type="text/javascript">{% include "common_module/image_upload.js" %}</script>
+
+    <script type="text/javascript">
+        {% include "android/main_page/video_manage/_add_video_validate.js" %}
+        $(document).ready(function () {
+            var type_selector = $("#video_type");
+            type_selector.change(function () {
+                var selected_video_type = $("#video_type").val();
+                $("#div_for_video_type_field").load("/content/android/channel_page/add/video_field",
+                        {
+                            "video_type": selected_video_type,
+                            'show_button_tag':'{{ show_button_tag }}',
+                            's_image_tag':'{{ s_image_tag }}',
+                            'game_banner_tag':'{{ game_banner_tag }}'
+                        });
+            });
+            type_selector.trigger('change');
+        })
+    </script>
+{% endblock %}

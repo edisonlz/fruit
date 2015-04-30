@@ -1,0 +1,153 @@
+<!-- Modal -->
+{% load util_tags %}
+<div id="myModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">新增投放</h3>
+    </div>
+
+    <div class="modal-body">
+        <form role="form" id="create_cha" method="post" action="{% url "brand_add_module" %}">
+
+            <table>
+                <tr><label><span style="color: orangered">*</span>标题:</label></tr>
+                <tr><input type="text" class="form-control required" id="title" name="title" placeholder="" ></tr>
+                <tr>
+                    <tr><label for="link_to_url">点击标题后跳转到哪儿(选填):</label></tr>
+                    <tr><input type="text" class="form-control" id="link_to_url" name="link_to_url" placeholder="" title="请填写完整的url(以http开头)"></tr>
+                </tr>
+                <tr>
+                    <td><span style="color: orangered">*</span>适用平台:</td>
+                    <td><input type="checkbox" id="state_for_android" name="state_for_android" value="1">android&nbsp;&nbsp;
+                        <input type="checkbox" id="state_for_iphone" name="state_for_iphone" value="1">iphone&nbsp;&nbsp;
+                        <input type="checkbox" id="state_for_ipad" name="state_for_ipad" value="1">ipad&nbsp;&nbsp;
+                    </td>
+
+                </tr>
+                <tr id="android">
+                    <td><label for="android_subchannel">投放位置(android子频道)</label></td>
+                    <td><select class="channels_selector" id="channel_id_of_android" name="channel_id_of_android">
+                    {% if not android_channels %}
+                        <option value="0">无</option>
+                    {% else %}
+                        {% for android_channel in android_channels %}
+                            <option value="{{ android_channel.id }}"
+                                    {% if initial_android_channel_id == android_channel.id  %}
+                                        selected
+                                    {% endif %}
+                                    >{{ android_channel.title }}({{ state_dict|dict_get:android_channel.state }})</option>
+                        {% endfor %}
+                    {% endif %}
+                        </select>
+                        </td>
+                        <td><select class="sub_channels_selector" id="subchannel_id_of_android" name="subchannel_id_of_android">
+                        {% if not android_sub_channels%}
+                            <option value="0">无</option>
+                        {% else %}
+                            {% for android_sub_channel in android_sub_channels %}
+                                <option value="{{ android_sub_channel.id }}"
+                                        {% if initial_android_sub_channel_id == android_sub_channel.id %}
+                                            selected
+                                        {% endif %}
+                                        >{{ android_sub_channel.title }}({{ state_dict|dict_get:android_sub_channel.state }})</option>
+                            {% endfor %}
+                        {% endif %}
+                        </select>
+                        </td>
+                </tr>
+                <tr id="iphone">
+                    <td><label for="iphone_subchannel">投放位置(iphone子频道)</label></td>
+                    <td><select class="channels_selector" id="channel_id_of_iphone" name="channel_id_of_iphone">
+                    {% if not iphone_channels%}
+                        <option value="0">无</option>
+                    {% else %}
+                        {% for iphone_channel in iphone_channels %}
+                            <option value="{{ iphone_channel.id }}"
+                                    {% if initial_iphone_channel_id == iphone_channel.id %}
+                                        selected
+                                    {% endif %}
+                                    >{{ iphone_channel.title }}(ios{{ state_dict|dict_get:iphone_channel.state }};iphone3.2{{ state_dict|dict_get:iphone_channel.state_iphone_3_2 }})</option>
+                        {% endfor %}
+                    {% endif %}
+                        </select>
+                    </td>
+                    <td><select class="sub_channels_selector" id="subchannel_id_of_iphone" name="subchannel_id_of_iphone">
+                    {% if not iphone_sub_channels %}
+                        <option value="0">无</option>
+                    {% else %}
+                        {% for iphone_sub_channel in iphone_sub_channels %}
+                            <option value="{{ iphone_sub_channel.id }}"
+                                   {% if initial_iphone_sub_channel_id == iphone_sub_channel.id %}
+                                        selected
+                                   {% endif %}
+                                    >{{ iphone_sub_channel.title }}({{ state_dict|dict_get:iphone_sub_channel.state }})</option>
+                        {% endfor %}
+                    {% endif %}
+                        </select>
+                    </td>
+                </tr>
+                <tr id="ipad">
+                    <td><label for="ipad_subchannel">投放位置(ipad子频道)</label></td>
+                    <td><select class="channels_selector" id="channel_id_of_ipad" name="channel_id_of_ipad">
+                    {% if not ipad_channels %}
+                        <option value="0">无</option>
+                    {% else %}
+                        {% for ipad_channel in ipad_channels %}
+                            <option value="{{ ipad_channel.id }}"
+                                    {% if initial_ipad_channel_id == ipad_channel.id %}
+                                        selected
+                                    {% endif %}
+                                    >{{ ipad_channel.title }}({{ state_dict|dict_get:ipad_channel.state }})</option>
+                        {% endfor %}
+                    {% endif %}
+                        </select>
+                    </td>
+                    <td><select class="sub_channels_selector" id="subchannel_id_of_ipad" name="subchannel_id_of_ipad">
+                    {% if not ipad_sub_channels %}
+                        <option value="0">无</option>
+                    {% else %}
+                        {% for ipad_sub_channel in ipad_sub_channels %}
+                            <option value="{{ ipad_sub_channel.id }}"
+                                    {% if initial_ipad_sub_channel_id == ipad_sub_channel.id %}
+                                        selected
+                                    {% endif %}
+                                    >{{ ipad_sub_channel.title }}({{ state_dict|dict_get:ipad_sub_channel.state }})</option>
+                        {% endfor %}
+                    {% endif %}
+                        </select>
+                    </td>
+                </tr>
+            </table>
+                <button type="submit" class="btn btn-success">保存</button>
+                <a class="btn btn-default" href="{% url 'brand_modules' %}">返回</a>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+    </div>
+
+
+{% block js %}
+<script type="text/javascript">
+    $(".channels_selector").change(function(){
+        platform = $(this).parents("tr").attr("id")
+        selected_channel_id = $(this).val()
+        $.ajax({
+            url: '/content/brand/brand_module/select_channel',
+            type: "POST",
+            dataType: 'json',
+            data: {
+                platform: platform,
+                selected_channel_id: selected_channel_id
+            },
+            success: function (data) {
+                $("#"+platform+" .sub_channels_selector").html(data.replace_options)
+            }
+        })
+    })
+
+</script>
+{% endblock %}
+
+</div>

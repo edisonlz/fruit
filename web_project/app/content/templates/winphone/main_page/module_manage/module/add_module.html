@@ -1,0 +1,50 @@
+<!-- Modal -->
+<div id="myModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">创建首页模块</h3>
+    </div>
+
+    <div class="modal-body main_page">
+        <form role="form" method="post" action="{% url "winphone_add_module" %}" id="add-new-module">
+            <table class="table table-hover table-striped table-bordered">
+                <tbody>
+                <tr>
+                    <td style="width: 30%"> 模块类型</td>
+                    <td>
+                        <select class="form-control" id="box_type" name="box_type" placeholder="">
+                            {% for k,v in box_type_list %}
+                                <option value="{{ k }}">{{ v }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%">模块标题</td>
+                    <td><input id="title" name="title" placeholder=""></td>
+                </tr>
+                <tr>
+                    <td>手机端视频个数</td>
+                    <td><input id="video_count_for_phone" name="video_count_for_phone" placeholder=""></td>
+                </tr>
+                <tr>
+                    <td>Pad端视频个数</td>
+                    <td><input id="video_count_for_pad" name="video_count_for_pad" placeholder=""></td>
+                </tr>
+                <tr>
+                    <td for="cid">频道跳转CID</td>
+                    <td><input id="cid" name="cid" placeholder=""></td>
+                </tr>
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-success">创建</button>
+            <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+
+    </div>
+
+</div>
+

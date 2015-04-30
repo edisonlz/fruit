@@ -1,0 +1,115 @@
+{% load util_tags %}
+<!-- Modal -->
+
+<div id="myModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">创建子频道模块</h3>
+    </div>
+
+    <div class="modal-body">
+        <form role="form" id="create_mod" method="post" action="{% url 'iphone_add_sub_channel_module_v4' %}">
+            <div class="form-group">
+                <label for="title">标题</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="module_type">模块类型</label>
+                <select class="form-control" id="module_type" name="module_type">
+                    <option value="0">普通模块</option>
+                    <option value="1">轮播图模块</option>
+                </select>
+            </div>
+            <div id="slider" hidden="hidden">
+                <div class="form-group">轮播图个数</div>
+                <label for="slider_video_count"></label>
+                <select class="form-group" id="slider_video_count" name="slider_video_count">
+                    {% for value in 21|times:"1 1" %}
+                    <option value="{{ value }}">{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div id="ordinary">
+                <div class="form-group">
+                    <label for="video_count">单元个数</label>
+                    <select class="form-control" id="count" name="count">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="video_count">单元类型</label>
+                </div>
+                <div style="margin-left: 80px" id="unit_type_div_1">
+                    <div>
+                        <span for="area" style="margin-right: 10px;">第1个单元</span>
+                        <select class="form-control" id="unit_type_div_1" name="unit_type_div_1">
+                            <option value="horizontal_twos">横图模板(2视频/单元)</option>
+                            <option value="vertical_threes">竖图模板(3视频/单元)</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-left: 80px;display:none;" id="unit_type_div_2">
+                    <div>
+                        <span for="area" style="margin-right: 10px;">第2个单元</span>
+                        <select class="form-control" id="unit_type_div_2" name="unit_type_div_2">
+                            <option value="horizontal_twos">横图模板(2视频/单元)</option>
+                            <option value="vertical_threes">竖图模板(3视频/单元)</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-left: 80px;display:none;" id="unit_type_div_3">
+                    <div>
+                        <span for="area" style="margin-right: 10px;">第3个单元</span>
+                        <select class="form-control" id="unit_type_div_3" name="unit_type_div_3">
+                            <option value="horizontal_twos">横图模板(2视频/单元)</option>
+                            <option value="vertical_threes">竖图模板(3视频/单元)</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-left: 80px;display:none;" id="unit_type_div_4">
+                    <div>
+                        <span for="area" style="margin-right: 10px;">第4个单元</span>
+                        <select class="form-control" id="unit_type_div_4" name="unit_type_div_4">
+                            <option value="horizontal_twos">横图模板(2视频/单元)</option>
+                            <option value="vertical_threes">竖图模板(3视频/单元)</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-left: 80px;display:none;" id="unit_type_div_5">
+                    <div>
+                        <span for="area" style="margin-right: 10px;">第5个单元</span>
+                        <select class="form-control" id="unit_type_div_5" name="unit_type_div_5">
+                            <option value="horizontal_twos">横图模板(2视频/单元)</option>
+                            <option value="vertical_threes">竖图模板(3视频/单元)</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-left: 80px;display:none;" id="unit_type_div_6">
+                    <div>
+                        <span for="area" style="margin-right: 10px;">第6个单元</span>
+                        <select class="form-control" id="unit_type_div_6" name="unit_type_div_6">
+                            <option value="horizontal_twos">横图模板(2视频/单元)</option>
+                            <option value="vertical_threes">竖图模板(3视频/单元)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success">创建</button>
+            <a class="btn btn-default"
+               href="{% url 'iphone_sub_channel_modules_v4' %}?select_channel={{ this_channel.id }}&select_subchannel={{ this_subchannel.id }}">返回</a>
+            <input name="channel_id" type="hidden" value="{{ this_channel.id }}"/>
+            <input name="subchannel_id" type="hidden" value="{{ this_subchannel.id }}"/>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+    </div>
+
+</div>

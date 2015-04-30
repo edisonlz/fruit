@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block link %}
+
+    <style type="text/css">
+        .title {
+            margin-bottom: 0px;
+            border-radius: 0px;
+            font-size: 16px;
+        }
+
+        .selct {
+            width:200px;
+            border-radius: 0px;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        .btns {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+
+
+    </style>
+{% endblock %}
+
+{% block content %}
+         <div class="page-header" style="padding-top: 8px; width: 250px; padding-bottom: 1px;">
+        <h3>权限编辑</h3>
+        </div>
+        <div class="row-fluid">
+            <div class="span2"></div>
+            <div class="span10">
+                       <div class="span4">
+                          <div style="width:200px;height:250px; margin-top: 30px;">
+                              <div class="well well-small title">权限列表</div>
+                              <div>
+                                  <select class="selct" multiple="multiple" name="products" id="select1" style="height: 250px;">
+                                    {% for product in products %}
+                                        <option value="{{ product.id }}">{{ product.product_ch_name }}</option>
+                                    {% endfor %}
+                                  </select>
+                              </div>
+                          </div>
+
+                       </div>
+                       <div class="span3">
+                           <div style="margin-bottom: 100px;"></div>
+                           <div><button type="button" class="btn btn-info btns" id="add"> >> </button></div>
+                           <div><button type="button" class="btn btn-info btns" id="addAll"> 全部添加 </button></div>
+                           <div><button type="button" class="btn btn-info btns" id="remove"> << </button></div>
+                           <div><button type="button" class="btn btn-info btns" id="removeAll"> 全部移除 </button></div>
+
+                       </div>
+                       <div class="span4">
+
+                         <div style="width:200px;height:250px; margin-top: 30px;">
+                              <div class="well well-small title">分配权限</div>
+                              <div>
+                                  <select multiple="multiple" name="select2" id="select2" class="selct" style="height: 250px;">
+                                      {% if perms %}
+                                          {% for perm in perms %}
+                                            <option value="{{ perm.id }}">{{ perm.product_ch_name }}</option>
+                                          {% endfor %}
+                                      {% endif %}
+                                  </select>
+                              </div>
+                         </div>
+
+                        </div>
+
+            </div>
+
+        </div>
+
+        <div class="row-fluid" style="margin-top: 100px;">
+                <form class="form-horizontal" id="form" method="post">
+                        <input type="hidden" id="perm" name="perm"/>
+                        <input type="hidden" id="user_id" name="user_id" value="{{ user.id }}"/>
+                        <div>
+                            <button type="submit" class="btn btn-danger" style="margin-left: 450px; margin-right: 40px; width: 90px;" id="sub">提交</button>
+                            <a class="btn btn-primary" href="{% url 'user_list' %}" style="width: 70px;">返回</a>
+                        </div>
+                </form>
+        </div>
+
+{% endblock %}
+
+
+{% block js %}
+
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            $('#add').click(function(){
+                var options = $('#select1 option:selected');//获取当前选中的项
+{#                alert(options.length);#}
+                var remove = options.remove();//删除下拉列表中选中的项
+                remove.appendTo('#select2')//追加给对方
+            });
+
+            $('#remove').click(function(){
+                var removeOptions = $('#select2 option:selected');
+                removeOptions.appendTo('#select1').attr("selected",false);
+            });
+
+            $('#addAll').click(function(){
+                var options = $('#select1 option');
+                options.appendTo('#select2');
+            });
+
+            $('#removeAll').click(function(){
+                var options = $('#select2 option');
+                options.appendTo('#select1').attr("selected",false);
+            });
+
+            $('#sub').click(function(){
+                if($('#select1 option').length==0 && $('#select2 option').length==0){
+                    alert('当前没有任何产品权限');
+                    return false;
+                }
+                var array = new Array();
+                $('#select2 option').each(function(){
+                    var txt = $(this).val();
+                    array.push(txt);
+                });
+{#                alert(array);#}
+{#                alert(array.length);#}
+                $('#perm').attr('value',array);
+
+            });
+
+	});
+    </script>
+{% endblock %}

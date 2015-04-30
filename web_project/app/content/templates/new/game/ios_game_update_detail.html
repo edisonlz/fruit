@@ -1,0 +1,117 @@
+<tr class='game_field' id='game_id_tr' title='这里要只填写游戏ID， 而不是整个链接.'>
+    <td>游戏ID</td>
+    <td><input name="original_game_id" id="original_game_id" value="{{ game.original_game_id }}">
+        <a id="fetch_game_information_button" class="btn">获取游戏信息</a>
+    </td>
+</tr>
+<tr class='game_field' id='game_information_area'>
+    <td>游戏信息
+        (该区域无法编辑，请使用游戏ID来获取或者更新信息）
+    </td>
+    <td title=''>
+        <div class='alert alert-warning'> (请通过修改游戏ID， 来修改下面的信息)</div>
+        <div id='game_field_form_animation' style='height: 304px;
+        display:none
+        '>
+        </div>
+        <div id='game_field_form'>
+            游戏名称 :<input type="text" name="game_appname" id="game_appname" value="{{ game.appname }}"
+                         readonly="readonly"><br/>
+            版本 : <input type="text" name="game_version" id="game_version" value="{{ game.version }}"
+                        readonly="readonly"><br/>
+            itunes id : <input type="text" name="game_itunesid" id="game_itunesid" value="{{ game.itunesid }}"
+                               readonly="readonly"><br/>
+            logo : <input type="text" name="game_logo" id="game_logo" value="{{ game.logo }}" readonly="readonly"><br/>
+            滚动图 : <input type="text" name="game_scroller" id="game_scroller" value="{{ game.scroller }}"
+                         readonly="readonly">
+            <br/>
+            评分(score) : <input type="text" name="game_score" id="game_score" value="{{ game.score }}"
+                               readonly="readonly"><br/>
+            URL : <input type="text" name="game_url" id="game_url" value="{{ game.url }}" readonly="readonly"><br/>
+            描述 : <input type="text" name="game_desc" id="game_desc" value="{{ game.desc }}" readonly="readonly"><br/>
+            上架时间 : <input type="text" name="game_upload_time" id="game_upload_time" value="{{ game.upload_time }}"
+                          readonly="readonly"><br/>
+            大小 : <input type="text" name="game_size" id="game_size" value="{{ game.size }}" readonly="readonly"><br/>
+            收费类型 : <input type="text" name="game_charge" id="game_charge" value="{{ game.charge }}" readonly="readonly"><br/>
+            跳转类型 : <input type="text" name="game_redirect_type" id="game_redirect_type" value="{{ game.redirect_type }}"
+                          readonly="readonly"><br/>
+            推荐类型 : <input type="text" name="game_recommend_type" id="game_recommend_type"
+                          value="{{ game.recommend_type }}"
+                          readonly="readonly"><br/>
+            外链URL : <input type="text" name="game_redirect_url" id="game_redirect_url" value="{{ game.redirect_url }}"
+                           readonly="readonly"><br/>
+        </div>
+    </td>
+</tr>
+<script type="text/javascript">
+    (function () {
+        this.fetch_game_information = function () {
+            var original_game_id;
+            original_game_id = $('#original_game_id').val();
+            $.ajaxSetup({
+                async: false,
+                beforeSend: function () {
+                    $('#game_field_form_animation').show();
+                    return $('#game_field_form').hide();
+                },
+                complete: function () {
+                    $('#game_field_form_animation').hide();
+                    return $('#game_field_form').show();
+                }
+            });
+            return $.get("/content/get_game_info",
+                    {game_id: original_game_id, product: 'iphone'},
+                    function (data) {
+                        var app;
+                        if (data.status === 'success' && data.app.itunesid.length > 0) {
+                            app = data.app;
+                            $("#game_information_area").show();
+                            $("#game_appname").val(app.appname);
+                            $("#game_version").val(app.version);
+                            $("#game_itunesid").val(app.itunesid);
+                            $("#game_logo").val(app.logo);
+                            $("#game_scroller").val(app.scroller);
+                            $("#game_score").val(app.score);
+                            $("#game_url").val(app.url);
+                            $("#game_desc").val(app.desc);
+                            $("#game_upload_time").val(app.upload_time);
+                            $("#game_size").val(app.size);
+                            $("#game_charge").val(app.charge);
+                            $("#game_redirect_type").val(app.redirect_type);
+                            $("#game_recommend_type").val(app.recommend_type);
+                            return $("#game_redirect_url").val(app.redirect_url);
+                        } else {
+                            $("#game_information_area").show();
+                            $("#game_appname").val('');
+                            $("#game_version").val('');
+                            $("#game_itunesid").val('');
+                            $("#game_logo").val('');
+                            $("#game_scroller").val('');
+                            $("#game_score").val('');
+                            $("#game_url").val('');
+                            $("#game_desc").val('');
+                            $("#game_upload_time").val('');
+                            $("#game_size").val('');
+                            $("#game_charge").val('');
+                            $("#game_redirect_type").val('');
+                            $("#game_recommend_type").val('');
+                            $("#game_redirect_url").val('');
+                            if (data.error == 400){
+                                $().toastmessage('showErrorToast', "远程服务器说这个ID(#{original_game_id})不存在啊");
+                            }else if (data.status == 'success' && (data.app.platform !== 1)){
+                                $().toastmessage('showErrorToast', "这个游戏ID不是IOS的，请输入有效游戏ID");
+                            }else{
+                                $().toastmessage('showErrorToast', "未知错误，HTTP 代码：{{data.error}}");
+                            }
+                        }
+                    },
+                    "json"
+            );
+
+        };
+        $("#fetch_game_information_button").click(function () {
+            fetch_game_information()
+        })
+    }).call(this);
+
+</script>

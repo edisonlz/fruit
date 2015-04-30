@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load util_tags %}
+{% block link %}
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}app/content/module/update.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}switchery/dist/switchery.css"/>
+    <script src="{{ STATIC_URL }}switchery/dist/switchery.js"></script>
+
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row-fluid">
+
+            <h3>视频修改</h3>
+
+            <form role="form" method="post"
+                  action="{% url 'video_list_update_video' video.module_id video.id %}">
+                <input type="hidden" class="form-control" id="id" name="id" value="{{ video.id }}">
+                <table class="table table-hover table-striped">
+                    {% if video.video_id %}
+                    <tr>
+                        <td style="width: 150px"></td>
+                        <td style="width: 200px"><label for="video_id">视频ID</label></td>
+                        <td><label>{{ video.video_id }}</label></td>
+                    </tr>
+                    {% elif video.url %}
+                    <tr>
+                        <td></td>
+                        <td style="width: 200px"><label for="url"><span style="color: orangered">*</span>URL</label></td>
+                        <td><textarea id="url" class="form-control" name="url" rows="5">{{ video.url }}</textarea></td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td></td>
+                        <td><label for="title"><span style="color: orangered">*</span>标题</label></td>
+                        <td><input type="text" class="form-control" id="title" name="title"
+                                   value="{{ video.title }}"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><label for="subtitle">子标题</label></td>
+                        <td><input type="text" class="form-control" id="subtitle" name="subtitle" title="12个中文字以内包括12个"
+                                   value="{{ video.subtitle }}"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><label for="intro">腰封</label></td>
+                        <td><input type="text" class="form-control" id="intro" name="intro"
+                                   value="{{ video.intro }}"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><label for="pgc_uid">pgc-uid</label></td>
+                        <td><input type="text" class="form-control" id="pgc_uid" name="pgc_uid" title='填写用户链接或uid'
+                                   value="{{ video.pgc_uid }}"></td>
+                    </tr>
+                    <tr class="control-group">
+                        <td></td>
+                        <td><label for="normal-input" class="control-label"><span style="color: orangered">*</span>图片</label><label> 尺寸: 448x252</label></td>
+                        <div class="validate-error"></div>
+                        <td>
+                            <div class="controls">
+                                <span id="normal-button" class="btn btn-success fileinput-button"
+                                      {% if video.h_image %}style="display: none;{% endif %}">
+                                    <span>+ 上传截图...</span>
+                                    <input id="normal-upload" type="file" name="files[]" multiple>
+                                </span>
+
+                                <div id="normal-success" class="alert alert-success"
+                                     style="font-size: 20px;margin-top: 10px;width: 165px;
+                                             {% if not video.h_image %}display: none;{% endif %}">
+                                    <button type="button" class="close">&times;</button>
+                                    <img id='normal-content' src="{{ video.h_image }}" class="img-polaroid">
+                                </div>
+                                <div id="screen-progress"
+                                     class="progress progress-success progress-striped  active"
+                                     style="display: none">
+                                    <div class="bar"></div>
+                                </div>
+                                <input type='hidden' id='normal-input' name='h_image'
+                                       value="{{ video.h_image }}" height="100"
+                                       width="100"/>
+                            </div>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><label for="video_type">视频类型</label></td>
+                        <td><label class="form-control" id="video_type">
+                            {% show_video_type_human_readable video.video_type %} </label></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><label for="pay_type">付费类型</label></td>
+                        <td><label>{{ video.pay_type_for_view }}</label></td>
+                    </tr>
+                </table>
+                <button type="submit" class="btn btn-default"><i class="icon-ok-sign"></i>确定</button>
+                <a class="btn btn-default"
+                   href="{% url 'videos_in_vl' video.module_id %}"><i class="icon-circle-arrow-left"></i>返回</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% block js %}
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+
+    <script type="text/javascript">
+        {% include "common_module/image_upload.js" %}
+        $(function () {
+
+            $(".alert button").click(function () {
+                var btn = $(this);
+                $(btn).next().attr("src", "");
+                parent = $(btn).parent();
+                //隐藏
+                parent.hide();
+                //设置hidden input的值
+                if (parent.next().next()) parent.next().next().val("");
+                //显示上传按钮
+                $(parent.parent().children()[0]).show();
+
+            });
+
+            var img_upload_arr = ['normal'];
+            for (var index = 0; index < img_upload_arr.length; index++) {
+                add_upload_handler(generate_upload_dict(img_upload_arr[index]));
+            }
+
+
+        });
+
+
+    </script>
+{% endblock %}

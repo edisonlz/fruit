@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block link %}
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}switchery/dist/switchery.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css"/>
+    <script src="{{ STATIC_URL }}switchery/dist/switchery.js"></script>
+    <style type="text/css">
+        #footer {
+            margin-top: 20px;
+        }
+        #main_block {
+            margin-left: 200px;
+        }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid" id="main_block">
+            <h3 class="page-header">新增子频道模块视频</h3>
+
+            <form method="post">
+                <div id="div_for_video_type" style="margin-bottom: 30px;"></div>
+                    <h5>视频类型:</h5>
+
+{#                <label for="video_type"></label>#}
+{#                <select class="form-control" id="video_type" name="video_type" >#}
+{#                {% for type in video_type_list %}#}
+{#                    <option value="{{ type.name }}"#}
+{#                       {% ifequal type.id 1 %}#}
+{#                            selected="selected"#}
+{#                       {% endifequal %}#}
+{#                            >#}
+{#                        {{ type.desc }}</option>#}
+{#                {% endfor %}#}
+{#                </select>#}
+{#                </div>#}
+                 <select class="form-control" id="video_type" name="video_type" >
+                        {% for type in video_type_list %}
+                            <option value="{{ type.name }}"
+                                    {% ifequal type.id 1 %}
+                                    selected="selected"
+                                    {% endifequal %}
+                                    >
+                                {{ type.desc }}</option>
+                        {% endfor %}
+                    </select>
+                <input type="hidden" name="channel_id" value="{{ current_channel_id }}">
+                <input type="hidden" name="subchannel_id" value="{{ current_subchannel_id }}">
+                <input type="hidden" name="module_id" value="{{ current_module_id }}">
+                <div id="div_for_video_type_field"></div>
+
+
+{#                    <h5>固定位置:</h5>#}
+{#                    <select class="form-control" id="fixed_position" name="fixed_position" placeholder="">#}
+{#                        {% for idx in fixed_position_list %}#}
+{#                            <option value="{{ idx }}">{{ idx }}#}
+{#                            </option>#}
+{#                        {% endfor %}#}
+{#                    </select>#}
+
+{#                    <div class="alert alert-warning">若位置序号缺失，说明此位置已有固定视频</div>#}
+
+
+                <div id="footer">
+                    <button type="submit" class="btn "><i class="icon-ok"></i>提交</button>
+                    <a class="btn" href="{% url "iphone_sub_channel_module_items"  %}?select_channel={{ current_channel_id }}&select_subchannel={{ current_subchannel_id }}&select_module={{ current_module_id }}"><i class="icon-arrow-left"></i>返回</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% block js %}
+
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script src="{{ STATIC_URL }}jquery-validate/jquery.validate.js"></script>
+    <script type="text/javascript">
+        {% include "iphone/channel/fixed_pos_videos/_add_video_validate.js" %}
+      {% include "common_module/image_upload.js" %}
+
+       $(document).ready(function () {
+            var type_selector = $("#video_type");
+            type_selector.change(function () {
+                var selected_video_type = $("#video_type").val();
+                $("#div_for_video_type_field").load("/content/iphone/channel_page/add/video_field",
+                        {
+                            "video_type": selected_video_type,
+                            "module_type": {{ module_type }}
+                        });
+            });
+            type_selector.trigger('change');
+        });
+{#        $(document).ready(function () {#}
+{#            $.ajax({#}
+{#                dataType: 'json',#}
+{#                url: "",#}
+{#                data: {#}
+{#                    'module_id': '{{ module_id }}',#}
+{#                    'subchannel_id': '{{ subchannel_id }}',#}
+{#                    'from': 'channel_video'#}
+{##}
+{#                },#}
+{#                success: function(data){#}
+{##}
+{#                }#}
+{#            });#}
+{#            var img_upload_arr = ['normal', 'small'];#}
+{#            for (var index = 0; index < img_upload_arr.length; index++) {#}
+{#                add_upload_handler(generate_upload_dict(img_upload_arr[index]));#}
+{#            }#}
+{##}
+{#        });#}
+{#        $(document).ready(function () {#}
+{##}
+{#            var type_selector = $("#video_type");#}
+{#            type_selector.change(function () {#}
+{#                var selected_video_type = $("#video_type").val();#}
+{#                $("#div_for_video_type_field").load("/content/iphone/main_page/add/video_field",#}
+{#                        {#}
+{#                            "video_type": selected_video_type#}
+{#                        });#}
+{#            });#}
+{#            type_selector.trigger('change');#}
+{##}
+{#        })#}
+    </script>
+
+{% endblock %}

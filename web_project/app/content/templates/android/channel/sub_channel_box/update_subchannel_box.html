@@ -1,0 +1,405 @@
+{% extends "base.html" %}
+{% load util_tags %}
+{% block link %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}app/content/module/update.css">
+    <style type="text/css">
+        {% include "common_module/sort_img.css" %}
+    </style>
+    <link href="{{ STATIC_URL }}select2/select2-bootstrap.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
+    <script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid">
+
+            <h3>更新子频道抽屉</h3>
+
+            <form role="form" id="create_mod" method="post" action="{% url 'android_update_sub_channel_module' %}">
+                <table class="table table-hover table-striped offset2">
+                    <tr>
+                        <td><label for="module_id">抽屉ID</label></td>
+                        <td>
+                            <input type="text" class="form-control" id="module_id" name="module_id"
+                                   value="{{ module.id }}"
+                                   readonly>
+                            <input type="hidden" class="form-control" id="channe_id" name="channel_id"
+                                   value="{{ channel_id }}">
+                            <input type="hidden" class="form-control" id="subchannel_id" name="subchannel_id"
+                                   value="{{ subchannel_id }}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="module_type">抽屉类型</label>
+                        </td>
+                        <td>
+                            {{ module_type_hash|dict_get:module.module_type }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="title"><span style="color: orangered">*</span>标题</label></td>
+                        <td><input type="text" class="form-control" id="title" name="title" value="{{ module.title }}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="count">单元个数</label></td>
+                        <td>
+                            <input type="hidden" id="unit_count" value="{{ module.unit_count }}">
+                            <select class="form-control" id="count" name="count">
+                                {% for value in 12|times:"2 2" %}
+                                    <option value="{{ value }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label>单元类型</label></td>
+                        <td>
+                            {% for unit_type_div in module.unit_type_divs %}
+                                <div class="form-group" id="unit_div_{{ forloop.counter }}">
+                                    <span style="margin-right: 10px;display: inline-block;"
+                                          for="unit_type_div_{{ forloop.counter }}">第{{ forloop.counter }}个单元</span>
+                                    <input type="hidden" id="unit_type_div_{{ forloop.counter }}"
+                                           value="{{ unit_type_div }}">
+                                    <select class="form-control" id="unit_select_{{ forloop.counter }}"
+                                            name="unit_select_{{ forloop.counter }}">
+                                        {% if module.is_headline_module %}
+                                                <option value="slider_images">轮播图</option>
+                                        {% endif %}
+                                        <option value="quarters">田字格结构</option>
+                                        <option value="halfs">左右结构</option>
+                                    </select>
+                                    <label for="unit_select_{{ forloop.counter }}"></label>
+                                </div>
+                            {% endfor %}
+                            {% for value in 11|times:"1 1" %}
+                                {% if value > module.unit_count %}
+                                    <div class="form-group" style="display:none;"
+                                         id="unit_div_{{ value }}">
+                                        <span style="margin-right: 10px;" for="unit_type_div_{{ value }}">第{{ value }}个单元</span>
+                                        <input type="hidden" id="unit_type_div_{{ value }}" value="{{ unit_type_div }}">
+                                        <select class="form-control" id="unit_select_{{ value }}"
+                                                name="unit_select_{{ value }}">
+                                            {% if module.is_headline_module %}
+                                                <option value="slider_images">轮播图</option>
+                                            {% endif %}
+                                            <option value="quarters">田字格结构</option>
+                                            <option value="halfs">左右结构</option>
+                                        </select>
+                                        <label for="unit_select_{{ value }}"></label>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% if module.is_headline_module %}
+                    <tr>
+                        <td><label for="slider_video_count">轮播图个数</label></td>
+                        <td>
+                            <select class="form-control" id="slider_video_count" name="slider_video_count">
+                                {% for value in 6|times:"1 1" %}
+                                    <option value="{{ value }}" {% if module.slider_video_count == value %}selected="selected" {% endif %}>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                    <tr {% if module.is_headline_module %} style="display: none" {% endif %}>
+                        <td><label for="jump_type">点击title后的跳转</label></td>
+                        <td>
+                            <div class="form-group">
+                                <span style="margin-right:10px;display: inline-block;vertical-align: top;">跳转方式</span>
+                                <input type="hidden" id="jump" value="{{ module.jump_type }}">
+                                <select class="form-control" id="jump_type" name="jump_type">
+                                    <option value="no_jump">无跳转</option>
+                                    <option value="by_sub_channel">跳转到子频道</option>
+                                    <option value="by_filter">跳转到全部的筛选结果</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="
+                            {% if module.jump_type == 'by_sub_channel' %}display: block;{% else %}display: none;{% endif %}"
+                                 id="jump_to_subchannel">
+                                <span style="width:120px;display: inline-block;vertical-align: top;">跳转到哪个子频道</span>
+                                <input type="hidden" id="sub_channel_id_for_link"
+                                       value="{{ module.sub_channel_id_for_link }}">
+                                <select class="form-control" id="sub_channel_id_for_link"
+                                        name="sub_channel_id_for_link">
+                                    {% for jump_channel in jump_channels %}
+                                        <option value="{{ jump_channel.id }}">{{ jump_channel.title }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="sub_channel_id_for_link"></label>
+                            </div>
+                            <div class="form-group" id="condition"
+                                 {% if module.jump_type == 'by_filter' %}{% else %}hidden="true"{% endif %}>
+                                <label for="condition">筛选条件</label>
+                                {% if areas %}
+                                    <div>
+                                        <div>
+                                            <span style="margin-right: 10px;">地区</span>
+                                            <select class="form-control" id="area" name="{{ areas.cat }}">
+                                                <option value=""
+                                                        {% if filter.0.1 == '' %}selected="selected"{% endif %}>全部
+                                                </option>
+                                                {% for area in areas.items %}
+                                                    <option value="{{ area.value }}"
+                                                            {% if area.value == filter.0.1 %}selected="selected"{% endif %}>
+                                                        {{ area.title }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <label for="area"></label>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if video_types %}
+                                    <div>
+                                        <div>
+                                            <span style="margin-right: 10px;">类型</span>
+                                            <select class="form-control" id="video_type" name="{{ video_types.cat }}">
+                                                <option value=""
+                                                        {% if filter.1.1 == '' %}selected="selected"{% endif %}>全部
+                                                </option>
+                                                {% for video_type in video_types.items %}
+                                                    <option value="{{ video_type.value }}"
+                                                            {% if video_type.value == filter.1.1 %}selected="selected"{% endif %}
+                                                            >{{ video_type.title }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <label for="video_type"></label>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if pay_kinds %}
+                                    <div>
+                                        <div>
+                                            <span style="margin-right: 10px;">上映</span>
+                                            <select class="form-control" id="pay_kind" name="{{ years.cat }}">
+                                                <option value=""
+                                                        {% if filter.2.1 == '' %}selected="selected"{% endif %}>全部
+                                                </option>
+                                                {% for year in years.items %}
+                                                    <option value="{{ year.value }}"
+                                                            {% if year.value == filter.2.1 %}selected="selected"{% endif %}>
+                                                        {{ year.title }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <label for="pay_kind"></label>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if pay_kinds %}
+                                    <div>
+                                        <div>
+                                            <span style="margin-right: 10px;">:</span>
+                                            <select class="form-control" id="pay_kind" name="{{ pay_kinds.cat }}">
+                                                <option value=""
+                                                        {% if filter.3.1 == '' %}selected="selected"{% endif %}>全部
+                                                </option>
+                                                {% for pay_kind in pay_kinds.items %}
+                                                    <option value="{{ pay_kind.value }}"
+                                                            {% if pay_kind.value == filter.3.1 %}selected="selected"{% endif %}>
+                                                        {{ pay_kind.title }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <label for="pay_kind"></label>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr{% if not has_tag %} style="display: none" {% endif %}>
+                        <td><label>Tag跳转</label></td>
+                        <td>
+                            <table class="table table-striped">
+                                <thead>
+                                    <th>标题</th>
+                                    <th>跳转到</th>
+{#                                    <th>状态</th>#}
+                                    <th>操作</th>
+                                </thead>
+                                <tbody id="sortable">
+                                    {% for tag in link_tags %}
+                                        <tr class="sort-item" id="{{ tag.id }}">
+                                            <td>{{ tag.title }}</td>
+                                            <td>{{ tag.link_to }}</td>
+                                            <td><button id="delete_tag" type="button" class="btn btn-small btn-danger" onclick="remove_tag(this)">删除</button></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <a href="#myModal" role="button" class="btn" data-toggle="modal">
+                                <i class="icon-plus"></i>创建Tag跳转</a>
+                        </td>
+                    </tr>
+
+                </table>
+
+
+                <button type="submit" class="btn btn-default"><li class="icon-ok-sign"></li>更新</button>
+                <a class="btn btn-default"
+                   href="{% url 'android_sub_channel_modules' %}?select_channel={{ channel_id }}&select_subchannel={{ subchannel_id }}"><li class="icon-circle-arrow-left"></li>返回</a>
+
+            </form>
+        </div>
+    </div>
+    <div class="row-fluid">
+        {% include  'android/channel/sub_channel_box/add_tag.html' %}
+    </div>
+
+    <div id="formErrorModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">提示(Esc关闭)</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-error">提示消息</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% block js %}
+
+    <script type="text/javascript">
+        {% include "common_module/sort_edit_del.js" %}
+        function remove_tag(tag) {
+                var tag_id = $(tag).parent().parent().attr('id');
+                $.ajax({
+                    url: "{% url 'android_delete_tag' %}",
+                    type: 'POST',
+                    data: {'pk': tag_id},
+                    success: function (data) {
+                        if ('success' == data.status) {
+                            $(tag).parent().parent().remove();
+                        }else{
+                            alert('删除失败');
+                        }
+                    }
+                });
+            }
+
+        $(document).ready(function () {
+            $("#li_android_module").addClass('active');
+
+            var num = $("#unit_count").val();
+            $("select[name=count] option[value=" + num + "]").attr("selected", "selected");
+            var jump_type = $('#jump').val();
+            $("select[name=jump_type] option[value=" + jump_type + "]").attr("selected", "selected");
+            var jump_subchannel = $('#sub_channel_id_for_link').val();
+            $("select[name=sub_channel_id_for_link] option[value=" + jump_subchannel + "]").attr("selected", "selected");
+
+            var unit_var;
+            var unit_total = $("#count option:last").val();
+            for (var start = 1; start <= unit_total; start++) {
+                unit_var = $("#unit_type_div_" + start.toString()).val();
+                $("select[id=unit_select_" + start.toString() + "] option[value=" + unit_var + "]").attr("selected", "selected");
+            }
+
+            $("#count").change(function () {
+                var unit_num = $(this).val();
+
+                for (start = 1; start <= unit_total; start++) {
+                    if (start > unit_num) {
+                        $("#unit_div_" + start.toString()).css('display', 'none');
+                    }
+                    else {
+                        $("#unit_div_" + start.toString()).css('display', 'block');
+                    }
+                }
+            });
+
+            $("#jump_type").change(function () {
+                var jump_type = $(this).val();
+                if (jump_type === 'by_sub_channel') {
+                    $("#jump_to_subchannel").css('display', 'block');
+                    $("#condition").hide();
+                } else if (jump_type === 'by_filter') {
+                    $("#jump_to_subchannel").css('display', 'none');
+                    $("#condition").show();
+                } else {
+                    $("#jump_to_subchannel").css('display', 'none');
+                    $("#condition").hide();
+                }
+            });
+
+            $('#add_tag').click(function () {
+                var params = {
+                    'module_id': $('#module_id').val(),
+                    'sub_channel_id': $('#subchannel_id').val(),
+                    'channel_id': $('#channel_id').val(),
+                    'tag_title': $('#tag_title').val(),
+                    'link_to_select': $('#link_to_select').val(),
+                };
+
+                $.ajax({
+                    url: "{% url 'android_add_tag' %}",
+                    type: 'POST',
+                    data: params,
+                    success: function (data) {
+                        if ('success' == data.status) {
+                            $('#myModal').modal('hide');
+                            add_tag_node(data);
+                        }
+                        else{
+                            $('#myModal').modal('hide');
+                            alert('添加失败');
+                        }
+                    }
+                });
+            });
+
+            add_tag_node = function (data) {
+                var tag = $('<tr class="sort-item" id="'+ data.id + '"><td>'+data.tag_title+'' + '</td><td>' + data.link_to_select
+                            + '<td><button id="delete_tag" type="button" class="btn btn-small btn-danger" onclick="remove_tag(this)">删除</button></td>');
+                $('#sortable').append(tag);
+            };
+
+            $('#sortable').sortable({
+                update: function () {
+                    $.ajax({
+                        url: "{% url 'android_sort_tag' %}",
+                        type: 'POST',
+                        data: {'tag_ids': collect_tag_ids()},
+                        success: function (data) {
+                            $().toastmessage({
+                                position: 'middle-center'
+                            });
+                            if(data.status == 'success'){
+                                $().toastmessage('showToast', {text: '排序成功!', type: 'success', sticky: true});
+                            }else{
+                                $().toastmessage('showToast', {text: '失败成功!', type: 'error', sticky: true});
+                            }
+                        }
+                    });
+                }
+            });
+
+            collect_tag_ids = function () {
+                var tag_id_array = [];
+                $('#sortable').children('tr').each(function () {
+                    tag_id_array.push($(this).attr('id'))
+                });
+                return tag_id_array.join(",");
+            }
+
+        });
+    </script>
+
+    {% include "subchannel_module/module_validate.html" %}
+
+    <link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css"
+          rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+
+{% endblock %}

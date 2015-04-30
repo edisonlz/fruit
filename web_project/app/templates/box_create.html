@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <form role="form" action="/app/box/new" id='create_box' method="POST">
+        <table class="table table-condensed table-hover">
+            <tr>
+                <td>
+                    <div class="name">
+                        <span class="add-on">名称：</span>
+                        <div class="controls input-append">
+                            <input size="10" type="text" value="" id='name' name='name'> </input>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="status">
+                        <span class="add-on">状态：</span>
+                        <select id='status' class="span1" name='status'>
+                            <option value="1" id="status_ok">开启</option>
+                            <option value="0" selected='selected' id="status_error">关闭</option>
+                        </select>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="input-prepend">
+                        <span class="add-on">产品：</span>
+                        <select id='product' class="span8" name='product'>
+                            {% for ele in products %}
+                                <option value="{{ ele.id }}">{{ ele.name }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                </td>
+            <tr>
+                <td>
+                    <div class="input-prepend">
+                        <span class="add-on">类别：</span>
+                        <select id='category' class="span8" name='category'>
+                            <option value="0">无</option>
+                            {% for ele in categories %}
+                                <option value="{{ ele.id }}">{{ ele.name }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div class="row-fluid">
+            <div class="span12 text-center">
+                <button type="button" class="btn btn-success" id='query_btn' time_type='0'>创建</button>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+
+    $('#query_btn').click(function (e) {
+        if ($("#name").val()!="")
+        {
+            $('#create_box').submit();
+        }
+        else
+        {
+            alert("名称不能为空");
+        }
+
+    });
+    </script>
+{% endblock %}

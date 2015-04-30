@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+{% load util_tags %}
+
+{% block link %}
+
+    <link href="{{ STATIC_URL }}select2/select2.css" rel="stylesheet"/>
+    <link href="{{ STATIC_URL }}select2/select2-bootstrap.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
+    <style type="text/css">
+        div.nav-group {
+            position: relative;
+        }
+
+        {#        div.tool-box {#}
+        {#            position: absolute;#}
+        {#            right: 0;#}
+        {#            top: 0;#}
+        {#        }#}
+
+        a.btn-table {
+            padding: 2px 5px;
+        }
+
+        div.pull-right a.btn {
+            margin-left: 5px;
+            margin-bottom: 10px;
+        }
+
+        div.navigation-div [class^="icon-"] {
+            display: inline-block;
+            margin: 0 5px 0 5px;
+            width: 14px;
+        }
+
+        table input[type=text] {
+            width: 150px;
+        }
+
+        #save_position_form {
+            float: left;
+            margin: 0;
+        }
+
+        #video-controls {
+            text-align: right;
+        }
+
+        .active-item-shadow {
+            box-shadow: rgba(133, 133, 133, 0.1) 0 0 5px 2px, rgba(133, 133, 133, 0.3) 0 0 2px;
+        }
+
+        td.td-title {
+            min-width: 75px;
+        }
+
+        td.canBeEdit {
+            max-width: 195px;
+            min-width: 150px;
+        }
+
+        td.text-sub {
+            max-width: 160px;
+            min-width: 120px;
+            width: auto;
+        }
+
+        .text-block {
+            display: none;
+
+        }
+
+        .text-block > textarea {
+            font-size: 13px;
+            padding: 0;
+            margin: 0;
+            display: block;
+            max-width: 195px;
+            min-width: 150px;
+            max-height: 100px;
+            resize: vertical;
+        }
+
+        .text-sub > .text-block > textarea {
+            max-width: 150px;
+            min-width: 120px;
+        }
+
+        .text-block > button {
+            float: right;
+            margin-left: 3px;
+        }
+
+    </style>
+
+{% endblock %}
+{% block navigation %}
+    <div class="navigation-div">
+        <ul class="breadcrumb">
+            <li><a href="/content/common_content/boxes" style="text-decoration: none;">推荐池公用抽屉</a><span class="divider">/</span>
+            </li>
+            <li class="active">{{ box.title }} - 视频列表</li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="row-fluid" style="width: auto;overflow: auto">
+        <div class="nav-group" style="height: 40px">
+            <div class="tool-box">
+                {% box_btns_show_perm box.id request.user 1 as perm_flag %}
+                <form method="post" id="save_position_form">
+                    <input type="hidden" name="item_ids" id="item_ids"/>
+                    <input type="hidden" name="box_id" id="box_id" value="{{ box.id }}"/>
+
+                    <a class="btn" href="{% url 'home_common_boxes' %}?page={{ from_box_page }}"><i
+                            class="icon-circle-arrow-left"></i>返回</a>
+                    {% if perm_flag %}
+                    <button type="button" class="btn" id="save_position_btn"><i class="icon-sort"></i>保存顺序</button>
+                    {% endif %}
+                </form>
+                {% if perm_flag %}
+                <div id="video-controls">
+                    <a class="btn" href="{% url 'home_common_videos_add_video' from_box_page box.id %}"><i
+                            class="icon-plus"></i>新增内容</a>
+                    <a href="#myModal" id='sync_button' role="button" class="btn" data-toggle="modal"><i
+                            class="icon-refresh"></i>同步</a>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+        {#    <div style="width: 1350px">#}
+        <div>
+            <table class="table table-striped" style="width: auto">
+                <thead>
+                <th><input type="checkbox" style="margin-right: 2px;margin-bottom: 2px" id="state-all-pick"></th>
+                <th>内容ID</th>
+                <th>类型</th>
+                <th>标题</th>
+                <th>子标题</th>
+                <th>腰封</th>
+                <th>版权</th>
+                <th>付费类型</th>
+                <th>图片</th>
+{#                <th>竖图</th>#}
+                {% if perm_flag %}
+                <th>操作</th>
+                {% endif %}
+                </thead>
+                <tbody id="sortable">
+                {% for video in videos %}
+                    <tr id="box_{{ video.box_id }}" value="{{ video.id }}" class="sort-item">
+                        <td><input type="checkbox" class="video-status-tag" value="{{ video.id }}"></td>
+                        {% if video.video_type == 4 %}
+                            <td><a class="data_tip" href="#" data-toggle="tooltip"
+                                   title="{{ video.url }}">{{ video.url | slice:"10" }}...</a></td>
+                        {% else %}
+                            <td>{{ video.video_id }}</td>
+                        {% endif %}
+                        <td>{% show_video_type_human_readable video.video_type %}</td>
+                        <td class="canBeEdit">
+                            <div class="text-block">
+                                <label for="title-{{ video.id }}"></label>
+                                <textarea cols="3" rows="2" class="edit-area"
+                                          id="title-{{ video.id }}">{{ video.title }}</textarea>
+                                <button type="button" class="modify-text  btn btn-mini btn-info">确认</button>
+                                <button type="button" class="recover-text btn btn-mini">取消</button>
+                            </div>
+                            <div class="text-piece">{{ video.title }}</div>
+                        </td>
+                        <td class="canBeEdit text-sub">
+                            <div class="text-block">
+                                <label for="subtitle-{{ video.id }}"></label>
+                                <textarea cols="3" rows="2" class="edit-area"
+                                          id="subtitle-{{ video.id }}">{{ video.subtitle }}</textarea>
+                                <button type="button" class="modify-text  btn btn-mini btn-info">确认</button>
+                                <button type="button" class="recover-text btn btn-mini">取消</button>
+                            </div>
+                            <div class="text-piece">{{ video.subtitle }}</div>
+                        </td>
+                        <td class="canBeEdit text-sub">
+                            <div class="text-block">
+                                <label for="intro-{{ video.id }}"></label>
+                                <textarea cols="3" rows="2" class="edit-area"
+                                          id="intro-{{ video.id }}">{{ video.intro }}</textarea>
+                                <button type="button" class="modify-text  btn btn-mini btn-info">确认</button>
+                                <button type="button" class="recover-text btn btn-mini">取消</button>
+                            </div>
+                            <div class="text-piece">{{ video.intro }}</div>
+                        </td>
+                        <td>{{ video.copyright_for_view }}</td>
+                        <td>{{ video.pay_type_for_view }}</td>
+                        <td>{% if video.h_image %}
+                            <a target="_blank" href="{{ video.url_to_play }}"><img src="{{ video.h_image }}" title="{{ video.title }}" style="height: 60px" class="img-polaroid"/></a>{% endif %}</td>
+{#                        <td>{% if video.v_image %}#}
+{#                            <img src="{{ video.v_image }}" style="height: 60px" class="img-polaroid"/>{% endif %}</td>#}
+                    {% if perm_flag %}
+                        <td colspan="2">
+                            <a class="btn btn-small btn-table"
+                               href="{% url "home_common_videos_update_video" from_box_page video.box_id video.id %}"><i
+                                    class="icon-edit"></i>编辑</a>
+                            <a class="btn btn-small btn-danger btn-table del"
+                               href="{% url "home_common_videos_delete_video" from_box_page video.box_id video.id %}"
+                               title="删除">
+                                <i class="icon-trash"></i>删除</a>
+                        </td>
+                    {% endif %}
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include  'home_common/common_video/select_sync_platforms_modal.html' with current_box_id=box.id override_box=override_box %}
+    </div>
+
+    {% if not videos %}
+        <div class="row-fluid">
+            <div class="col-sm-8">
+                <div class="alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Warning!</strong> 相关首页视频模块数据为空,请创建视频数据。
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+
+    <div class="row-fluid">
+        {#        <form method="post" id="save_position_form">#}
+        {#            <input type="hidden" name="item_ids" id="item_ids"/>#}
+        {#            <input type="hidden" name="box_id" id="box_id" value="{{ box.id }}"/>#}
+        {#            <button type="submit" class="btn" id="save_position_btn"><i class="icon-sort"></i>保存顺序</button>#}
+        {#            <a class="btn" href="{% url 'home_common_boxes'%}?page={{ from_box_page }}"><i class="icon-circle-arrow-left"></i>返回</a>#}
+        {#        </form>#}
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+    <script src="{{ STATIC_URL }}select2/select2.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script src="{{ STATIC_URL }}jquery-validate/jquery.validate.js"></script>
+    <script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+
+    <script type="text/javascript">
+    function save_position_btn_func(){
+            var item_ids = $('#item_ids').val();
+            $.ajax({
+                type:'POST',
+                dataType: 'json',
+                url: '/content/common_content/current_box_page/1/box/{{ box.id }}/videos',
+                data: {
+                    item_ids: item_ids
+                },
+                success: function(data){
+                    if(data.status === 'success'){
+                        $().toastmessage({
+                            position: 'middle-center'
+                        });
+                        $().toastmessage('showSuccessToast', '操作成功');
+                        setTimeout(function(){location.reload()},1000);
+                    }else{
+                        $().toastmessage('showErrorToast',"操作失败")
+                    }
+                }
+
+            })
+        }
+        {% include 'common_module/sort_edit_del.js' %}
+
+        $(document).ready(function () {
+            $('.sort-item input').each(function () {
+                $(this).bind('blur', function () {
+                    var video_id = $(this).parent().parent().attr('value')
+                    var attribute = $(this).attr('id').split('-')[0]
+                    var value = $(this).val()
+
+                    $.ajax({
+                        url: '/content/common_content/current_box_page/update_video_value',
+                        type: "POST",
+                        dataType: 'json',
+                        data: {
+                            video_id: video_id,
+                            attribute: attribute,
+                            value: value
+                        },
+                        success: function (data) {
+                            $('#' + attribute + '-' + video_id).val(data.value)
+                            $().toastmessage({
+                                position: 'middle-center'
+                            });
+                            $().toastmessage('showSuccessToast', '操作成功');
+                        }
+                    })
+
+
+                })
+            })
+
+
+            $('#box_list').change(function () {
+                box_id = $(this).val()
+                window.location = location.pathname + '?box_id=' + box_id
+            })
+            $(function () {
+                $.fn.editable.defaults.mode = 'popup';
+                $('.select_pick').editable({
+                    showbuttons: false,
+                    source: [
+                        {value: 1, text: '开启'},
+                        {value: 0, text: '关闭'}
+                    ]
+                });
+            });
+
+        });
+    </script>
+    <script type="text/javascript">
+        $('#state-all-pick').click(function () {
+            if ($(this).is(':checked')) {
+                $("input:checkbox.video-status-tag").prop("checked", true)
+            } else {
+                $("input:checkbox:checked.video-status-tag").attr("checked", false)
+            }
+        });
+        function collect_change_module_ids() {
+            var module_id_array = [];
+            var module_ids = '';
+            $("input:checkbox:checked.video-status-tag").each(function () {
+                module_id_array.push($(this).parent().parent().attr('value'))
+            });
+            module_ids = module_id_array.join(",");
+            return module_ids
+        }
+
+        $('.module-state').click(function () {
+            var module_ids = "";
+            var val = $(this).attr("value");
+            var source = {
+                '1': '开启',
+                '0': '关闭'
+            }
+            module_ids = collect_change_module_ids();
+            if (module_ids.length > 0) {
+                $.ajax({
+                    url: '/content/common_content/video/update_status',
+                    type: "POST",
+                    dataType: 'json',
+                    data: {
+                        module_ids: module_ids,
+                        value: val
+                    },
+                    success: function (data) {
+                        for (var i = 0; i < data.module_ids.length; i++) {
+                            $('#status_' + data.module_ids[i]).html(source[val])
+                        }
+                        ;
+                        $().toastmessage({
+                            position: 'middle-center'
+                        });
+                        $().toastmessage('showSuccessToast', '操作成功');
+                    }
+                })
+            }
+        })
+        $(document).ready(function () {
+            $(".canBeEdit").dblclick(function () {
+                $(this).children('div.text-block').show();
+                $(this).children('div.text-piece').hide();
+            });
+            $(".recover-text").click(function () {
+                var textarea_div = $(this).parent();
+                textarea_div.hide().next().show();
+            });
+            $(".modify-text").click(function () {
+                var textarea = $(this).prevAll('textarea');
+                var id_arr = textarea.attr('id').split('-');
+                var attr = id_arr[0];
+                var video_id = id_arr[1];
+                var value = textarea.val();
+                $.ajax({
+                    url: '/content/common_content/current_box_page/update_video_value',
+                    type: "POST",
+                    dataType: 'json',
+                    data: {
+                        video_id: video_id,
+                        attribute: attr,
+                        value: value
+                    },
+                    success: function (data) {
+                        textarea.parent().hide().nextAll('.text-piece').text(value).show();
+                        $().toastmessage({
+                            position: 'middle-center'
+                        });
+                        $().toastmessage('showSuccessToast', '操作成功');
+                    }
+                })
+            });
+
+            $(".edit-area").keydown(function (e) {
+                if (e.ctrlKey && e.keyCode == 13) {
+                    // Ctrl-Enter pressed
+                    $(this).nextAll('.modify-text').triggerHandler('click');
+                }
+            });
+        })
+    </script>
+    <link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css"
+          rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+
+{% endblock %}

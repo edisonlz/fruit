@@ -1,0 +1,28 @@
+
+<td>
+    <span style="color: orangered">*</span>竖图({{ v_image_desc }}):
+</td>
+<td>
+    <div class="control-group">
+        <label for="v_image-input" class="control-label"></label>
+
+        <div class="controls">
+            <span id="v_image-button" class="btn btn-success fileinput-button ">
+                 <span>+ 上传截图...</span>
+                 <input id="v_image-upload" type="file" name="files[]" multiple>
+            </span>
+
+            <div id="v_image-success" class="alert alert-success" style="font-size: 20px;margin-top: 10px;width: 165px;{% if not video.v_image %}display: none{% endif %}">
+                <button type="button" class="close">&times;</button>
+                <img id='v_image-content' src="{{ video.v_image }}" class="img-polaroid">
+            </div>
+            <div id="v_image-progress"
+                 class="progress progress-success progress-striped  active"
+                 style="display: none">
+                <div class="bar"></div>
+            </div>
+            <input type='hidden' class='hidden-img' id='v_image-input' name='v_image' value="{{ video.v_image }}" height="100"
+                   width="100"/>
+        </div>
+    </div>
+</td>

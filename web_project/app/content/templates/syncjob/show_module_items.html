@@ -1,0 +1,446 @@
+{% extends "base.html" %}
+
+{% block link %}
+    <style type="text/css">
+        #htop {
+            display: inline-block;
+        }
+
+        .btn-top {
+            float: right;
+            display: inline-block;
+        }
+
+        .btn-top > .btn {
+            margin-left: 10px;
+        }
+
+        .alert-info {
+            margin-top: 20px;
+        }
+
+        .input-prepend {
+            min-width: 855px;
+
+        }
+
+        #filter_name {
+            min-width: 250px;
+        }
+
+        #filter_block {
+            display: none;
+        }
+
+        #filter_block .input-prepend {
+            min-width: initial;
+        }
+
+        .filter_text {
+            cursor: pointer;
+            display: inline-block;
+            color: #0088cc;
+        }
+
+
+        .handle_block {
+            min-width: 220px;
+        }
+
+        .ui-autocomplete {
+            max-height: 180px;
+            max-width: 350px;
+            width: 100%;
+            overflow-y: auto;
+            /* prevent horizontal scrollbar */
+            overflow-x: hidden;
+            z-index: 2000;
+        }
+
+        /* IE 6 doesn't support max-height */
+        * html .ui-autocomplete {
+            height: 180px;
+        }
+
+        #select_wrap {
+            overflow: auto;
+        }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="row-fluid">
+        <div>
+            <h4 id="htop">抓取计划 - {% if plats.0 == 'all' %}全部{% else %}{{ plats.0 }}{% endif %}平台</h4>
+
+            <div class="btn-top">
+                <span class="add-on">平台:</span>
+
+                <div class="btn-group">
+                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#" id="select_platform">
+                        {% if plats.0 == 'all' %}
+                            全部
+                        {% else %}
+                            {{ plats.0 }}
+                        {% endif %}
+                        <span class="caret"></span>
+                    </a>
+
+                    <ul class="dropdown-menu">
+                        {% for floor in plats %}
+                            {% if forloop.counter0 != 0 %}
+                                <li><a href="{% url "show_select_plans" %}?platform={{ floor }}">
+                                    {% if floor == 'all' %}全部{% else %}{{ floor }}{% endif %}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                <a href="{% url "show_all_virtual_name" %}" role="button" class="btn"
+                   data-toggle="modal"><i class="icon-folder-close"></i>查看虚拟名称</a>
+                {% if user.is_super %}
+                    <button role="button" class="btn" id="make_new_fetch"><i class="icon-plus"></i>新增抓取</button>
+                {% endif %}
+
+            </div>
+        </div>
+        <input type="hidden" id="platform" value="{{ platform }}">
+
+        <div id="select_wrap" {% if plats.0 == 'all' %}style="display: none;"{% endif %}>
+            <span class="add-on">频道:</span>
+            <select class="col-sm-8" id="select_channel" name="select_channel">
+                {% for cha in channels %}
+                    {% ifequal cha.id channel.id %}
+                        <option value="{{ cha.id }}" selected="selected">
+                            {{ cha.title }}
+                            ({% if cha.state == 1 %}开启{% else %}关闭{% endif %})
+                        </option>
+                    {% else %}
+                        <option value="{{ cha.id }}">{{ cha.title }}
+                            ({% if cha.state == 1 %}开启{% else %}关闭{% endif %})
+                        </option>
+                    {% endifequal %}
+                {% endfor %}
+                <option value="_" {% if channel == '_' %}selected="selected"{% endif %}>全部</option>
+            </select>
+            {% if subchannels %}
+                <span class="add-on" style="margin-left: 5px;">子频道:</span>
+                <select class="col-sm-8" id="select_subchannel" name="select_subchannel"
+                        data-types="{{ subchannel.type }}">
+                    {% for sub in subchannels %}
+                        {% ifequal sub.id subchannel.id %}
+                            <option value="{{ sub.id }}" selected="selected">
+                                {{ sub.title }}({% if sub.state == 1 %}开启{% else %}关闭{% endif %})
+                            </option>
+                        {% else %}
+                            <option value="{{ sub.id }}">{{ sub.title }}
+                                ({% if sub.state == 1 %}开启{% else %}关闭{% endif %})
+                            </option>
+                        {% endifequal %}
+                    {% endfor %}
+                    <option value="_" {% if subchannel == '_' %}selected="selected"{% endif %}>全部</option>
+                </select>
+
+            {% endif %}
+            {% if modules and subchannel.type == 1 %}
+                <span class="add-on" style="margin-left: 5px;">子频道模块:</span>
+                <select class="col-sm-8" id="select_module" name="select_module">
+                    {% for mod in modules %}
+                        {% ifequal mod.id module.id %}
+                            <option value="{{ mod.id }}" selected="selected">
+                                {{ mod.title }}({% if mod.state == 1 %}开启{% else %}关闭{% endif %})
+                            </option>
+                        {% else %}
+                            <option value="{{ mod.id }}">{{ mod.title }}
+                                ({% if mod.state == 1 %}开启{% else %}关闭{% endif %})
+                            </option>
+                        {% endifequal %}
+                    {% endfor %}
+                    <option value="_" {% if module == '_' %}selected="selected"{% endif %}>全部</option>
+                </select>
+
+            {% endif %}
+        </div>
+    </div>
+    <div class="control-group">
+        <div id="filter_block">
+            <label class="control-label" for="filter_name"></label>
+
+            <div class="controls">
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-filter"></i></span>
+                    <input class="span2" id="filter_name" type="text" title="键入文字对已存在的抓取计划进行筛选">
+
+                </div>
+                <div class="filter_text" id="fade_filter">
+                    收起
+                </div>
+            </div>
+        </div>
+        <div class="filter_text" id="display_filter">
+            虚名称筛选
+        </div>
+    </div>
+
+    {% if jobs %}
+        <table class="table table-striped">
+            <thead>
+            <th>任务id</th>
+            <th>虚拟名称</th>
+            {% if total_flag %}
+            <th class="platform">平台</th>
+            <th class="category">子频道或模块名称</th>
+            {% endif %}
+            <th>运行类型</th>
+            <th>时间间隔/定期时间</th>
+            <th>自动上线?</th>
+            <th>个数限制</th>
+            {% if user.is_super %}
+                <th>操作</th>
+            {% endif %}
+            </thead>
+
+            <tbody id="sortable">
+            {% for job in jobs %}
+                <tr id="module_{{ item.id }}" value="{{ job.id }}">
+                    <td>{{ job.id }}</td>
+                    <td class="virtual_name">{{ job.virtual_name }}</td>
+                    {% if total_flag %}
+                    <td class="platform">{{ job.get_platform_display }}</td>
+                    <td class="category">{{ job.category_name }}</td>
+                    {% endif %}
+                    <td>{% if job.cron %}每天固定时间{% else %}间隔时间{% endif %}</td>
+                    <td>{% if job.cron %}每天{{ job.cron }}{% else %}每{{ job.interval }}分钟{% endif %}</td>
+                    <td>{% if job.is_auto_published %}是{% else %}否{% endif %}</td>
+                    <td>{% if job.max_fetch_count %}{{ job.max_fetch_count }}{% else %}无限制{% endif %}</td>
+                    {% if user.is_super %}
+                        <td colspan="2" class="handle_block">
+                            <a class="btn btn-small btn-success run" data-toggle="tooltip" data-job="{{ job.id }}"
+                               data-title="999">
+                                <span class="glyphicon glyphicon-play"></span>立即执行</a>
+                            <a href="{% url "update_sync_plan" job.id %}?channel_id={{ job.channel_id }}&subchannel_id={{ job.subchannel_id }}&module_id={{ job.module_id }}&platform={{ job.platform }}&from=select_plans&back={{ plats.0 }}"
+                               class="btn btn-small btn-warning">
+                                <span class="glyphicon glyphicon-play"></span>修改</a>
+                            <a href="{% url "del_sync_plan" job.id %}?channel_id={{ job.channel_id }}&subchannel_id={{ job.subchannel_id }}&module_id={{ job.module_id }}&platform={{ job.platform }}"
+                               class="del btn btn-small btn-danger">
+                                <span class="glyphicon glyphicon-play">删除</span></a>
+                            <a href="{% url 'fetch_job_log_watch' job.id %}" class="btn btn-small btn-info">
+                            <span class="glyphicon glyphicon-play">日志</span></a>
+                        </td>
+                    {% endif %}
+
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    {% else %}
+        <div>
+            <div class="alert alert-info">
+                <i class="icon-info-sign"></i>没有抓取计划!
+            </div>
+        </div>
+    {% endif %}
+    <div class="row-fluid">
+        {% include "syncjob/add_syncjob_from_show_all.html" %}
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            (function () {
+                var disabled_flag;
+                var sub_type_counter = 0;
+                var sub_type = $("#select_subchannel").data('types');
+                var levels = ['channel', 'subchannel', 'module'];
+                for (var i = 0; i < levels.length; i++) {
+                    var obj = $("#select_" + levels[i] + ' option:selected');
+                    if ($.trim(obj.text()) === '全部') {
+                        disabled_flag = true;
+                        break;
+                    }
+                    if (i >= 1 && obj.length > 0) {
+                        sub_type_counter += 1;
+                    }
+                }
+                if ((sub_type === 1 && sub_type_counter === 2) || (sub_type === 2 && sub_type_counter === 1)) {
+                } else {
+                    disabled_flag = true;
+                }
+                if ($.trim($("#select_platform").text()) === '全部') {
+                    disabled_flag = true;
+                    $("#platform").nextAll().remove();
+                    $(".platform").show();
+                }
+
+                if (disabled_flag) {
+                    $("#make_new_fetch").prop('disabled', true);
+                    $(".category").show();
+                }
+            })();
+
+            $("#make_new_fetch").bind('click', function () {
+                if ($(this).prop('disabled') === false) {
+                    $("#syncJobModal").modal('toggle');
+                }
+            });
+
+            $("#create_job").bind('click', function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+                var objs = $("#select_channel").add($("#select_subchannel")).add($("#select_module"));
+                var category_name = objs.map(function () {
+                    return $(this).children('option:selected').text().replace(/\s+/g, '');
+                }).get().join('->');
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'category_name',
+                    value: category_name
+                }).appendTo(form);
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    data: form.serialize(),
+                    url: '{% url "add_sync_plan" %}',
+                    success: function (data) {
+                        if (data.status == 'success') {
+                            location.reload();
+                        } else {
+                            alert(data.msg);
+                        }
+                    }
+                })
+            });
+
+            var slider_effect = function () {
+                $("#display_filter").toggle('slow');
+                $("#filter_block").slideToggle();
+            };
+            $("#display_filter").bind('click', slider_effect);
+            $("#fade_filter").bind('click', slider_effect);
+
+            $('#filter_name').focus(function () {
+                var pre_name = '';
+                setInterval(function () {
+                    var v_name = $('#filter_name').val();
+                    if (v_name === '') {
+                        $(".virtual_name").each(function () {
+                            $(this).parent().show();
+                        })
+                    } else if (v_name !== pre_name) {
+                        pre_name = v_name;
+                        $(".virtual_name").each(function () {
+                            if ($(this).text().indexOf(v_name) < 0) {
+                                $(this).parent().hide();
+                            } else {
+                                $(this).parent().show();
+                            }
+                        })
+                    }
+                }, 500);
+            });
+
+            $("#virtual_name").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "{% url "virtual_name_autocomplete" %}",
+                        dataType: "json",
+                        type: 'post',
+                        data: {
+                            'q': $("#virtual_name").val()
+                        },
+                        success: function (data) {
+                            return response(data);
+                        }
+                    });
+                },
+                minLength: 1,
+                autoFocus: true
+            });
+
+            $('.run').bind('click', function () {
+                var obj = $(this);
+                $.ajax({
+                    url: "/content/sync/runatonce/plan/" + obj.data('job'),
+                    dataType: "json",
+                    type: 'get',
+                    success: function (data) {
+                        obj.tooltip({
+                            title: data.status
+                        }).tooltip('show');
+                        setTimeout(function () {
+                            obj.tooltip('hide').tooltip('destroy');
+                        }, 1000);
+                    }
+                });
+            });
+
+            var run_type = $('#run_type');
+            run_type.change(function () {
+                if ($(this).val() === 'interval') {
+                    $('#interval_type').show();
+                    $('#cron_type').hide();
+                } else {
+                    $('#interval_type').hide();
+                    $('#cron_type').show();
+                }
+            });
+            run_type.triggerHandler('change');
+
+            $(".data_tip").tooltip();
+
+            $(".del").click(function () {
+
+                var statu = confirm("确认删除吗?");
+                if (!statu) {
+                    return false;
+                }
+            });
+
+            var platform = $("#platform").attr('value');
+            $("#select_channel").change(function () {
+                channel_id = $(this).children('option:selected').val();
+                window.location.href = "{% url 'show_select_plans' %}" + "?select_channel=" + channel_id + "&platform=" + platform;
+            });
+
+
+            $("#select_subchannel").change(function () {
+                subchannel_id = $(this).children('option:selected').val();
+                channel_id = $("#select_channel").val();
+                window.location.href = "{% url 'show_select_plans' %}" + "?select_channel=" + channel_id + "&select_subchannel=" + subchannel_id + "&platform=" + platform;
+            });
+
+
+            $("#select_module").change(function () {
+                module_id = $(this).children('option:selected').val();
+                subchannel_id = $("#select_subchannel").val();
+                channel_id = $("#select_channel").val();
+                window.location.href = "{% url 'show_select_plans' %}" + "?select_channel=" + channel_id + "&select_subchannel=" + subchannel_id + "&select_module=" + module_id + "&platform=" + platform;
+            });
+
+
+            $(function () {
+                $.fn.editable.defaults.mode = 'popup';
+                $('.select_pick').editable({
+                    showbuttons: false,
+                    source: [
+                        {value: 1, text: '开启'},
+                        {value: 0, text: '关闭'}
+                    ]
+                });
+            });
+
+        });
+    </script>
+    <link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css"
+          rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+
+{% endblock %}
