@@ -80,7 +80,19 @@ def update_status(request):
     box = Box.objects.get(id=pk)
     box.state = value
     box.save()
-    
+
     response = {'status': 'success'}
     return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+@login_required
+def update_position(request):
+    if request.method == 'POST':
+        response = {'status': 'success'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
+    else:
+        response = {'status': 'fail'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
+
 

@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">
+    <style type="text/css">
+        .status_editable {
+
+        }
+    </style>
 {% endblock %}
 
 
@@ -36,9 +41,14 @@
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增抽屉
                     </a>
 
-                    <a class="btn btn-primary" href="#" role="button">保存顺序</a>
-                    <form method="post" id="save_position_form">
-                        <input type="hidden" name="box_ids" id="item_ids"/>
+                    
+                    <button id="save_position_btn" type="button" id="myButton" data-loading-text="Loading..." 
+                        class="btn btn-danger" autocomplete="off">
+                        保存顺序
+                    </button>
+
+                    <form method="post" action="/content/update_position" id="form_positoin" name="form_positoin">
+                        <input type="hidden" name="box_ids" id="box_ids"/>
                     </form>
             </div>
     </div>
@@ -51,7 +61,7 @@
                     <th>序号</th>
                     <th>标题</th>
                     <th>抽屉类型</th>
-                    <th>item个数</th>
+                    <th>内容数量</th>
                     <th>状态</th>
                     <th>操作</th>
                 </thead>
@@ -69,7 +79,8 @@
                         <td style="width: 80px;">
                          
 
-                        <a href="#" id="state_group" data-type="select"
+                        <a href="#" id="state_group_{{box.id}}" data-type="select"
+                            class="status_editable"
                             data-pk="{{box.id}}" data-value="{{  box.state }}" 
                             data-source="/content/status" 
                             data-title="选择状态" class="editable editable-click editable-open"  style="background-color: rgba(0, 0, 0, 0);">
@@ -123,6 +134,7 @@
         
 
         $(document).ready(function () {
+            /* list table sortbale */
             $("#sortable").sortable({
                 revert: true,
                 start: function(event, ui) {
@@ -136,28 +148,12 @@
 
             });
 
-            $('#state_group').editable({
+            /* state edistable */
+            $('.status_editable').editable({
                     url: '/content/update_status',
                     showbuttons: false
             });
 
-            /*function collect_module_ids_with_order(){
-                children = $("#sortable").children();
-                ret = ''
-                for(i=0;i<children.length;i++){
-                    child = children[i];
-                    ret += $(child).attr('value')+',';
-                }
-                return ret.substring(0, ret.length-1);
-            }
-            $("#save_position_btn").click(function(){
-                item_ids = collect_module_ids_with_order();
-                if(item_ids==''){
-                    alert('没有要排序的内容');
-                    return false;
-                }
-                $("#module_ids").val(item_ids);
-            });*/
 
             $(".del").click(function(){
 
@@ -168,9 +164,60 @@
             });
 
 
-        })
+            /* state checkbox */
+             $('#state-all-pick').click(function () {
+                if ($(this).is(':checked')) {
+                    $("input:checkbox.module-status-tag").prop("checked", true);
+                } else {
+                    $("input:checkbox:checked.module-status-tag").attr("checked", false);
+                }
+            });
 
-    
+
+             /* save positoin */
+            $("#save_position_btn").click(function(){
+
+
+                item_ids = collect_module_ids_with_order();
+                if(item_ids==''){
+                    alert('没有要排序的内容');
+                    return false;
+                }
+
+                var $btn = $(this).button('loading');
+                $("#box_ids").val(item_ids);
+
+                $('#form_positoin').submit();    
+
+            });
+
+            /* save position form */
+            var options = {
+                success:  function(responseText, statusText){
+                    $("#save_position_btn").button('reset');
+
+                    if(responseText.status=="success"){
+                       $().toastmessage('showSuccessToast', '操作成功');
+                    } else {
+                        $().toastmessage('showErrorToast', "操作失败");
+                    }
+                }
+            };
+            $('#form_positoin').ajaxForm(options);
+
+        });
+
+
+        function collect_module_ids_with_order(){
+                children = $("#sortable").children();
+                ret = ''
+                for(i=0;i<children.length;i++){
+                    child = children[i];
+                    ret += $(child).attr('value')+',';
+                }
+                return ret.substring(0, ret.length-1);
+        }
+        
 </script>
 
     <script src="{{ STATIC_URL }}select2/select2.js"></script>
