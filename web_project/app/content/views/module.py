@@ -88,6 +88,21 @@ def update_status(request):
 @login_required
 def update_position(request):
     if request.method == 'POST':
+
+        box_ids = request.POST.get('box_ids')
+        if box_ids:
+            box_ids = box_ids.split(',')
+        else:
+            box_ids = []
+
+        box_ids.reverse()
+        position = 1
+        for box_id in box_ids:
+            box = Box.objects.get(id=box_id)
+            box.position = position
+            position += 1
+            box.save()
+
         response = {'status': 'success'}
         return HttpResponse(json.dumps(response), content_type="application/json")
     else:

@@ -194,7 +194,8 @@
             /* save position form */
             var options = {
                 success:  function(responseText, statusText){
-                    $("#save_position_btn").button('reset');
+                    
+                    setTimeout(function () {$("#save_position_btn").button('reset')}, 1000);
 
                     if(responseText.status=="success"){
                        $().toastmessage('showSuccessToast', '操作成功');
