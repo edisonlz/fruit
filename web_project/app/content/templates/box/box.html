@@ -43,7 +43,7 @@
 
                     
                     <button id="save_position_btn" type="button" id="myButton" data-loading-text="Loading..." 
-                        class="btn btn-danger" autocomplete="off">
+                        class="btn btn-danger disabled" autocomplete="off">
                         保存顺序
                     </button>
 
@@ -143,8 +143,10 @@
                 stop: function(event, ui) {
                     console.log("Start position: " + ui.item.startPos);
                     console.log("New position: " + ui.item.index());
-                }
 
+                    if(ui.item.startPos!=ui.item.index())
+                        $("#save_position_btn").removeClass("disabled");
+                }
 
             });
 

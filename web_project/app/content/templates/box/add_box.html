@@ -92,7 +92,7 @@
         // if the ajaxForm method was passed an Options Object with the dataType
         // property set to 'json' then the first argument to the success callback
         // is the json data object returned by the server
-        if(responseText.status=="success"){
+        if(responseText.status=="showToast"){
             $().toastmessage('showSuccessToast', '操作成功');
             setTimeout(function () {location.reload()}, 1000);
         } else {
