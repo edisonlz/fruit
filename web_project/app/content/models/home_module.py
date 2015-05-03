@@ -8,14 +8,18 @@ from common import Status
 class BoxType(object):
     NORMAL = 1
     HEADER_SHOW = 0
+    ADV = 2
+    
     TYPE_HASH = {
         NORMAL: u'普通盒子',
-        HEADER_SHOW: u'轮播图'
+        HEADER_SHOW: u'轮播图',
+        ADV : "整条广告",
     }
 
     TYPES = [
         (NORMAL, u'普通盒子'),
         (HEADER_SHOW, u'轮播图'),
+        (ADV, u'整条广告'),
     ]
 
     @classmethod
