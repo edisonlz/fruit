@@ -32,9 +32,14 @@ def update_box_position(request):
 @login_required
 def cms_module(request):
     if request.method == 'GET':
+        boxes = Box.objects.filter(is_delete=False).order_by('-position')
+        return render(request, 'base.html', {
+            'modules': boxes,
+        })
 
-        navigation_list = ["内容管理", "抽屉列表"]
-
+@login_required
+def index(request):
+    if request.method == 'GET':
         boxes = Box.objects.filter(is_delete=False).order_by('-position')
         return render(request, 'base2.html', {
             'modules': boxes,
