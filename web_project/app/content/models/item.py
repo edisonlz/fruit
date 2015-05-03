@@ -5,14 +5,12 @@ from django.db.models import Max
 from sorl.thumbnail.fields import ImageWithThumbnailsField
 import uuid
 from home_module import Box
+from common import BaseModel
 
-class ItemCategory(models.Model):
+class ItemCategory(BaseModel):
 
     title = models.CharField(max_length=100, default=u'标题')
-    created_at = models.DateTimeField(verbose_name=u'创建时间', auto_now_add=True)
-    updated_at = models.DateTimeField(verbose_name=u'更新时间', auto_now=True)
-    is_delete = models.BooleanField(verbose_name=u'删除标记', default=False, db_index=True)
-
+    
     class Meta:
         app_label = "content"
 
@@ -34,16 +32,12 @@ class PromoteType(object):
         return TYPE_HASH.get(itype)
 
 
-class ItemPromote(models.Model):
+class ItemPromote(BaseModel):
 
     title = models.CharField(max_length=100, default=u'标题')
     promote_rate  = models.FloatField(verbose_name="促销利率")
     promote_type = models.IntegerField(verbose_name="促销类型",choices=PromoteType.TYPES,default=PromoteType.DISCOUNT)
 
-    created_at = models.DateTimeField(verbose_name=u'创建时间', auto_now_add=True)
-    updated_at = models.DateTimeField(verbose_name=u'更新时间', auto_now=True)
-    is_delete = models.BooleanField(verbose_name=u'删除标记', default=False, db_index=True)
-    
 
     class Meta:
     	verbose_name = u"促销类型"

@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 import json
-from app.content.models import Box
+from app.content.models import Box, BoxType
 from django.db import transaction
 
 
@@ -28,13 +28,33 @@ def update_box_position(request):
         return HttpResponse(json.dumps(response), content_type="application/json")
 
 
+@login_required
+def cms_box_create(request):
+    if request.method == 'POST':
+        box_type = request.POST.get("box_type")
+        title = request.POST.get("title")
+        icount = request.POST.get("icount")
+
+        box = Box()
+        box.box_type = box_type
+        box.title = title
+        box.iner_count = icount
+        box.save()
+
+        response = {'status': 'success'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
+    else:
+        response = {'status': 'fail'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
 
 @login_required
 def cms_box(request):
     if request.method == 'GET':
         boxes = Box.objects.filter(is_delete=False).order_by('-position')
         return render(request, 'box/box.html', {
-            'modules': boxes,
+            'boxes': boxes,
+            'box_types': BoxType.TYPES
         })
 
 @login_required

@@ -11,36 +11,38 @@ class Migration(SchemaMigration):
         # Adding model 'Box'
         db.create_table(u'content_box', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(default=u'\u6807\u9898', max_length=100)),
-            ('position', self.gf('django.db.models.fields.IntegerField')(default=0, db_index=True)),
             ('state', self.gf('django.db.models.fields.IntegerField')(default=0, max_length=2, db_index=True)),
-            ('iner_count', self.gf('django.db.models.fields.IntegerField')(default=12)),
-            ('box_type', self.gf('django.db.models.fields.IntegerField')(default=1, db_index=True)),
             ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
             ('is_delete', self.gf('django.db.models.fields.BooleanField')(default=False, db_index=True)),
+            ('title', self.gf('django.db.models.fields.CharField')(default=u'\u6807\u9898', max_length=100)),
+            ('position', self.gf('django.db.models.fields.IntegerField')(default=0, db_index=True)),
+            ('iner_count', self.gf('django.db.models.fields.IntegerField')(default=12)),
+            ('box_type', self.gf('django.db.models.fields.IntegerField')(default=1, db_index=True)),
         ))
         db.send_create_signal('content', ['Box'])
 
         # Adding model 'ItemCategory'
         db.create_table(u'content_itemcategory', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(default=u'\u6807\u9898', max_length=100)),
+            ('state', self.gf('django.db.models.fields.IntegerField')(default=0, max_length=2, db_index=True)),
             ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
             ('is_delete', self.gf('django.db.models.fields.BooleanField')(default=False, db_index=True)),
+            ('title', self.gf('django.db.models.fields.CharField')(default=u'\u6807\u9898', max_length=100)),
         ))
         db.send_create_signal('content', ['ItemCategory'])
 
         # Adding model 'ItemPromote'
         db.create_table(u'content_itempromote', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(default=u'\u6807\u9898', max_length=100)),
-            ('promote_rate', self.gf('django.db.models.fields.FloatField')()),
-            ('promote_type', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('state', self.gf('django.db.models.fields.IntegerField')(default=0, max_length=2, db_index=True)),
             ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
             ('is_delete', self.gf('django.db.models.fields.BooleanField')(default=False, db_index=True)),
+            ('title', self.gf('django.db.models.fields.CharField')(default=u'\u6807\u9898', max_length=100)),
+            ('promote_rate', self.gf('django.db.models.fields.FloatField')()),
+            ('promote_type', self.gf('django.db.models.fields.IntegerField')(default=0)),
         ))
         db.send_create_signal('content', ['ItemPromote'])
 
@@ -74,6 +76,7 @@ class Migration(SchemaMigration):
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_delete': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_index': 'True'}),
+            'state': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '2', 'db_index': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'default': "u'\\u6807\\u9898'", 'max_length': '100'}),
             'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
         },
@@ -84,6 +87,7 @@ class Migration(SchemaMigration):
             'is_delete': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_index': 'True'}),
             'promote_rate': ('django.db.models.fields.FloatField', [], {}),
             'promote_type': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'state': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '2', 'db_index': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'default': "u'\\u6807\\u9898'", 'max_length': '100'}),
             'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
         }
