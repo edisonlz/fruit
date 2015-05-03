@@ -56,8 +56,6 @@ class Item(models.Model):
 
     title = models.CharField(max_length=100, default=u'标题')
 
-    box = models.ForeignKey(Box)
-
     categroy = models.ForeignKey(ItemCategory,verbose_name=u'分类')
     promote = models.ForeignKey(ItemPromote,verbose_name=u'促销',null=True,blank=True)
 
@@ -67,13 +65,33 @@ class Item(models.Model):
 
 	#usage:
 	# info['screenshots'] = game.get_screen_shots(obj,web=web)
+    # images/app/screen/  ln to outside of project
     show_image = ImageWithThumbnailsField(
         upload_to=lambda ss, name: "images/app/screen/%s.%s" % (uuid.uuid4(), name.split('.')[-1]), blank=False,
         null=False,
         thumbnail={'size': (480, 320), 'extension': 'jpg'},
         extra_thumbnails={
             'phone': {'size': (480, 320), 'extension': 'jpg'}
-        }, )
+        }, verbose_name=u"展示图")
+
+
+    adv_image = ImageWithThumbnailsField(
+        upload_to=lambda ss, name: "images/app/screen/%s.%s" % (uuid.uuid4(), name.split('.')[-1]), blank=False,
+        null=False,
+        thumbnail={'size': (480, 320), 'extension': 'jpg'},
+        extra_thumbnails={
+            'phone': {'size': (480, 320), 'extension': 'jpg'}
+        }, verbose_name=u"广告图")
+
+
+    head_image = ImageWithThumbnailsField(
+        upload_to=lambda ss, name: "images/app/screen/%s.%s" % (uuid.uuid4(), name.split('.')[-1]), blank=False,
+        null=False,
+        thumbnail={'size': (480, 320), 'extension': 'jpg'},
+        extra_thumbnails={
+            'phone': {'size': (480, 320), 'extension': 'jpg'}
+        }, verbose_name=u"轮播图")
+
 
     screen_shot_1 = ImageWithThumbnailsField(
         upload_to=lambda ss, name: "images/app/screen/%s.%s" % (uuid.uuid4(), name.split('.')[-1]), blank=False,
@@ -81,7 +99,7 @@ class Item(models.Model):
         thumbnail={'size': (480, 320), 'extension': 'jpg'},
         extra_thumbnails={
             'phone': {'size': (480, 320), 'extension': 'jpg'}
-        }, )
+        }, verbose_name=u"详情图1")
 
     screen_shot_2 = ImageWithThumbnailsField(
         upload_to=lambda ss, name: "images/app/screen/%s.%s" % (uuid.uuid4(), name.split('.')[-1]), blank=False,
@@ -89,7 +107,7 @@ class Item(models.Model):
         thumbnail={'size': (480, 320), 'extension': 'jpg'},
         extra_thumbnails={
             'phone': {'size': (480, 320), 'extension': 'jpg'}
-        }, )
+        }, verbose_name=u"详情图2" )
 
     screen_shot_3 = ImageWithThumbnailsField(
         upload_to=lambda ss, name: "images/app/screen/%s.%s" % (uuid.uuid4(), name.split('.')[-1]), blank=False,
@@ -97,7 +115,7 @@ class Item(models.Model):
         thumbnail={'size': (480, 320), 'extension': 'jpg'},
         extra_thumbnails={
             'phone': {'size': (480, 320), 'extension': 'jpg'}
-        }, )
+        }, verbose_name=u"详情图3" )
 
     screen_shot_4 = ImageWithThumbnailsField(
         upload_to=lambda ss, name: "images/app/screen/%s.%s" % (uuid.uuid4(), name.split('.')[-1]), blank=False,
@@ -105,7 +123,7 @@ class Item(models.Model):
         thumbnail={'size': (480, 320), 'extension': 'jpg'},
         extra_thumbnails={
             'phone': {'size': (480, 320), 'extension': 'jpg'}
-        }, )
+        }, verbose_name=u"详情图4" )
 
 
     created_at = models.DateTimeField(verbose_name=u'创建时间', auto_now_add=True)
@@ -119,6 +137,14 @@ class Item(models.Model):
     		return (self.promote.promote_type,self.promote.promote_rate * self.price)
 
 
+class BoxItem(models.Model):
 
+    box = models.ForeignKey(Box)
+    item = models.ForeignKey(Item)
+
+    class Meta:
+        verbose_name = u"盒子水果"
+        verbose_name_plural = verbose_name
+        app_label = "content"
 
 
