@@ -47,7 +47,7 @@
       
       <form class="form-signin" method="post" action="{% url 'signin' %}">
         {% csrf_token %}
-        <h2 class="form-signin-heading">荔白-管理系统</h2>
+        <h2 class="form-signin-heading"><span class="glyphicon glyphicon-grain" aria-hidden="true"></span>&nbsp; 荔白-管理系统</h2>
         <label for="username" class="sr-only">账号</label>
         <input type="text" name="username" id="username" class="form-control" placeholder="账号" required autofocus>
         
