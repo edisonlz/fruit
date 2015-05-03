@@ -59,12 +59,12 @@
                 <tbody id="sortable">
                 {% for box in boxes %}
                     <tr class="sort-item" id="module_{{ box.id }}" value="{{ box.id }}">
-                        <td><input type="checkbox" class="module-status-tag"></td>
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ box.title }}</td>
-                        <td>{{ box.box_type_str }}</td>
-                        <td>{{ module.iner_count }}</td>
-                        <td>
+                        <td style="width: 10px;"><input type="checkbox" class="module-status-tag"></td>
+                        <td style="width: 60px;">{{ forloop.counter }}</td>
+                        <td style="width: 180px;"> {{ box.title }}</td>
+                        <td style="width: 100px;">{{ box.box_type_str }}</td>
+                        <td style="width: 100px;">{{ module.iner_count }}</td>
+                        <td style="width: 80px;">
                             {{ box.status_str }}
                         </td>
                         <td colspan="1">
