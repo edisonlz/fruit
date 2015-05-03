@@ -7,7 +7,7 @@ from django.http import HttpResponse
 import json
 from app.content.models import Box, BoxType
 from django.db import transaction
-
+from app.content.models import Status
 
 @login_required
 def update_box_position(request):
@@ -60,5 +60,27 @@ def cms_box(request):
 @login_required
 def index(request):
     return render(request, 'base.html', {})
+ 
 
+@login_required
+def status(request):
+
+    response = []
+    for state in Status.STATUS:
+        response.append({"value":state[0] , "text": state[1]})
+
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+@login_required
+def update_status(request):
+
+    pk =  request.POST.get("pk")
+    value = int(request.POST.get("value")[0])
+    
+    box = Box.objects.get(id=pk)
+    box.state = value
+    box.save()
+    
+    response = {'status': 'success'}
+    return HttpResponse(json.dumps(response), content_type="application/json")
 

@@ -17,8 +17,8 @@ class Status(object):
     ]
 
     @property
-    def status_str(self):
-        return self.STATUS_HASH.get(self.status)
+    def state_str(self):
+        return self.STATUS_HASH.get(self.state)
 
 
 class BaseModel(models.Model,Status):

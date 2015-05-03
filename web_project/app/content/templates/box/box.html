@@ -59,13 +59,22 @@
                 <tbody id="sortable">
                 {% for box in boxes %}
                     <tr class="sort-item" id="module_{{ box.id }}" value="{{ box.id }}">
-                        <td style="width: 10px;"><input type="checkbox" class="module-status-tag"></td>
+                        <td style="width: 10px;">
+                            <input type="checkbox" class="module-status-tag">
+                        </td>
                         <td style="width: 60px;">{{ forloop.counter }}</td>
                         <td style="width: 180px;"> {{ box.title }}</td>
                         <td style="width: 100px;">{{ box.box_type_str }}</td>
-                        <td style="width: 100px;">{{ module.iner_count }}</td>
+                        <td style="width: 100px;">{{ box.iner_count }}</td>
                         <td style="width: 80px;">
-                            {{ box.status_str }}
+                         
+
+                        <a href="#" id="state_group" data-type="select"
+                            data-pk="{{box.id}}" data-value="{{  box.state }}" 
+                            data-source="/content/status" 
+                            data-title="选择状态" class="editable editable-click editable-open"  style="background-color: rgba(0, 0, 0, 0);">
+                            {{ box.state_str }}
+                       </a>
                         </td>
                         <td colspan="1">
                         
@@ -122,10 +131,14 @@
                 stop: function(event, ui) {
                     console.log("Start position: " + ui.item.startPos);
                     console.log("New position: " + ui.item.index());
-                    // if (ui.item.startPos != ui.item.index()){
-                    //     $("#save_position_btn").removeClass("disabled");
-                    // }
                 }
+
+
+            });
+
+            $('#state_group').editable({
+                    url: '/content/update_status',
+                    showbuttons: false
             });
 
             /*function collect_module_ids_with_order(){
@@ -157,17 +170,6 @@
 
         })
 
-
-        $(function(){
-            $.fn.editable.defaults.mode =  'popup';
-            $('.select_pick').editable({
-                showbuttons: false,
-                source: [
-                      {value: 1, text: '开启'},
-                      {value: 0, text: '关闭'}
-                   ]
-            });
-        });
     
 </script>
 
