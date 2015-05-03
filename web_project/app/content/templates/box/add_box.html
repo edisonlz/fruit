@@ -1,100 +1,38 @@
-<div id="myModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">创建首页抽屉</h3>
-    </div>
-
-    <div class="modal-body main_page">
-        <form role="form" method="post" action="{% url "iphone_add_module"  %}" id="add-new-module" class="validate_module">
-            <table class="table table-hover table-striped table-bordered" style="width: 100%">
-                <tbody>
-{#                <tr>#}
-{#                    <td style="width: 35%">模块ID</td>#}
-{#                    <td>#}
-{#                        <input id="box_id" name="box_id">#}
-{#                    </td>#}
-{#                </tr>#}
-                <tr>
-                    <td style="width: 35%"> 抽屉类型</td>
-                    <td>
-                        <select class="form-control" id="box_type" name="box_type" placeholder="">
+<div class="modal fade" id="boxModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="exampleModalLabel">新增首页盒子</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="recipient-name" class="control-label">盒子类型:</label>
+            <select class="form-control" id="box_type" name="box_type" placeholder="">
                             {% for k,v in box_type_list %}
                                 <option value="{{ k }}">{{ v }}</option>
                             {% endfor %}
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="width: 30%"> 关联推荐池抽屉</td>
-                    <td>
-                        <select class="form-control" id="box_type" name="attached_common_box_id" placeholder="">
-                            <option value="0">无</option>
-                            {% for box in common_boxes %}
-                                <option value="{{ box.id }}">{{ box.title }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                </tr>
-                <tr id="module_title_div">
-                    <td style="width: 35%"><span style="color: orangered">*</span>抽屉标题</td>
-                    <td><input id="title" name="title" placeholder=""></td>
-                </tr>
-                <tr>
-                    <td><span style="color: orangered">*</span>手机端视频个数</td>
-                    <td><input id="video_count_for_phone" name="video_count_for_phone" placeholder=""></td>
-                </tr>
+            </select>
+          </div>
 
-{#                <tr>#}
-{#                    <td>Pad端视频个数</td>#}
-{#                    <td><input id="video_count_for_pad" name="video_count_for_pad" placeholder=""></td>#}
-{#                </tr>#}
-{#                <tr id="cid_div">#}
-{#                    <td for="cid">频道跳转</td>#}
-{#                    <td><select class="form-control" id="cid" name="cid">#}
-{#                            <option value="0">无</option>#}
-{#                            {% for cid_detail in cid_details %}#}
-{#                                <option value="{{ cid_detail.cid }}">{{ cid_detail.title }}</option>#}
-{#                            {% endfor %}#}
-{#                         </select>#}
-{#                    </td>#}
-{#                </tr>#}
-                <tr class="control-group" id="image_div">
-                    <td><label>冠名图片(v4.1+)</label><label style="font-size:12px;"> (高度40px,宽度不超过70px)</label></td>
-                    <td>
-                        <div class="controls">
-                <span id="normal-button" class="btn btn-success fileinput-button">
-                     <span>+ 上传截图...</span>
-                     <input id="normal-upload" type="file" name="files[]" multiple>
-                </span>
+          <div class="form-group">
+            <label for="message-text" class="control-label">抽屉标题:</label>
+            <input id="title" name="title" placeholder="" type="text" />
+          </div>
 
-                            <div id="normal-success" class="alert alert-success" style="display: none;">
-                                <button type="button" class="close">&times;</button>
-                                <img id='normal-content' src="" class="img-polaroid"
-                                     style="max-width: 150px; max-height: 100px;">
-                            </div>
-                            <div id="normal-progress" class="progress progress-success progress-striped  active"
-                                 style="display: none">
-                                <div class="bar"></div>
-                            </div>
-                            <input type='hidden' class='in_validate' id='normal-input' name='normal_img' value="" height="100" width="100"/>
-                        </div>
-                    </td>
-                </tr>
-                <tr id="image_link_div">
-                    <td style="width: 35%"><label for="video_count">冠名图片跳转url(v4.1+)</label><label style="font-size: 12px;"></label>
-                    </td>
-                    <td><input id="video_count" name="image_link" placeholder=""></td>
-                </tr>
-                </tbody>
-            </table>
-            <button type="submit" class="btn btn-success">创建</button>
-            <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+
+          <div class="form-group">
+            <label for="message-text" class="control-label">内容数量:</label>
+            <input id="title" name="icount" placeholder="" type="text" />
+          </div>
+
         </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary">创建</button>
+      </div>
     </div>
-
-    <div class="modal-footer">
-
-    </div>
-
+  </div>
 </div>
-
