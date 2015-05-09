@@ -22,5 +22,6 @@ urlpatterns = patterns(
     url(regex='^address/update_position$', view='address.update_position', name=u'cms_address_update_position'),
     url(regex='^address/del$', view='address.delete', name=u'cms_address_del'),
     url(regex='^address/update$', view='address.cms_address_update', name=u'cms_address_update'),
+    url(regex='^address/map$', view='address.map', name=u'cms_address_map'),
 
 )

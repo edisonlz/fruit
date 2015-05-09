@@ -9,6 +9,8 @@ import datetime
 
 class ShoppingAddress(BaseModel):   
 
+    city_code = models.CharField(verbose_name=u'城市code',max_length=20)
+    city= models.CharField(verbose_name=u'城市名称',max_length=20)
     name = models.CharField(verbose_name=u'名称',max_length=20)
     address = models.CharField(verbose_name=u'名称',max_length=50)
     phone = models.CharField(verbose_name=u'名称',max_length=15)

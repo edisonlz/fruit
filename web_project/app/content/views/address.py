@@ -14,10 +14,16 @@ from app.content.models import Status
 def cms_address(request):
 
     if request.method == 'GET':
-        addresses = ShoppingAddress.objects.filter(is_delete=False).order_by('-position')
+
+        key = request.GET.get("key")
+        if key:
+            addresses = ShoppingAddress.objects.filter(is_delete=False,name__contains="%s" % key).order_by('-position')
+        else:
+            addresses = ShoppingAddress.objects.filter(is_delete=False).order_by('-position')
+
         return render(request, 'address/address.html', {
             'addresses': addresses,
-            'menu' : 2
+            'key' : key
         })
 
 @login_required
@@ -27,6 +33,8 @@ def cms_address_create(request):
         address = request.POST.get("address")
         phone = request.POST.get("phone")
         onlinetime = request.POST.get("onlinetime")
+        city_code = request.POST.get("city_code")
+        city = request.POST.get("city")
 
         ad = ShoppingAddress()
         ad.name = name
@@ -34,6 +42,9 @@ def cms_address_create(request):
         ad.address = address
         ad.onlinetime = onlinetime
         ad.status = Status.StatusOpen
+        ad.city_code = city_code
+        ad.city = city
+        
         ad.save()
 
         response = {'status': 'success'}
@@ -50,12 +61,16 @@ def cms_address_update(request):
         address = request.POST.get("address")
         phone = request.POST.get("phone")
         onlinetime = request.POST.get("onlinetime")
+        city_code = request.POST.get("city_code")
+        city = request.POST.get("city")
 
         ad = ShoppingAddress.objects.get(id=pk)
         ad.name = name
         ad.phone = phone
         ad.address = address
         ad.onlinetime = onlinetime
+        ad.city_code = city_code
+        ad.city = city
         ad.save()
 
         response = {'status': 'success'}
@@ -123,4 +138,16 @@ def delete(request):
     else:
         response = {'status': 'fail'}
         return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+
+@login_required
+def map(request):
+
+    pk =  request.GET.get("id")
+    address = ShoppingAddress.objects.get(id=pk)
+
+    return render(request, 'address/map.html', {
+            'address' : address
+        })
 
