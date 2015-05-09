@@ -7,27 +7,42 @@
         
       </div>
       <div class="modal-body">
-        <form id="form_add_box" method="post" action="/content/box/create">
-          <div class="form-group form-inline">
-            <label for="recipient-name" class="control-label">盒子类型:</label>
-            <select class="form-control" id="box_type" name="box_type" placeholder="">
-                            {% for k,v in box_types %}
-                                <option value="{{ k }}">{{ v }}</option>
-                            {% endfor %}
-            </select>
+        <form id="form_add_address" method="post" action="/content/address/create">
+
+          <div class="form-group">
+            <label class="sr-only" for="name"></label>
+            <div class="input-group">
+              <div class="input-group-addon">名称</div>
+              <input type="text" class="form-control" name="name" id="name" placeholder="">
+            </div>
           </div>
 
-          <div class="form-group form-inline">
-            <label for="message-text" class="control-label">抽屉标题:</label>
-            <input id="title" class="form-control" name="title" placeholder="" type="text" />
+          <div class="form-group">
+            <label class="sr-only" for="address"></label>
+            <div class="input-group">
+              <div class="input-group-addon">地址</div>
+              <input type="text" class="form-control" name="address" id="address" placeholder="">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="sr-only" for="phone"></label>
+            <div class="input-group">
+              <div class="input-group-addon">联系电话</div>
+              <input type="text" class="form-control" name="phone" id="phone" placeholder="">
+            </div>
+          </div>
+
+          <div class="form-group">
+            
+            <div class="input-group">
+              <div class="input-group-addon">上线时间</div>
+                <input size="16" type="text" class="form-control form_datetime"  style="width:200px" id="onlinetime" name="onlinetime" value="" >
+              </div>
           </div>
 
 
-          <div class="form-group form-inline">
-            <label for="message-text" class="control-label">内容数量:</label>
-            <input id="icount"  class="form-control" name="icount" placeholder="" type="text" />
-          </div>
-
+        
         </form>
       </div>
       <div class="modal-footer">
@@ -46,13 +61,24 @@
             success:       showResponse  // post-submit callback
         };
 
-        $('#form_add_box').ajaxForm(options);
+        $('#form_add_address').ajaxForm(options);
 
         $('#btn_create').click(function(){
-            $('#form_add_box').submit();
+            $('#form_add_address').submit();
         });
-        
 
+
+         $(".form_datetime").datetimepicker({
+              format: "yyyy-mm-dd",
+                language:  'zh-CN',  
+                weekStart: 1,  
+                todayBtn:  1,  
+                autoclose: 1,  
+                todayHighlight: 1,  
+                startView: 2,  
+                minView: 2,  
+                forceParse: 0  
+          });
     });
 
 

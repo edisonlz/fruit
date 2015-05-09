@@ -20,6 +20,11 @@ class ShoppingAddress(BaseModel):
         verbose_name_plural = verbose_name
         app_label = "content"
 
+    @property
+    def onlinetime_str(self):
+        return self.onlinetime.strftime("%Y/%m/%d")
+
+
 
     def is_new(self):
     	"""上线1个月内==new"""
