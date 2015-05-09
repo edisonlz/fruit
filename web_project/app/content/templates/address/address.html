@@ -96,7 +96,7 @@
                                     修改</a>
 
                                 <a class="btn btn-small btn-danger btn-table del"
-                                   title="删除">
+                                   title="删除" onclick=del_item({{address.id}}) >
                                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> 删除
                                 </a>
                         </td>
@@ -156,14 +156,6 @@
             });
 
 
-            $(".del").click(function(){
-
-                var statu = confirm("确认删除吗?");
-                if(!statu){
-                    return false;
-                }
-            });
-
 
              /* save positoin */
             $("#save_position_btn").click(function(){
@@ -182,6 +174,7 @@
 
             });
 
+
             /* save position form */
             var options = {
                 success:  function(responseText, statusText){
@@ -198,6 +191,24 @@
             $('#form_positoin').ajaxForm(options);
 
         });
+
+        function del_item(pk){
+
+            var statu = confirm("确认删除吗?");
+                if(!statu){
+                    return false;
+                }
+
+            $.post("/content/address/del",{"id":pk},function(data, textStatus, jqXHR){
+                if(data.status=="success"){
+                    $().toastmessage('showSuccessToast', '操作成功');
+                    setTimeout(function () {location.reload()}, 1000);
+                } else {
+                    $().toastmessage('showErrorToast', "操作失败");
+                }
+            });
+
+        }
 
 
         function collect_module_ids_with_order(){

@@ -36,10 +36,12 @@ def cms_address_create(request):
 
 @login_required
 def cms_address(request):
+
     if request.method == 'GET':
         addresses = ShoppingAddress.objects.filter(is_delete=False).order_by('-position')
         return render(request, 'address/address.html', {
             'addresses': addresses,
+            'menu' : 2
         })
 
 
@@ -82,4 +84,20 @@ def update_position(request):
         return HttpResponse(json.dumps(response), content_type="application/json")
 
 
+@login_required
+def delete(request):
+
+    if request.method == 'POST':
+
+        pk =  request.POST.get("id")
+
+        box = ShoppingAddress.objects.get(id=pk)
+        box.is_delete = True
+        box.save()
+
+        response = {'status': 'success'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
+    else:
+        response = {'status': 'fail'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
 

@@ -19,5 +19,7 @@ urlpatterns = patterns(
     url(regex='^address/create$', view='address.cms_address_create', name=u'cms_address_create'),
     url(regex='^address/update_status$', view='address.update_status', name=u'cms_address_update_status'),
     url(regex='^address/update_position$', view='address.update_position', name=u'cms_address_update_position'),
+    url(regex='^address/del$', view='address.delete', name=u'cms_address_del'),
+    
 	
 )
