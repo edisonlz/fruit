@@ -4,6 +4,8 @@ from wi_cache.base import CachingManager
 from django.db.models import Max
 from common import Status
 from common import BaseModel
+import logging
+import traceback
 
 class BoxType(object):
     NORMAL = 1
@@ -34,6 +36,7 @@ class Box(BaseModel):
     iner_count = models.IntegerField(verbose_name=u"内部容器个数", default=12)
     box_type = models.IntegerField(verbose_name=u"模块类型", choices=BoxType.TYPES,default=BoxType.NORMAL, db_index=True)
 
+
     objects = CachingManager()
 
     class Meta:
@@ -44,6 +47,32 @@ class Box(BaseModel):
     @property
     def box_type_str(self):
         return BoxType.to_s(int(self.box_type))
+
+
+    def deletebox(self):
+        self.is_delete=1
+        self.save()
+
+
+    @classmethod
+    def delete_box(cls,boxid):
+
+        try:
+            box = cls.objects.get(pk=boxid)
+
+            box.deletebox()
+
+            return True
+
+        except:
+
+            logging.error(traceback.format_exc())
+            return False
+
+
+
+
+
 
 
 

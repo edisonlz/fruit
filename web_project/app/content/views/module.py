@@ -48,6 +48,27 @@ def cms_box_create(request):
         return HttpResponse(json.dumps(response), content_type="application/json")
 
 
+
+@login_required
+def cms_box_delete(request):
+
+    if request.method == 'POST':
+
+        box_id = request.POST.get("box_id")
+
+        flage = Box.delete_box(box_id)
+        if flage:
+            response = {'status': 'success',"box_id":box_id}
+        else:
+            response = {'status': 'error'}
+
+        return HttpResponse(json.dumps(response), content_type="application/json")
+    else:
+        response = {'status': 'fail'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+
 @login_required
 def cms_box(request):
     if request.method == 'GET':

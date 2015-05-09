@@ -97,7 +97,7 @@
                                     修改</a>
 
                                 <a class="btn btn-small btn-danger btn-table del"
-                                   title="删除">
+                                   title="删除" >
                                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> 删除
                                 </a>
                         </td>
@@ -163,6 +163,36 @@
                 if(!statu){
                     return false;
                 }
+
+                var parent = $(this).parent().parent();
+                var box_id = parent.attr("value");
+
+                $.ajax({
+
+                     type: 'POST',
+
+                     url: "/content/box/delete" ,
+
+                    data: {"box_id":box_id},
+
+                    success: function(data){
+
+
+                        if (data.status =="success")
+                        {
+                           //$("tr[value="+data.box_id+"]").hide();
+                           location.reload();
+                        }
+                        else{
+                            alert(data.status);
+                        }
+                    } ,
+
+                    dataType: "json"
+
+                });
+
+
             });
 
 

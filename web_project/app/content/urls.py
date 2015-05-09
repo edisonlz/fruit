@@ -6,6 +6,7 @@ urlpatterns = patterns(
     url(regex='^index$', view='module.index', name=u'cms_index'),
     url(regex='^box$', view='module.cms_box', name=u'cms_box_index'),
     url(regex='^box/create$', view='module.cms_box_create', name=u'cms_box_create'),
+    url(regex='^box/delete$', view='module.cms_box_delete', name=u'cms_box_delete'),
     url(regex='^status$', view='module.status', name=u'cms_status'),
     url(regex='^update_status$', view='module.update_status', name=u'cms_update_status'),
     url(regex='^update_position$', view='module.update_position', name=u'cms_update_position'),
