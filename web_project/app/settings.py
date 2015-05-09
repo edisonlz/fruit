@@ -43,7 +43,7 @@ def load_settings(settings, debug=True, **kwargs):
             'STATICFILES_DIRS': (
                 os.path.join(PROJECT_ROOT, 'statics'),
             ),
-            "STATIC_ROOT": os.path.join(PROJECT_ROOT, 'statics'),
+            #"STATIC_ROOT": os.path.join(PROJECT_ROOT, 'statics'),
             'TEMPLATE_CONTEXT_PROCESSORS': (
                 "django.core.context_processors.debug",
                 "django.core.context_processors.i18n",
