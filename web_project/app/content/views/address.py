@@ -16,14 +16,20 @@ def cms_address(request):
     if request.method == 'GET':
 
         key = request.GET.get("key")
+        city = request.GET.get("city")
+
+        addresses = ShoppingAddress.objects.filter(is_delete=False).order_by('-position')
+
         if key:
-            addresses = ShoppingAddress.objects.filter(is_delete=False,name__contains="%s" % key).order_by('-position')
-        else:
-            addresses = ShoppingAddress.objects.filter(is_delete=False).order_by('-position')
+            addresses = addresses.filter(name__contains="%s" % key)
+        
+        if city:
+            addresses = addresses.filter(city=city)
 
         return render(request, 'address/address.html', {
             'addresses': addresses,
-            'key' : key
+            'key' : key,
+            'city':city
         })
 
 @login_required
