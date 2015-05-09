@@ -10,6 +10,15 @@ from django.db import transaction
 from app.content.models import Status
 
 
+@login_required
+def cms_address(request):
+
+    if request.method == 'GET':
+        addresses = ShoppingAddress.objects.filter(is_delete=False).order_by('-position')
+        return render(request, 'address/address.html', {
+            'addresses': addresses,
+            'menu' : 2
+        })
 
 @login_required
 def cms_address_create(request):
@@ -33,17 +42,31 @@ def cms_address_create(request):
         response = {'status': 'fail'}
         return HttpResponse(json.dumps(response), content_type="application/json")
 
-
 @login_required
-def cms_address(request):
+def cms_address_update(request):
+    if request.method == 'POST':
+        pk = request.POST.get("pk")
+        name = request.POST.get("name")
+        address = request.POST.get("address")
+        phone = request.POST.get("phone")
+        onlinetime = request.POST.get("onlinetime")
 
-    if request.method == 'GET':
-        addresses = ShoppingAddress.objects.filter(is_delete=False).order_by('-position')
-        return render(request, 'address/address.html', {
-            'addresses': addresses,
-            'menu' : 2
+        ad = ShoppingAddress.objects.get(id=pk)
+        ad.name = name
+        ad.phone = phone
+        ad.address = address
+        ad.onlinetime = onlinetime
+        ad.save()
+
+        response = {'status': 'success'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
+    else:
+        pk = request.GET.get("pk")
+        ad = ShoppingAddress.objects.get(id=pk)
+        return render(request, 'address/edit_address.html', {
+            'ad': ad,
         })
-
+        
 
 @login_required
 def update_status(request):

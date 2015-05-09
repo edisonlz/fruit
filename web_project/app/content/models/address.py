@@ -22,7 +22,7 @@ class ShoppingAddress(BaseModel):
 
     @property
     def onlinetime_str(self):
-        return self.onlinetime.strftime("%Y/%m/%d")
+        return self.onlinetime.strftime("%Y-%m-%d")
 
 
 

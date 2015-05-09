@@ -20,6 +20,6 @@ urlpatterns = patterns(
     url(regex='^address/update_status$', view='address.update_status', name=u'cms_address_update_status'),
     url(regex='^address/update_position$', view='address.update_position', name=u'cms_address_update_position'),
     url(regex='^address/del$', view='address.delete', name=u'cms_address_del'),
-    
-	
+    url(regex='^address/update$', view='address.cms_address_update', name=u'cms_address_update'),
+
 )
