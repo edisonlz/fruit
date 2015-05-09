@@ -16,7 +16,7 @@ def cms_address(request):
     if request.method == 'GET':
 
         key = request.GET.get("key")
-        city = request.GET.get("city")
+        city = request.GET.get("city","北京")
 
         addresses = ShoppingAddress.objects.filter(is_delete=False).order_by('-position')
 
