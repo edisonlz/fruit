@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 import json
-from app.content.models import Box, BoxType
+from app.content.models import Box, BoxType,BoxItem
 from django.db import transaction
 from app.content.models import Status
 
@@ -47,7 +47,33 @@ def cms_box_create(request):
         response = {'status': 'fail'}
         return HttpResponse(json.dumps(response), content_type="application/json")
 
+@login_required
+def cms_box_update(request):
 
+    if request.method == 'POST':
+
+        box_id = request.POST.get("box_id")
+        box_type = request.POST.get("box_type")
+        title = request.POST.get("title")
+        icount = request.POST.get("icount")
+
+        box = Box.objects.get(pk=int(box_id))
+        box.box_type = box_type
+        box.title = title
+        box.iner_count = int(icount)
+        box.save()
+
+        response = {'status': 'success'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
+    else:
+
+        box_id = request.GET.get("box_id")
+        box = Box.objects.get(pk=box_id)
+
+        return render(request, 'box/edit_box.html', {
+            'box': box,
+            'box_types': BoxType.TYPES,
+        })
 
 @login_required
 def cms_box_delete(request):
@@ -133,3 +159,122 @@ def update_position(request):
 
 
 
+
+
+
+@login_required
+def box_item_list(request):
+    """
+        获取盒子内容列表
+    """
+    if request.method == 'GET':
+
+        box_id = request.GET.get("box_id")
+
+        items = BoxItem.objects.filter(is_delete=False,box_id=box_id).order_by('-position')
+        return render(request, 'box/box_item_list.html', {
+            'boxitem': items,
+            "box_id":box_id,
+        })
+
+
+
+
+@login_required
+def add_item_to_box(request):
+    """
+        添加内容到某个盒子
+    """
+    if request.method == 'POST':
+
+        box_id = request.POST.get('box_id')
+        item_id = request.POST.get('item_id')
+
+        flage = BoxItem.addItem(box_id,item_id)
+
+        if flage:
+            response = {'status': 'success'}
+        else:
+            response = {'status': 'fail'}
+
+        return HttpResponse(json.dumps(response), content_type="application/json")
+    else:
+        response = {'status': 'fail'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+@login_required
+def delete_item_to_box(request):
+    """
+        删除内容到某个盒子
+    """
+    if request.method == 'POST':
+
+        box_id = request.POST.get('box_id')
+        item_id = request.POST.get('item_id')
+
+        flage = BoxItem.deleteItem(box_id,item_id)
+
+        if flage:
+            response = {'status': 'success'}
+        else:
+            response = {'status': 'fail'}
+
+
+        return HttpResponse(json.dumps(response), content_type="application/json")
+    else:
+        response = {'status': 'fail'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+
+@login_required
+def box_item_update_position(request):
+    if request.method == 'POST':
+
+        box_id = request.POST.get('box_id')
+        item_ids = request.POST.get("item_id")
+        if item_ids:
+            item_ids = item_ids.split(',')
+        else:
+            item_ids = []
+
+        # item_ids.reverse()
+        flage = BoxItem.updatePosition(box_id,item_ids)
+
+        if flage:
+            response = {'status': 'success'}
+        else:
+            response = {'status': 'fail'}
+
+        return HttpResponse(json.dumps(response), content_type="application/json")
+    else:
+        response = {'status': 'fail'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+
+@login_required
+def app_auto_complete(request):
+    """auto complete return format"""
+    #{ label: "Choice1", value: "value1" }
+    from item import Item
+    key = request.GET.get('key')
+
+    items = Item.objects.filter(title__icontains=key)
+
+
+    results = []
+    if items:
+
+        for item in items:
+            results.append({"label": item.title,
+                        "value": {"id": item.id, "title": item.title}
+                        })
+
+    # response={
+    #     "status":"success",
+    #     "data":results
+    # }
+
+    return HttpResponse(json.dumps(results), content_type="application/json")

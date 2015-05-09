@@ -72,10 +72,80 @@ class Box(BaseModel):
 
 
 
+class BoxItem(models.Model):
+
+    from item import Item
+
+    box = models.ForeignKey(Box)
+    item = models.ForeignKey(Item)
+    position = models.IntegerField(verbose_name=u'位置', default=0, db_index=True)
+    is_delete = models.IntegerField(verbose_name=u"状态",default=0)
+
+    class Meta:
+        verbose_name = u"盒子水果"
+        verbose_name_plural = verbose_name
+        app_label = "content"
 
 
+    @classmethod
+    def deleteItem(cls,boxid,itemid):
+
+        from item import Item
+
+        try:
+            box = Box.objects.get(pk=boxid)
+            item = Item.objects.get(pk=itemid)
+
+            boxitem = cls.objects.get(box=box,item=item)
+            boxitem.is_delete=1
+            boxitem.save()
+            return True
+        except:
+            logging.error(traceback.format_exc())
+            return False
+
+    @classmethod
+    def getBoxItemNum(cls,box):
+
+        items = cls.objects.filter(box=box)
+
+        return len(items)
+
+    @classmethod
+    def addItem(cls,boxid,itemid):
+
+        from item import Item
+
+        try:
+            box = Box.objects.get(pk=boxid)
+            item = Item.objects.get(pk=itemid)
+
+            position = cls.getBoxItemNum(box)
+            boxitem = cls.objects.get_or_create(box=box,item=item)
+            boxitem.position=position
+            boxitem.is_delete=0
+            boxitem.save()
+
+            return True
+        except:
+            logging.error(traceback.format_exc())
+            return False
 
 
+    @classmethod
+    def updatePosition(cls,box_id,item_ids):
 
+        try:
+            position = 1
+            for item_id in item_ids:
+                boxitem = cls.objects.get(box_id = box_id,item_id=item_id)
+                boxitem.position = position
+                position += 1
+                boxitem.save()
+
+            return True
+        except:
+            logging.error(traceback.format_exc())
+            return False
 
 
