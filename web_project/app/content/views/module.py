@@ -14,7 +14,7 @@ def update_box_position(request):
     if request.method == 'POST':
         box_ids = request.POST.get('item_ids')
         if box_ids:
-            item_ids = map(int, item_ids.split(',')) or []
+            item_ids = map(int, box_ids.split(',')) or []
             position = 1
             for item_id in reversed(item_ids):
 
@@ -54,12 +54,13 @@ def cms_box(request):
         boxes = Box.objects.filter(is_delete=False).order_by('-position')
         return render(request, 'box/box.html', {
             'boxes': boxes,
-            'box_types': BoxType.TYPES
+            'box_types': BoxType.TYPES,
+            "menu":3,
         })
 
 @login_required
 def index(request):
-    return render(request, 'base.html', {})
+    return render(request, 'base.html', {"menu":1})
  
 
 @login_required

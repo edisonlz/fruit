@@ -70,7 +70,7 @@
 
                 <tbody id="sortable">
                 {% for address in addresses %}
-                    <tr class="sort-item" id="module_{{ box.id }}" value="{{ box.id }}">
+                    <tr class="sort-item" id="module_{{ address.id }}" value="{{ address.id }}">
 
                         <td style="width: 60px;">{{ forloop.counter }}</td>
                         <td style="width: 100px;"> {{ address.name }}</td>
