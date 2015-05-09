@@ -46,6 +46,35 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('content', ['ItemPromote'])
 
+        # Adding model 'Item'
+        db.create_table(u'content_item', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('title', self.gf('django.db.models.fields.CharField')(default=u'\u6807\u9898', max_length=100)),
+            ('categroy', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['content.ItemCategory'])),
+            ('promote', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['content.ItemPromote'], null=True, blank=True)),
+            ('price', self.gf('django.db.models.fields.FloatField')()),
+            ('stock_price', self.gf('django.db.models.fields.FloatField')()),
+            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
+            ('is_delete', self.gf('django.db.models.fields.BooleanField')(default=False, db_index=True)),
+        ))
+        db.send_create_signal('content', ['Item'])
+
+        # Adding model 'ShoppingAddress'
+        db.create_table(u'content_shoppingaddress', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('state', self.gf('django.db.models.fields.IntegerField')(default=0, max_length=2, db_index=True)),
+            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
+            ('is_delete', self.gf('django.db.models.fields.BooleanField')(default=False, db_index=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=20)),
+            ('address', self.gf('django.db.models.fields.CharField')(max_length=50)),
+            ('phone', self.gf('django.db.models.fields.CharField')(max_length=15)),
+            ('position', self.gf('django.db.models.fields.IntegerField')(default=0, db_index=True)),
+            ('onlinetime', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+        ))
+        db.send_create_signal('content', ['ShoppingAddress'])
+
 
     def backwards(self, orm):
         # Deleting model 'Box'
@@ -56,6 +85,12 @@ class Migration(SchemaMigration):
 
         # Deleting model 'ItemPromote'
         db.delete_table(u'content_itempromote')
+
+        # Deleting model 'Item'
+        db.delete_table(u'content_item')
+
+        # Deleting model 'ShoppingAddress'
+        db.delete_table(u'content_shoppingaddress')
 
 
     models = {
@@ -68,6 +103,18 @@ class Migration(SchemaMigration):
             'is_delete': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_index': 'True'}),
             'position': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'}),
             'state': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '2', 'db_index': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'default': "u'\\u6807\\u9898'", 'max_length': '100'}),
+            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
+        },
+        'content.item': {
+            'Meta': {'object_name': 'Item'},
+            'categroy': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['content.ItemCategory']"}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_delete': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_index': 'True'}),
+            'price': ('django.db.models.fields.FloatField', [], {}),
+            'promote': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['content.ItemPromote']", 'null': 'True', 'blank': 'True'}),
+            'stock_price': ('django.db.models.fields.FloatField', [], {}),
             'title': ('django.db.models.fields.CharField', [], {'default': "u'\\u6807\\u9898'", 'max_length': '100'}),
             'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
         },
@@ -89,6 +136,19 @@ class Migration(SchemaMigration):
             'promote_type': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'state': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '2', 'db_index': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'default': "u'\\u6807\\u9898'", 'max_length': '100'}),
+            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
+        },
+        'content.shoppingaddress': {
+            'Meta': {'object_name': 'ShoppingAddress'},
+            'address': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_delete': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_index': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
+            'onlinetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'phone': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
+            'position': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'}),
+            'state': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '2', 'db_index': 'True'}),
             'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
         }
     }

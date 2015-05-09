@@ -1,0 +1,108 @@
+<div class="modal fade" id="boxModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="exampleModalLabel">新增提货点</h4>
+        
+      </div>
+      <div class="modal-body">
+        <form id="form_add_box" method="post" action="/content/box/create">
+          <div class="form-group form-inline">
+            <label for="recipient-name" class="control-label">盒子类型:</label>
+            <select class="form-control" id="box_type" name="box_type" placeholder="">
+                            {% for k,v in box_types %}
+                                <option value="{{ k }}">{{ v }}</option>
+                            {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group form-inline">
+            <label for="message-text" class="control-label">抽屉标题:</label>
+            <input id="title" class="form-control" name="title" placeholder="" type="text" />
+          </div>
+
+
+          <div class="form-group form-inline">
+            <label for="message-text" class="control-label">内容数量:</label>
+            <input id="icount"  class="form-control" name="icount" placeholder="" type="text" />
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button id="btn_create" type="button" class="btn btn-primary">创建</button>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+
+    // prepare the form when the DOM is ready
+    $(document).ready(function() {
+        var options = {
+            //target:        '#output1',   // target element(s) to be updated with server response
+            beforeSubmit:  showRequest,  // pre-submit callback
+            success:       showResponse  // post-submit callback
+        };
+
+        $('#form_add_box').ajaxForm(options);
+
+        $('#btn_create').click(function(){
+            $('#form_add_box').submit();
+        });
+        
+
+    });
+
+
+    // pre-submit callback
+    function showRequest(formData, jqForm, options) {
+        // formData is an array; here we use $.param to convert it to a string to display it
+        // but the form plugin does this for you automatically when it submits the data
+        // var queryString = $.param(formData);
+
+        // // jqForm is a jQuery object encapsulating the form element.  To access the
+        // // DOM element for the form do this:
+        // // var formElement = jqForm[0];
+
+        // alert('About to submit: \n\n' + queryString);
+
+        // // here we could return false to prevent the form from being submitted;
+        // // returning anything other than false will allow the form submit to continue
+        // return true;
+
+        for (var i=0; i < formData.length; i++) {
+          if (!formData[i].value) {
+              alert('表单值为空!');
+              return false;
+          }
+        }
+        return true;
+    }
+
+    // post-submit callback
+    function showResponse(responseText, statusText)  {
+        // for normal html responses, the first argument to the success callback
+        // is the XMLHttpRequest object's responseText property
+
+        // if the ajaxForm method was passed an Options Object with the dataType
+        // property set to 'xml' then the first argument to the success callback
+        // is the XMLHttpRequest object's responseXML property
+
+        // if the ajaxForm method was passed an Options Object with the dataType
+        // property set to 'json' then the first argument to the success callback
+        // is the json data object returned by the server
+        if(responseText.status=="showToast"){
+            $().toastmessage('showSuccessToast', '操作成功');
+            setTimeout(function () {location.reload()}, 1000);
+        } else {
+            $().toastmessage('showErrorToast', "操作失败");
+        }
+
+    }
+
+
+
+  </script>
+</div>

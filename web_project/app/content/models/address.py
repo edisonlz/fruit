@@ -7,20 +7,18 @@ from common import BaseModel
 import datetime
 
 
-class ShoppingAddress(BaseModel):
+class ShoppingAddress(BaseModel):   
 
-	name = models.CharField(verbose_name=u'名称',max_length=20)
+    name = models.CharField(verbose_name=u'名称',max_length=20)
     address = models.CharField(verbose_name=u'名称',max_length=50)
     phone = models.CharField(verbose_name=u'名称',max_length=15)
-
+    position = models.IntegerField(verbose_name=u'展示位置', default=0, db_index=True)
     onlinetime = models.DateTimeField(verbose_name=u'上线时间', auto_now_add=True)
-
 
     class Meta:
         verbose_name = u"提货点"
         verbose_name_plural = verbose_name
         app_label = "content"
-        abstract = True
 
 
     def is_new(self):
