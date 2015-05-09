@@ -34,3 +34,19 @@ class BaseModel(models.Model,Status):
         verbose_name_plural = verbose_name
         app_label = "content"
         abstract = True
+
+
+    def close(self,is_save=False):
+        self.state = Status.StatusClose
+        if is_save:
+            self.save()
+
+    def open(self,is_save=False):
+        self.state = Status.StatusOpen
+        if is_save:
+            self.save()
+
+
+
+
+

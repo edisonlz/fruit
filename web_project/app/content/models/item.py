@@ -137,14 +137,14 @@ class Item(models.Model):
     		return (self.promote.promote_type,self.promote.promote_rate * self.price)
 
 
-class BoxItem(models.Model):
+# class BoxItem(models.Model):
 
-    box = models.ForeignKey(Box)
-    item = models.ForeignKey(Item)
+#     box = models.ForeignKey(Box)
+#     item = models.ForeignKey(Item)
 
-    class Meta:
-        verbose_name = u"盒子水果"
-        verbose_name_plural = verbose_name
-        app_label = "content"
+#     class Meta:
+#         verbose_name = u"盒子水果"
+#         verbose_name_plural = verbose_name
+#         app_label = "content"
 
 
