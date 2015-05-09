@@ -5,41 +5,27 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 import json
-from app.content.models import Box, BoxType
+from app.content.models import Box, BoxType , ShoppingAddress
 from django.db import transaction
 from app.content.models import Status
 
-@login_required
-def update_address_position(request):
-    if request.method == 'POST':
-        box_ids = request.POST.get('item_ids')
-        if box_ids:
-            item_ids = map(int, item_ids.split(',')) or []
-            position = 1
-            for item_id in reversed(item_ids):
-
-                item = ShoppingAddress.objects.get(id=item_id)
-                item.position = position
-                item.save()
-                
-                position += 1
-
-        response = {'status': 'success'}
-        return HttpResponse(json.dumps(response), content_type="application/json")
 
 
 @login_required
 def cms_address_create(request):
     if request.method == 'POST':
-        box_type = request.POST.get("box_type")
-        title = request.POST.get("title")
-        icount = request.POST.get("icount")
+        name = request.POST.get("name")
+        address = request.POST.get("address")
+        phone = request.POST.get("phone")
+        onlinetime = request.POST.get("onlinetime")
 
-        box = ShoppingAddress()
-        box.box_type = box_type
-        box.title = title
-        box.iner_count = icount
-        box.save()
+        ad = ShoppingAddress()
+        ad.name = name
+        ad.phone = phone
+        ad.address = address
+        ad.onlinetime = onlinetime
+        ad.status = Status.StatusOpen
+        ad.save()
 
         response = {'status': 'success'}
         return HttpResponse(json.dumps(response), content_type="application/json")
@@ -49,27 +35,15 @@ def cms_address_create(request):
 
 
 @login_required
-def cms_box(request):
+def cms_address(request):
+
     if request.method == 'GET':
-        boxes = Box.objects.filter(is_delete=False).order_by('-position')
-        return render(request, 'box/box.html', {
-            'boxes': boxes,
-            'box_types': BoxType.TYPES
+        addresses = ShoppingAddress.objects.filter(is_delete=False).order_by('-position')
+        return render(request, 'address/address.html', {
+            'addresses': addresses,
+            'menu' : 2
         })
 
-@login_required
-def index(request):
-    return render(request, 'base.html', {})
- 
-
-@login_required
-def status(request):
-
-    response = []
-    for state in Status.STATUS:
-        response.append({"value":state[0] , "text": state[1]})
-
-    return HttpResponse(json.dumps(response), content_type="application/json")
 
 @login_required
 def update_status(request):
@@ -77,7 +51,7 @@ def update_status(request):
     pk =  request.POST.get("pk")
     value = int(request.POST.get("value")[0])
     
-    box = Box.objects.get(id=pk)
+    box = ShoppingAddress.objects.get(id=pk)
     box.state = value
     box.save()
 
@@ -89,16 +63,16 @@ def update_status(request):
 def update_position(request):
     if request.method == 'POST':
 
-        box_ids = request.POST.get('box_ids')
-        if box_ids:
-            box_ids = box_ids.split(',')
+        address_ids = request.POST.get('address_ids')
+        if address_ids:
+            address_ids = address_ids.split(',')
         else:
-            box_ids = []
+            address_ids = []
 
-        box_ids.reverse()
+        address_ids.reverse()
         position = 1
-        for box_id in box_ids:
-            box = Box.objects.get(id=box_id)
+        for aid in address_ids:
+            box = ShoppingAddress.objects.get(id=aid)
             box.position = position
             position += 1
             box.save()
@@ -110,4 +84,20 @@ def update_position(request):
         return HttpResponse(json.dumps(response), content_type="application/json")
 
 
+@login_required
+def delete(request):
+
+    if request.method == 'POST':
+
+        pk =  request.POST.get("id")
+
+        box = ShoppingAddress.objects.get(id=pk)
+        box.is_delete = True
+        box.save()
+
+        response = {'status': 'success'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
+    else:
+        response = {'status': 'fail'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
 
