@@ -8,7 +8,7 @@
       <div class="modal-body">
         <form id="form_add_box" method="post" action="/content/box/create">
           <div class="form-group form-inline">
-            <label for="recipient-name" class="control-label">盒子类型:</label>
+            <label for="recipient-name" class="control-label">抽屉类型:</label>
             <select class="form-control" id="box_type" name="box_type" placeholder="">
                             {% for k,v in box_types %}
                                 <option value="{{ k }}">{{ v }}</option>
@@ -92,7 +92,7 @@
         // if the ajaxForm method was passed an Options Object with the dataType
         // property set to 'json' then the first argument to the success callback
         // is the json data object returned by the server
-        if(responseText.status=="showToast"){
+        if(responseText.status=="success"){
             $().toastmessage('showSuccessToast', '操作成功');
             setTimeout(function () {location.reload()}, 1000);
         } else {

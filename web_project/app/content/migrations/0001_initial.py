@@ -67,6 +67,8 @@ class Migration(SchemaMigration):
             ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
             ('is_delete', self.gf('django.db.models.fields.BooleanField')(default=False, db_index=True)),
+            ('city_code', self.gf('django.db.models.fields.CharField')(max_length=20)),
+            ('city', self.gf('django.db.models.fields.CharField')(max_length=20)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=20)),
             ('address', self.gf('django.db.models.fields.CharField')(max_length=50)),
             ('phone', self.gf('django.db.models.fields.CharField')(max_length=15)),
@@ -141,6 +143,8 @@ class Migration(SchemaMigration):
         'content.shoppingaddress': {
             'Meta': {'object_name': 'ShoppingAddress'},
             'address': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'city': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
+            'city_code': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_delete': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_index': 'True'}),
