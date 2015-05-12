@@ -140,7 +140,7 @@ def load_settings(settings, debug=False, **kwargs):
             ],
         'AUTHENTICATION_BACKENDS': (
             "django.contrib.auth.backends.ModelBackend",
-            "app.user.backends.LDAPBackend",
+           # "app.user.backends.LDAPBackend",
             ),
         'TEMPLATE_CONTEXT_PROCESSORS': (
             "django.core.context_processors.debug",

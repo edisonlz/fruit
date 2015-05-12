@@ -4,7 +4,7 @@ __pycache__/
 
 # C extensions
 *.so
-
+.idea/
 # Distribution / packaging
 .Python
 env/
@@ -55,3 +55,7 @@ docs/_build/
 
 # PyBuilder
 target/
+mysettings.py
+*.jpg
+*.png
+*.xml
