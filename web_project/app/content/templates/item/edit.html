@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}css/vidinfos.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
 
     <style type="text/css">
         .form-group{
@@ -15,40 +16,14 @@
 {% endblock %}
 
 {% block content %}
-
-    <div class="row">
-        <div class="">
-            <span class="label label-success" style="margin-bottom: 10px">基础信息</span>
-        </div>
-    </div>
-    <div class="row">
-        <form class="form-horizontal" style="margin-top: 20px">
-            <div class="form-group has-success">
-                <label class="col-sm-2 control-label">
-                    展示图片
-                </label>
-
-                <div id="show_image_div" class="col-sm-5">
-                    <span class="btn btn-success fileinput-button form-control" {% if item.show_image %}
-                          style="display: none;" {% endif %}>
-                            <span>+添加展示图片</span>
-                            <input id="show_img_input" class="image_input" type="file" name="files[]"
-                                   accept="image/png, image/gif, image/jpg, image/jpeg">
-                    </span>
-
-                    <div class="alert alert-success img_div"
-                         style="display: {% if not item.show_image %}none{% endif %};font-size: 20px;margin-top: 10px">
-                        <button type="button" class="close">&times;</button>
-                        <img src="{{ item.show_image }}" class="img-responsive img-polaroid"/>
-                    </div>
-
-                    <div class="progress progress-success progress-striped active" style="display: none">
-                        <div class="bar"></div>
-                    </div>
-                    <input type='hidden' id='show_image' class='result-input' value="{{ item.show_image }}"/>
-                </div>
-            </div>
-
+    <h3>编辑商品</h3>
+    <hr>
+    <br>
+    <div class="row" style="background-color: #F5F5F5">
+        <br>
+        <span class="label label-success" style="margin-left: 20px">基础信息</span>
+        <br>
+        <form class="form-horizontal">
             <div class="form-group has-success">
                 <label class="col-sm-2 control-label">
                     商品名称
@@ -57,6 +32,32 @@
                     <input id="title" type="text" class="form-control" value="{{ item.title|default:"" }}">
                 </div>
             </div>
+            <div class="form-group has-success">
+                <label class="col-sm-2 control-label">
+                    展示图片
+                </label>
+
+                <div id="show_image_div" class="col-sm-5">
+                    <span class="btn btn-success fileinput-button form-control" {% if item.show_image %}
+                          style="display: none;" {% endif %}>
+                            <i class="glyphicon glyphicon-plus"></i>
+                            <span>添加展示图片</span>
+                            <input id="show_img_input" class="image_input" type="file" name="files[]"
+                                   accept="image/png, image/gif, image/jpg, image/jpeg">
+                    </span>
+                    <div class="alert alert-success img_div"
+                         style="display: {% if not item.show_image %}none{% endif %};font-size: 20px;margin-top: 10px">
+                        <button type="button" class="close">&times;</button>
+                        <img src="{{ item.show_image }}" class="img-responsive img-polaroid"/>
+                    </div>
+                    <div class="progress progress-success progress-striped active" style="display: none">
+                        <div class="bar"></div>
+                    </div>
+                    <input type='hidden' id='show_image' class='result-input' value="{{ item.show_image }}"/>
+                </div>
+            </div>
+
+
 
             <div class="form-group has-success">
                 <label class="col-sm-2 control-label">
@@ -65,7 +66,7 @@
                 <div class="col-sm-3 has-success">
                     <div class="input-group">
                         <div class="input-group-addon">￥</div>
-                            <input id="stock_price" type="text" class="form-control" value="{{ item.stock_price|default:"" }}">
+                            <input id="price" type="text" class="form-control" value="{{ item.price|default:"" }}">
                     </div>
                 </div>
             </div>
@@ -98,8 +99,9 @@
                 </div>
             </div>
 
-            <span class="label label-warning">补充信息</span>
+            <br>
 
+            <span class="label label-warning" style="margin-left: 20px">补充信息</span>
             <div class="form-group has-warning">
                     <label class="col-sm-2 control-label">促销类型</label>
                     <div class="col-sm-3">
@@ -116,13 +118,13 @@
                     </div>
                 </div>
 
-
                 <div class="form-group has-warning">
                     <label class="col-sm-2 control-label">轮播图</label>
                     <div id="scroller_div" class="col-sm-5">
                         <span class="btn btn-success fileinput-button form-control" {% if item.adv_image %}
                               style="display: none;" {% endif %}>
-                                <span>+添加轮播图</span>
+                                <i class="glyphicon glyphicon-plus"></i>
+                                <span>添加轮播图</span>
                                 <input class="image_input" type="file" name="files[]"
                                        accept="image/png, image/gif, image/jpg, image/jpeg">
                         </span>
@@ -149,6 +151,7 @@
 
                     <div class="col-sm-5">
                         <span id="screenshot_btn" class="btn btn-success fileinput-button form-control">
+                                <i class="glyphicon glyphicon-plus"></i>
                                 <span>添加图片(批量添加)</span>
                                 <input id="screenshot_input" type="file"
                                        accept="image/png, image/gif, image/jpg, image/jpeg" multiple>
@@ -158,7 +161,6 @@
                              style="display: none">
                             <div class="bar"></div>
                         </div>
-                        <br>
 
                         <div id="screenshot_div" style="margin-top: 20px">
                             {% for screenshot in item.get_screenshot_list %}
@@ -196,37 +198,18 @@
                     <label class="col-sm-2 control-label">
                         商品描述
                     </label>
-                    <div class="col-sm-10">
+                    <div class="col-sm-8">
                         <textarea id="desc" class="form-control" style="height: 200px">{{ item.desc }}</textarea>
                     </div>
                 </div>
-
+                <br>
             </form>
 
-        <div id="error_modal" class="modal fade">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
-                                class="sr-only">Close</span></button>
-                        <h4 id="error_title" class="modal-title"></h4>
-                    </div>
-                    <div class="modal-body">
-                        <p id="error_content"></p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
-
     </div>
-    <div class="row" style="margin-top: 30px">
+    <br>
+    <div class="row">
 {#       <div class=" col-sm-offset-5 ">#}
-            <button id="final_submit" class="btn btn-primary col-sm-5 col-sm-offset-2 ">保存</button>
+            <button id="final_submit" class="btn btn-info btn-lg col-sm-12 ">保存</button>
 {#       </div>#}
     </div>
     <br>
@@ -237,6 +220,8 @@
     <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
     <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
     <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+
 <script>
 
 //upload img
@@ -244,70 +229,7 @@ uploadImage2v($('#show_image_div'), null, null);
 uploadImage2v($('#scroller_div'), null, null);
 
 
-function screenshot_add(src) {
-    $("#screenshot_div").append($("#screenshot_template").clone());
-    $("#screenshot_div").children().last().removeAttr("id style");
-    $("#screenshot_div").children().last().find("img").attr("src", src);
-    $("#screenshot_div").children().last().find("input").addClass("screenshot_urls");
-    $("#screenshot_div").children().last().find("input").attr("value", src);
-}
-
-$('#screenshot_input').fileupload({
-    autoUpload: true,//是否自动上传
-    url: '/app/img/upload',//上传地址
-    dataType: 'json',
-    acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-    maxFileSize: 1048576,
-
-    add: function (e, data) {
-        data.formData = {
-            'type': $('#screenshot_type').val()
-        };
-        var uploadErrors = [];
-        var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
-        $.each(data.originalFiles, function (index, item) {
-            if ('type' in item && !acceptFileTypes.test(item['type'])) {
-                uploadErrors.push('上传图片格式错误。');
-            }
-            if ('size' in item && item['size'] > 1048576) {
-                uploadErrors.push('上传图片需要小于1Mb。');
-            }
-        });
-
-        if (uploadErrors.length > 0) {
-            show_error_message("上传错误", uploadErrors.join("\n"));
-        } else {
-            data.submit();
-        }
-    },
-
-    done: function (e, data) {//设置文件上传完毕事件的回调函数
-        $("#screenshot_btn").show();
-        $("#screenshot_progress").hide();
-        if ("e" in data.result && data.result["e"]["code"] < 0) {
-            show_error_message("上传错误: code-" + data.result["e"]["code"] + ' desc-' + data.result["e"]["desc"]);
-            return;
-        }
-        $.each(data.result.files, function (index, file) {
-            screenshot_add(file.url);
-        });
-    },
-
-    progressall: function (e, data) {//设置上传进度事件的回调函数
-
-        $("#screenshot_btn").hide();
-        $("#screenshot_progress").show();
-
-        var progress = parseInt(data.loaded / data.total * 100, 10);
-        $('#screenshot_progress .bar').css(
-                'width',
-                progress + '%'
-        );
-    }
-});
-
-
-//upload
+//upload single image
 function uploadImage2v(input_file, width, height){
     var url = '/content/upload/img';
     var fileSelector = input_file.find('.image_input');
@@ -415,6 +337,7 @@ function screenshot_add(src) {
     $("#screenshot_div").children().last().find("input").attr("value", src);
 }
 
+//screenshot batch upload
 $('#screenshot_input').fileupload({
     autoUpload: true,//是否自动上传
     url: '/content/upload/img',//上传地址
@@ -472,101 +395,93 @@ $('#screenshot_input').fileupload({
 
 
 //validate
-$("#final_submit").click(function () {
+function validate_form(){
+    var info = {"error":0 , "desc":"success"};
+    if ($("#show_image").val() == ""){
+        info.error = 1;
+        info.desc = "请上传展示图片";
+        return info;
+    }
+    if ($("#title").val() == "") {
+        info.error = 1;
+        info.desc = "请填写商品名称";
+        return info;
+    }
 
-    $("#final_submit").addClass("disabled");
+    if ($("#price").val() == "") {
+        info.error = 1;
+        info.desc = "请填写商品价格";
+        return info;
+    }
 
-    var result = {"item_id": "{{ item_id |default:"" }}"};
+    if ($("#stock_price").val() == "") {
+        info.error = 1;
+        info.desc = "请填写进货价格";
+        return info;
+    }
 
-    if ($("#title").val() == "")
-        return show_error_message_submit("请填写商品名称");
-    else
-        result['title'] = $("#title").val();
-
-    if ($("#price").val() == "")
-        return show_error_message_submit("请填写商品价格");
-    else
-        result['price'] = $("#price").val();
-
-    if ($("#stock_price").val() == "")
-        return show_error_message_submit("请填写进货价格");
-    else
-        result['stock_price'] = $("#stock_price").val();
-
-    if ($("#show_image").val() == "")
-        return show_error_message_submit("请上传商品展示图");
-    else
-        result['show_image'] = $("#show_image").val();
-
-
-    if ($("#category").val() == "")
-        return show_error_message_submit("请选择商品分类");
-    else
-        result['category'] = $("#category").val();
-
-
-    if ($("#promote").val() == "")
-        return show_error_message_submit("请选择推广类型");
-    else
-        result['promote'] = $("#promote").val();
-
-
-    result['scroller'] = $("#scroller").val();
-
-    if ($("#desc").val() == "")
-        return show_error_message_submit("请填写简介");
-    else
-        result['desc'] = $("#desc").val();
-
-    if ($("#short_desc").val() == "")
-        return show_error_message_submit("请填写短描述");
-    else
-        result['short_desc'] = $("#short_desc").val();
-
-{#    result['show_img_input'] = $("$show_img_input").val();#}
+    if ($("#category").val() == "") {
+        info.error = 1;
+        info.desc = "请选择商品分类";
+        return info;
+    }
 
     var screenshot_urls = [];
+
     $(".screenshot_urls").each(function () {
         screenshot_urls.push($(this).val());
     });
 
-    if (screenshot_urls.length != 4 && screenshot_urls.length != 0)
-        return show_error_message_submit("必须上传4张图片");
+    if (screenshot_urls.length != 4 && screenshot_urls.length != 0){
+        info.error = 1;
+        info.desc = "必须上传4张截图";
+        return info;
+    }
+    return info;
+}
 
-    {#    else if (screenshot_urls.length > 6)#}
-    {#        return show_error_message_submit("最多上传六张截图");#}
-    {##}
-    {#    else#}
 
+$("#final_submit").click(function () {
+
+    $("#final_submit").addClass("disabled");
+
+    //validate
+    var validate_info = validate_form();
+    if (validate_info.error == 1){
+        $("#final_submit").removeClass("disabled");
+        return $().toastmessage('showErrorToast',validate_info.desc);
+    }
+
+    //generate post data
+    var result = {"item_id": "{{ item_id |default:"" }}"};
+    result['title'] = $("#title").val();
+    result['price'] = $("#price").val();
+    result['stock_price'] = $("#stock_price").val();
+    result['show_image'] = $("#show_image").val();
+    result['category'] = $("#category").val();
+    result['promote'] = $("#promote").val();
+    result['scroller'] = $("#scroller").val();
+    result['desc'] = $("#desc").val();
+    result['short_desc'] = $("#short_desc").val();
+    var screenshot_urls = [];
+    $(".screenshot_urls").each(function () {
+        screenshot_urls.push($(this).val());
+    });
     result['screenshot_urls'] = screenshot_urls;
-
 
     $.post("/content/item/edit", {"result": JSON.stringify(result)}, function (data) {
         if (data.status == "success") {
-            alert("提交成功");
-            window.location.replace("/content/item/edit?item_id=" + data.item_id);
-        } else {
-            show_error_message_submit(data.desc);
-        }
-    });
+            $().toastmessage('showSuccessToast', '操作成功');
+            setTimeout(function () {
+                location.href="/content/item/edit?item_id=" + data.item_id;
+            }, 1000);
 
+        } else {
+            $().toastmessage('showErrorToast', '操作失败');        }
+    });
     return false;
 });
 
-
-function show_error_message(title, content) {
-    $("#error_title").text(title);
-    $("#error_content").text(content);
-    $("#error_modal").modal();
-}
-function show_error_message_add(content) {
-    show_error_message("添加错误", content);
-}
-function show_error_message_submit(content) {
-    show_error_message("提交错误", content);
-    $("#final_submit").removeClass("disabled");
-    return false;
-}
 
 </script>
 {% endblock %}

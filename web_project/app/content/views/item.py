@@ -13,6 +13,7 @@ MIMEANY = '*/*'
 MIMEJSON = 'application/json'
 MIMETEXT = 'text/plain'
 
+
 def response_mimetype(request):
     """response_mimetype -- Return a proper response mimetype, accordingly to
     what the client accepts, as available in the `HTTP_ACCEPT` header.
@@ -48,13 +49,10 @@ def item_edit(request):
     if request.method == "GET":
         #item id
         item_id = request.GET.get("item_id")
-
         try:
             item = Item.objects.get(pk=item_id)
-            print item.categroy_id
         except:
             pass
-
         #select data
         categories = ItemCategory.objects.all()
         promotes = ItemPromote.objects.all()
@@ -67,8 +65,8 @@ def item_edit(request):
             request.POST.get('result')
         )
 
+        #generate item
         item_id = data.get('item_id', '')
-
         if item_id:
             item = Item.objects.get(id=item_id)
         else:
@@ -120,13 +118,13 @@ def upload_img(request):
     if request.method == 'POST':
 
         file_obj = request.FILES[u'files[]']
-        data = file_obj.read()
         path_name = '%s/tmp_img/%s' % (
             os.path.join(settings.STATICFILES_DIRS[0]),
             file_obj.name)
 
-        fp = open(path_name, 'w')
-        fp.write(data)
+        with open(path_name, 'w') as des_f:
+            for chunk in file_obj.chunks():
+                des_f.write(chunk)
 
         response_data = {
             "files": [
