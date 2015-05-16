@@ -167,14 +167,18 @@ def box_item_list(request):
     """
         获取盒子内容列表
     """
+    from app.content.models.item import Item
     if request.method == 'GET':
 
         box_id = request.GET.get("box_id")
+
+        items = Item.objects.all()
 
         items = BoxItem.objects.filter(is_delete=False,box_id=box_id).order_by('-position')
         return render(request, 'box/box_item_list.html', {
             'boxitem': items,
             "box_id":box_id,
+            "items":items,
         })
 
 

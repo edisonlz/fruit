@@ -17,6 +17,9 @@ urlpatterns = patterns(
     url(regex='^status$', view='module.status', name=u'cms_status'),
     url(regex='^update_status$', view='module.update_status', name=u'cms_update_status'),
     url(regex='^update_position$', view='module.update_position', name=u'cms_update_position'),
+    url(regex='^item/edit$', view='item.item_edit', name=u'item edit'),
+    url(regex='^item/autocomplete$', view='item.item_auto_complete', name=u'item edit'),
+    url(regex='^upload/img$', view='item.upload_img', name=u'item edit'),
 
 
 
@@ -35,6 +38,7 @@ urlpatterns = patterns(
     url(regex='^city/update_status$', view='city.update_status', name=u'cms_city_update_status'),
     url(regex='^city/del$', view='city.delete', name=u'cms_address_del'),
     url(regex='^city/update$', view='city.cms_city_update', name=u'cms_city_update'),
+
 
 
 )

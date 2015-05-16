@@ -4,7 +4,8 @@ from django.contrib import admin
 from django.contrib.admin.models import LogEntry, DELETION
 from django.utils.html import escape
 from django.core.urlresolvers import reverse
-
+from app.content.models.item import ItemCategory
+from app.content.models.item import ItemPromote
 
 class LogEntryAdmin(admin.ModelAdmin):
 
@@ -61,4 +62,13 @@ class LogEntryAdmin(admin.ModelAdmin):
             .prefetch_related('content_type')
 
 
+class ItemCategoryAdmin(admin.ModelAdmin):
+    list_display = ('id', "title")
+
+
+class ItemPromoteAdmin(admin.ModelAdmin):
+    list_display = ('id', "title")
+
+admin.site.register(ItemPromote, ItemPromoteAdmin)
+admin.site.register(ItemCategory, ItemCategoryAdmin)
 admin.site.register(LogEntry, LogEntryAdmin)
