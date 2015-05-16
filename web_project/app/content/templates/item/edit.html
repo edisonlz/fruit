@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}css/vidinfos.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
-
     <style type="text/css">
         .form-group{
             margin-top: 20px;
@@ -16,9 +15,6 @@
 {% endblock %}
 
 {% block content %}
-    <h3>编辑商品</h3>
-    <hr>
-    <br>
     <div class="row" style="background-color: #F5F5F5">
         <br>
         <span class="label label-success" style="margin-left: 20px">基础信息</span>
@@ -392,19 +388,24 @@ $('#screenshot_input').fileupload({
     }
 });
 
-
+function test_price(price){
+    var num_reg = /^\d+$/;
+    var float_reg = /^\d+(\.\d+)?$/;
+    return num_reg.test(price) || float_reg.test(price);
+}
 
 //validate
 function validate_form(){
     var info = {"error":0 , "desc":"success"};
-    if ($("#show_image").val() == ""){
-        info.error = 1;
-        info.desc = "请上传展示图片";
-        return info;
-    }
+
     if ($("#title").val() == "") {
         info.error = 1;
         info.desc = "请填写商品名称";
+        return info;
+    }
+    if ($("#show_image").val() == ""){
+        info.error = 1;
+        info.desc = "请上传展示图片";
         return info;
     }
 
@@ -414,10 +415,28 @@ function validate_form(){
         return info;
     }
 
+    else{
+        if (!test_price($("#price").val()))
+        {
+              info.error = 1;
+              info.desc = "商品价格应为整数或小数";
+              return info;
+        }
+    }
+
     if ($("#stock_price").val() == "") {
         info.error = 1;
         info.desc = "请填写进货价格";
         return info;
+    }
+
+    else{
+        if (!test_price($("#stock_price").val()))
+        {
+              info.error = 1;
+              info.desc = "进货价格应为整数或小数";
+              return info;
+        }
     }
 
     if ($("#category").val() == "") {

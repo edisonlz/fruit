@@ -61,6 +61,7 @@ def item_edit(request):
 
     elif request.method == "POST":
         #get post data
+
         data = json.loads(
             request.POST.get('result')
         )
@@ -142,3 +143,23 @@ def upload_img(request):
         return response
     else:
         return HttpResponse('OK')
+
+
+def item_auto_complete(request):
+    """auto complete return format"""
+
+    key = request.GET.get('key','')
+    count = request.GET.get('count', 10)
+    qs = Item.objects.filter(title__icontains=key)[0:count]
+
+    results = []
+    for item in qs:
+        tmp = {}
+        tmp['id'] = item.id
+        tmp['title'] = item.title
+        results.append(tmp)
+
+    response = JSONResponse(results, mimetype=response_mimetype(request))
+    # response['Content-Disposition'] = 'inline; filename=files.json'
+    response["Access-Control-Allow-Origin"] = "*"
+    return response
