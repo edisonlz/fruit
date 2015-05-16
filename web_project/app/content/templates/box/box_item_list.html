@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">
+    <script src="{{ STATIC_URL }}js/bootstrap.autocomplete.js"></script>
     <style type="text/css">
         .status_editable {
 
@@ -23,7 +24,7 @@
     <div class="row">
         <div class="pull-left">
             <ul class="nav nav-tabs">
-              <li role="presentation" class="active"><a href="#">首页盒子管理</a></li>
+              <li role="presentation" class="active"><a href="#">首页抽屉管理</a></li>
             </ul>
         </div>
     </div>
@@ -69,7 +70,7 @@
 
                         <td colspan="1">
                             <a class="btn btn-small btn-danger btn-table del"
-                                   title="删除"  onclick="deleteitem({{ boxitem.box.id }},{{  boxitem.item.id}})">
+                                   title="删除"  onclick="javascript:deleteitem('{{ boxitem.box.id }}','{{  boxitem.item.id}}');">
                                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> 删除
                             </a>
                         </td>
@@ -123,47 +124,6 @@
                 }
 
             });
-
-
-
-
-            function deleteitem(box,item){
-
-                var statu = confirm("确认删除吗?");
-                if(!statu){
-                    return false;
-                }
-
-                $.ajax({
-
-                     type: 'POST',
-
-                     url: "/content/box/child/delete" ,
-
-                    data: {"box_id":box,
-                           "item_id":item},
-
-                    success: function(data){
-
-
-                        if (data.status =="success")
-                        {
-                           //$("tr[value="+data.box_id+"]").hide();
-                           location.reload();
-                        }
-                        else{
-                            alert(data.status);
-                        }
-                    } ,
-
-                    dataType: "json"
-
-                });
-
-
-            };
-
-
             /* state checkbox */
              $('#state-all-pick').click(function () {
                 if ($(this).is(':checked')) {
@@ -218,6 +178,44 @@
                 }
                 return ret.substring(0, ret.length-1);
         }
+
+
+        function deleteitem(box,item){
+
+            var statu = confirm("确认删除吗?");
+            if(!statu){
+                return false;
+            }
+
+            $.ajax({
+
+                 type: 'POST',
+
+                 url: "/content/box/child/delete" ,
+
+                data: {"box_id":box,
+                       "item_id":item},
+
+                success: function(data){
+
+
+                    if (data.status =="success")
+                    {
+                       //$("tr[value="+data.box_id+"]").hide();
+                       location.reload();
+                    }
+                    else{
+                        alert(data.status);
+                    }
+                } ,
+
+                dataType: "json"
+
+            });
+
+
+        };
+
 
 </script>
 

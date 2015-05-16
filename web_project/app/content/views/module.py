@@ -172,13 +172,13 @@ def box_item_list(request):
 
         box_id = request.GET.get("box_id")
 
-        items = Item.objects.all()
+        if not box_id:
+            return
 
-        items = BoxItem.objects.filter(is_delete=False,box_id=box_id).order_by('-position')
+        items = BoxItem.objects.filter(is_delete=0,box_id=box_id).order_by('position')
         return render(request, 'box/box_item_list.html', {
-            'boxitem': items,
+            'boxitems': items,
             "box_id":box_id,
-            "items":items,
         })
 
 
@@ -193,8 +193,9 @@ def add_item_to_box(request):
 
         box_id = request.POST.get('box_id')
         item_id = request.POST.get('item_id')
-
-        flage = BoxItem.addItem(box_id,item_id)
+        # import pdb
+        # pdb.set_trace()
+        flage = BoxItem.addItem(int(box_id),int(item_id))
 
         if flage:
             response = {'status': 'success'}
@@ -237,7 +238,7 @@ def box_item_update_position(request):
     if request.method == 'POST':
 
         box_id = request.POST.get('box_id')
-        item_ids = request.POST.get("item_id")
+        item_ids = request.POST.get("item_ids")
         if item_ids:
             item_ids = item_ids.split(',')
         else:
