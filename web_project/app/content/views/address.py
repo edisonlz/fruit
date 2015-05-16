@@ -17,7 +17,7 @@ def cms_address(request):
 
         key = request.GET.get("key")
         city_id = request.GET.get("city_id")
-        citys = City.objects.all()
+        citys = City.all()
 
         addresses = ShoppingAddress.all()
 
@@ -34,7 +34,7 @@ def cms_address(request):
             'addresses': addresses,
             'key' : key,
             'citys':citys,
-            'select_city_id':city_id
+            'select_city_id': int(city_id)
         })
 
 @login_required
@@ -83,9 +83,11 @@ def cms_address_update(request):
         return HttpResponse(json.dumps(response), content_type="application/json")
     else:
         pk = request.GET.get("pk")
+        citys = City.all()
         ad = ShoppingAddress.objects.get(id=pk)
         return render(request, 'address/edit_address.html', {
             'ad': ad,
+            'citys':citys,
         })
         
 
