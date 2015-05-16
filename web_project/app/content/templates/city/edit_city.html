@@ -33,8 +33,8 @@
         
       </div>
       <div class="modal-body">
-        <form id="form_add_address" method="post" action="/content/city/update">
-
+        <form id="form_update_city" method="post" action="/content/city/update">
+           {% csrf_token %}
           <div class="form-group">
             <label class="sr-only" for="name"></label>
             <div class="input-group">
@@ -88,10 +88,10 @@
             success:       showResponse  // post-submit callback
         };
 
-        $('#form_add_address').ajaxForm(options);
+        $('#form_update_city').ajaxForm(options);
 
         $('#btn_create').click(function(){
-            $('#form_add_address').submit();
+            $('#form_update_city').submit();
         });
 
 

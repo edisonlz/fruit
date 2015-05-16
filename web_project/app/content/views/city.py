@@ -50,14 +50,14 @@ def cms_city_update(request):
 
         pk = request.POST.get("pk")
         name = request.POST.get("name")
-        cide_code = request.POST.get("city_code")
+        city_code = request.POST.get("city_code")
         phone = request.POST.get("phone")
         manager = request.POST.get("manager")
 
         city = City.objects.get(id=pk)
         city.name = name
         city.phone = phone
-        city.cide_code = cide_code
+        city.city_code = city_code
         city.manager = manager
         city.save()
 
