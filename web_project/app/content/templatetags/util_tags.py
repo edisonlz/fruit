@@ -26,6 +26,11 @@ def dict_get(dict, key):
     return dict.get(key, '')
 
 
+@register.filter(is_safe=True)
+def truncate_zh(str,len): 
+    return str[:len] + '...'
+
+
 @register.filter
 def index_url(value,str):
 
@@ -77,4 +82,7 @@ def get_current_time(format_string):
     """
     return datetime.datetime.now().strftime(format_string)
 
+
+
+    
 
