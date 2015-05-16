@@ -177,7 +177,11 @@
                     $().toastmessage('showSuccessToast', '操作成功');
                     setTimeout(function () {location.reload()}, 1000);
                 } else {
-                    $().toastmessage('showErrorToast', "操作失败");
+                    if(data.message){
+                        $().toastmessage('showErrorToast', data.message);
+                    }else{
+                        $().toastmessage('showErrorToast', "操作失败");
+                    }
                 }
             });
 

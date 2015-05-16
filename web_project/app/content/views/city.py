@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 import json
-from app.content.models import City
+from app.content.models import City,ShoppingAddress
 from django.db import transaction
 from app.content.models import Status
 
@@ -79,8 +79,17 @@ def delete(request):
         pk =  request.POST.get("id")
 
         city = City.objects.get(id=pk)
+
+        count = ShoppingAddress.objects.filter(city=city).count();
+
+        if count > 0:
+            response = {'status': 'fail', "message":"城市有关联记录不能删除!"}
+            return HttpResponse(json.dumps(response), content_type="application/json")
+
         city.is_delete = True
         city.save()
+
+
 
         response = {'status': 'success'}
         return HttpResponse(json.dumps(response), content_type="application/json")
