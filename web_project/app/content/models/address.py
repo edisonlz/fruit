@@ -14,6 +14,7 @@ class ShoppingAddress(BaseModel):
     name = models.CharField(verbose_name=u'名称',max_length=20)
     address = models.CharField(verbose_name=u'名称',max_length=50)
     phone = models.CharField(verbose_name=u'名称',max_length=15)
+    manager  = models.CharField(verbose_name=u'负责人',max_length=15)
     position = models.IntegerField(verbose_name=u'展示位置', default=0, db_index=True)
     onlinetime = models.DateTimeField(verbose_name=u'上线时间', auto_now_add=True)
 
