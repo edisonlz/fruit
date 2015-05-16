@@ -24,11 +24,14 @@ def cms_address(request):
         if key:
             addresses = addresses.filter(name__contains="%s" % key)
         
-        if city_id:
-            addresses = addresses.filter(city__id=city_id)
-        else:
+        #默认最早的一个城市
+        if not city_id:
             if citys:
                 city_id = citys.first().id
+
+        if city_id:
+            addresses = addresses.filter(city__id=city_id)
+            
 
         return render(request, 'address/address.html', {
             'addresses': addresses,
