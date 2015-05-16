@@ -57,6 +57,11 @@
                     <input type="checkbox" style="margin-right: 2px;margin-bottom: 2px" id="state-all-pick"></th>
                     <th>序号</th>
                     <th>名称</th>
+                    <th>缩率图</th>
+                    <th>价格</th>
+                    <th>促销类型</th>
+                    <th>折扣率</th>
+                    <th>商品描述</th>
                     <th>操作</th>
                 </thead>
 
@@ -67,8 +72,12 @@
                             <input type="checkbox" class="module-status-tag">
                         </td>
                         <td style="width: 60px;">{{ forloop.counter }}</td>
-                        <td style="width: 180px;"> {{ boxitem.item.title }} <img src="{{ boxitem.picture }}" class="img-thumbnail" style="height:40px;"></td>
-
+                        <td style="width: 100px;"> {{ boxitem.item.title }}</td>
+                        <td style="width: 80px;"> <img src="{{ boxitem.picture }}" class="img-thumbnail" style="height:60px;"></td>
+                        <td style="width: 100px;"> {{ boxitem.item.price }}</td>
+                        <td style="width: 100px;"> {{ boxitem.item.promote.title }}</td>
+                        <td style="width: 100px;"> {{ boxitem.item.promote.promote_rate }}</td>
+                        <td style="width: 100px;"> {{ boxitem.item.short_desc }}</td>
                         <td colspan="1">
                             <a class="btn btn-small btn-danger btn-table del"
                                    title="删除"  onclick="javascript:deleteitem('{{ boxitem.box.id }}','{{  boxitem.item.id}}');">
