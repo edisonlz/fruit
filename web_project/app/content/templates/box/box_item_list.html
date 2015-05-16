@@ -41,6 +41,7 @@
                         class="btn btn-danger disabled" autocomplete="off">
                         保存顺序
                     </button>
+                    <button id="back" type="button" id="back" class="btn btn-danger" onclick="javascript:history.go(-1)">返回</button>
 
                     <form method="post" action="/content/box/child/update_position" id="form_positoin" name="form_positoin">
                         <input type="hidden" name="box_id" id="box_id" value="{{ box_id }}"/>
@@ -66,7 +67,7 @@
                             <input type="checkbox" class="module-status-tag">
                         </td>
                         <td style="width: 60px;">{{ forloop.counter }}</td>
-                        <td style="width: 180px;"> {{ boxitem.item.title }}</td>
+                        <td style="width: 180px;"> {{ boxitem.item.title }} <img src="{{ boxitem.picture }}" class="img-thumbnail" style="height:40px;"></td>
 
                         <td colspan="1">
                             <a class="btn btn-small btn-danger btn-table del"

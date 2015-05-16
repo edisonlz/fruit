@@ -87,6 +87,17 @@ class BoxItem(models.Model):
         app_label = "content"
 
 
+
+    @property
+    def picture(self):
+        picture_dict={
+            0:"self.item.head_image",#head_image
+            1:"self.item.show_image",#show_image
+            2:"self.item.adv_image",#adv_image
+        }
+        return eval(picture_dict.get(self.box.box_type))
+
+
     @classmethod
     def deleteItem(cls,boxid,itemid):
 
@@ -155,5 +166,7 @@ class BoxItem(models.Model):
         except:
             logging.error(traceback.format_exc())
             return False
+
+
 
 
