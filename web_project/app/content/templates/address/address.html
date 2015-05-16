@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load util_tags %}
 
 
 {% block link %}
@@ -17,9 +18,7 @@
             src="{{ STATIC_URL }}bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
 
     <style type="text/css">
-        .status_editable {
-
-        }
+    
     </style>
 {% endblock %}
 
@@ -92,7 +91,7 @@
                     <tr class="sort-item" id="module_{{ address.id }}" value="{{ address.id }}">
 
                         <td style="width: 60px;">{{ forloop.counter }}</td>
-                        <td style="width: 120px;"> {{ address.name }}</td>
+                        <td style="width: 120px;" > <a href="#" data-toggle="tooltip" data-placement="left" title=" {{ address.name }}"> {{ address.name|truncate_zh:6 }}</a></td>
                         <td style="width: 180px;"><a target="_blank" href="/content/address/map?id={{address.id}}">{{ address.address }}</td>
                         <td style="width: 60px;">{{ address.manager }}</td>
                         <td style="width: 100px;">{{ address.phone }}</td>
@@ -227,6 +226,10 @@
                 }
             };
             $('#form_positoin').ajaxForm(options);
+
+
+            $('[data-toggle="tooltip"]').tooltip();
+
 
         });
 
