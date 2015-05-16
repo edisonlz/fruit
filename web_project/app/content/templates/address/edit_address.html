@@ -56,7 +56,11 @@
             <label class="sr-only" for="city"></label>
             <div class="input-group">
               <div class="input-group-addon">城市</div>
-              <input type="text" value="{{ad.city}}" class="form-control" name="city" id="city" placeholder="">
+              <select class="form-control" id="city_id" name="city_id" placeholder="">
+                            {% for loop_city in citys %}
+                            <option  {% if city.id == loop_city.id %} selected="selected" {% endif %}  value="{{loop_city.id}}">{{loop_city.name}}</option>
+                            {% endfor %}
+                        </select>
             </div>
           </div>
 

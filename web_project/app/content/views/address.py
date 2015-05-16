@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 import json
-from app.content.models import Box, BoxType , ShoppingAddress
+from app.content.models import Box, BoxType , ShoppingAddress , City
 from django.db import transaction
 from app.content.models import Status
 
@@ -16,20 +16,25 @@ def cms_address(request):
     if request.method == 'GET':
 
         key = request.GET.get("key")
-        city = request.GET.get("city","北京")
+        city_id = request.GET.get("city_id")
+        citys = City.objects.all()
 
-        addresses = ShoppingAddress.objects.filter(is_delete=False).order_by('-position')
+        addresses = ShoppingAddress.all()
 
         if key:
             addresses = addresses.filter(name__contains="%s" % key)
         
-        if city:
-            addresses = addresses.filter(city=city)
+        if city_id:
+            addresses = addresses.filter(city__id=city_id)
+        else:
+            if citys:
+                city_id = citys.first().id
 
         return render(request, 'address/address.html', {
             'addresses': addresses,
             'key' : key,
-            'city':city
+            'citys':citys,
+            'select_city_id':city_id
         })
 
 @login_required
@@ -39,8 +44,7 @@ def cms_address_create(request):
         address = request.POST.get("address")
         phone = request.POST.get("phone")
         onlinetime = request.POST.get("onlinetime")
-        city_code = request.POST.get("city_code")
-        city = request.POST.get("city")
+        city_id = request.POST.get("city_id")
 
         ad = ShoppingAddress()
         ad.name = name
@@ -48,9 +52,7 @@ def cms_address_create(request):
         ad.address = address
         ad.onlinetime = onlinetime
         ad.status = Status.StatusOpen
-        ad.city_code = city_code
-        ad.city = city
-        
+        ad.city_id = city_id
         ad.save()
 
         response = {'status': 'success'}
@@ -67,16 +69,14 @@ def cms_address_update(request):
         address = request.POST.get("address")
         phone = request.POST.get("phone")
         onlinetime = request.POST.get("onlinetime")
-        city_code = request.POST.get("city_code")
-        city = request.POST.get("city")
+        city_id = request.POST.get("city_id")
 
         ad = ShoppingAddress.objects.get(id=pk)
         ad.name = name
         ad.phone = phone
         ad.address = address
         ad.onlinetime = onlinetime
-        ad.city_code = city_code
-        ad.city = city
+        ad.city_id = city_id
         ad.save()
 
         response = {'status': 'success'}

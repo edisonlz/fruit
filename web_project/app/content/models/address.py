@@ -7,10 +7,23 @@ from common import BaseModel
 import datetime
 
 
+class City(BaseModel):
+
+    city_code = models.CharField(verbose_name=u'城市code',max_length=10)
+    name = models.CharField(verbose_name=u'城市名称',max_length=16)
+    manager  = models.CharField(verbose_name=u'地区负责人',max_length=15)
+    phone = models.CharField(verbose_name=u'联系电话',max_length=15)
+
+    class Meta:
+        verbose_name = u"城市"
+        verbose_name_plural = verbose_name
+        app_label = "content"
+
+
+
 class ShoppingAddress(BaseModel):   
 
-    city_code = models.CharField(verbose_name=u'城市code',max_length=20)
-    city= models.CharField(verbose_name=u'城市名称',max_length=20)
+    city = models.ForeignKey(City)
     name = models.CharField(verbose_name=u'名称',max_length=20)
     address = models.CharField(verbose_name=u'名称',max_length=50)
     phone = models.CharField(verbose_name=u'名称',max_length=15)
