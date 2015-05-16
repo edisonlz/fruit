@@ -7,14 +7,21 @@
       </div>
       <div class="modal-body">
         <form id="form_add_box" method="post" action="/content/box/child/create">
+
+            <input type="text" id="box_id" name="box_id" value="{{ box_id }}" style="display: none;"/>
+
           <div class="form-group form-inline">
-            <label for="recipient-name" class="control-label">内容:</label>
-            <select class="form-control" id="box_type" name="box_type" placeholder="">
-                            {% for item in items %}
-                                <option value="{{ item.id }}">{{ item.title}}</option>
-                            {% endfor %}
-            </select>
+            <label for="recipient-name" class="control-label">输入商品名称:</label>
+            <input type="text" id="key_name"/>
           </div>
+{#          <div class="form-group form-inline">#}
+{#            <label for="recipient-name" class="control-label">内容:</label>#}
+{#            <select class="form-control" id="select_item" name="select_item" placeholder="">#}
+{#                            {% for item in items %}#}
+{#                                <option value="{{ item.id }}">{{ item.title}}</option>#}
+{#                            {% endfor %}#}
+{#            </select>#}
+{#          </div>#}
 
         </form>
       </div>
@@ -71,18 +78,20 @@
 
 
 
-    $("#select_app").autocomplete({
+    $("#key_name").autocomplete({
 
             source: function (query, process) {
-                $.get("/app/autocomplete", {key: query, exclude: 1}, function (respData) {
+                $.get("/content/item/autocomplete", {key: query, count:5}, function (respData) {
                     return process(respData);
                 });
             },
             formatItem: function (item) {
-                return item["label"];
+                return item.title;
             },
             setValue: function (item) {
-                return {'data-value': item["label"], 'real-value': item["value"].id + "^^" + item["value"].thumb};
+                console.log(item);
+                console.log({'data-value': item.title, 'real-value': item.id});
+                return {'data-value': "aa", 'real-value': 1};
             }
         });
 
