@@ -32,5 +32,13 @@ urlpatterns = patterns(
     url(regex='^address/update$', view='address.cms_address_update', name=u'cms_address_update'),
     url(regex='^address/map$', view='address.map', name=u'cms_address_map'),
 
+    #city
+    url(regex='^city$', view='city.cms_city', name=u'cms_city_index'),
+    url(regex='^city/create$', view='city.cms_city_create', name=u'cms_city_create'),
+    url(regex='^city/update_status$', view='city.update_status', name=u'cms_city_update_status'),
+    url(regex='^city/del$', view='city.delete', name=u'cms_address_del'),
+    url(regex='^city/update$', view='city.cms_city_update', name=u'cms_city_update'),
+
+
 
 )

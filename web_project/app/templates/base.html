@@ -139,6 +139,7 @@
 
           <div class="list-group">
             <a href="/" class="list-group-item {% if request.path|index_url:"home" %} active {% endif %}">首页</a>
+            <a href="/content/city" class="list-group-item  {% if request.path|index_url:"city" %} active {% endif %}">城市管理</a>
             <a href="/content/address" class="list-group-item  {% if request.path|index_url:"address" %} active {% endif %}">提货点管理</a>
             <a href="/content/box" class="list-group-item {% if request.path|index_url:"box" %} active {% endif %}">首页抽屉管理</a>
             <a href="#" class="list-group-item {% if request.path|index_url:"item" %}  active {% endif %}">水果管理</a>

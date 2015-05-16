@@ -7,13 +7,27 @@ from common import BaseModel
 import datetime
 
 
+class City(BaseModel):
+
+    city_code = models.CharField(verbose_name=u'城市code',max_length=10)
+    name = models.CharField(verbose_name=u'城市名称',max_length=16)
+    manager  = models.CharField(verbose_name=u'地区负责人',max_length=15)
+    phone = models.CharField(verbose_name=u'联系电话',max_length=15)
+
+    class Meta:
+        verbose_name = u"城市"
+        verbose_name_plural = verbose_name
+        app_label = "content"
+
+
+
 class ShoppingAddress(BaseModel):   
 
-    city_code = models.CharField(verbose_name=u'城市code',max_length=20)
-    city= models.CharField(verbose_name=u'城市名称',max_length=20)
+    city = models.ForeignKey(City)
     name = models.CharField(verbose_name=u'名称',max_length=20)
     address = models.CharField(verbose_name=u'名称',max_length=50)
     phone = models.CharField(verbose_name=u'名称',max_length=15)
+    manager  = models.CharField(verbose_name=u'负责人',max_length=15)
     position = models.IntegerField(verbose_name=u'展示位置', default=0, db_index=True)
     onlinetime = models.DateTimeField(verbose_name=u'上线时间', auto_now_add=True)
 
@@ -37,6 +51,9 @@ class ShoppingAddress(BaseModel):
         else:
             return True
 
+    @classmethod
+    def all(cls):
+        return cls.objects.filter(is_delete=False).order_by('-position')
 
 
 

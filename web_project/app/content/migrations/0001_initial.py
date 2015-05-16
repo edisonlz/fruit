@@ -60,6 +60,30 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('content', ['Item'])
 
+        # Adding model 'BoxItem'
+        db.create_table(u'content_boxitem', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('box', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['content.Box'])),
+            ('item', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['content.Item'])),
+            ('position', self.gf('django.db.models.fields.IntegerField')(default=0, db_index=True)),
+            ('is_delete', self.gf('django.db.models.fields.IntegerField')(default=0)),
+        ))
+        db.send_create_signal('content', ['BoxItem'])
+
+        # Adding model 'City'
+        db.create_table(u'content_city', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('state', self.gf('django.db.models.fields.IntegerField')(default=0, max_length=2, db_index=True)),
+            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
+            ('is_delete', self.gf('django.db.models.fields.BooleanField')(default=False, db_index=True)),
+            ('city_code', self.gf('django.db.models.fields.CharField')(max_length=10)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=16)),
+            ('manager', self.gf('django.db.models.fields.CharField')(max_length=15)),
+            ('phone', self.gf('django.db.models.fields.CharField')(max_length=15)),
+        ))
+        db.send_create_signal('content', ['City'])
+
         # Adding model 'ShoppingAddress'
         db.create_table(u'content_shoppingaddress', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -67,11 +91,11 @@ class Migration(SchemaMigration):
             ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
             ('is_delete', self.gf('django.db.models.fields.BooleanField')(default=False, db_index=True)),
-            ('city_code', self.gf('django.db.models.fields.CharField')(max_length=20)),
-            ('city', self.gf('django.db.models.fields.CharField')(max_length=20)),
+            ('city', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['content.City'])),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=20)),
             ('address', self.gf('django.db.models.fields.CharField')(max_length=50)),
             ('phone', self.gf('django.db.models.fields.CharField')(max_length=15)),
+            ('manager', self.gf('django.db.models.fields.CharField')(max_length=15)),
             ('position', self.gf('django.db.models.fields.IntegerField')(default=0, db_index=True)),
             ('onlinetime', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
         ))
@@ -91,6 +115,12 @@ class Migration(SchemaMigration):
         # Deleting model 'Item'
         db.delete_table(u'content_item')
 
+        # Deleting model 'BoxItem'
+        db.delete_table(u'content_boxitem')
+
+        # Deleting model 'City'
+        db.delete_table(u'content_city')
+
         # Deleting model 'ShoppingAddress'
         db.delete_table(u'content_shoppingaddress')
 
@@ -106,6 +136,26 @@ class Migration(SchemaMigration):
             'position': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'}),
             'state': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '2', 'db_index': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'default': "u'\\u6807\\u9898'", 'max_length': '100'}),
+            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
+        },
+        'content.boxitem': {
+            'Meta': {'object_name': 'BoxItem'},
+            'box': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['content.Box']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_delete': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'item': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['content.Item']"}),
+            'position': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'})
+        },
+        'content.city': {
+            'Meta': {'object_name': 'City'},
+            'city_code': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_delete': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_index': 'True'}),
+            'manager': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
+            'phone': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
+            'state': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '2', 'db_index': 'True'}),
             'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
         },
         'content.item': {
@@ -143,11 +193,11 @@ class Migration(SchemaMigration):
         'content.shoppingaddress': {
             'Meta': {'object_name': 'ShoppingAddress'},
             'address': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'city': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
-            'city_code': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
+            'city': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['content.City']"}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_delete': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_index': 'True'}),
+            'manager': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             'onlinetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'phone': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
