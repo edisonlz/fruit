@@ -79,6 +79,7 @@
                     
                     <th>名称</th>
                     <th>地址</th>
+                    <th>负责人</th>
                     <th>联系电话</th>
                     <th>上线时间</th>
                     <th>状态</th>
@@ -91,9 +92,11 @@
                     <tr class="sort-item" id="module_{{ address.id }}" value="{{ address.id }}">
 
                         <td style="width: 60px;">{{ forloop.counter }}</td>
-                        <td style="width: 160px;"> {{ address.name }}</td>
-                        <td style="width: 200px;"><a target="_blank" href="/content/address/map?id={{address.id}}">{{ address.address }}</td>
+                        <td style="width: 120px;"> {{ address.name }}</td>
+                        <td style="width: 180px;"><a target="_blank" href="/content/address/map?id={{address.id}}">{{ address.address }}</td>
+                        <td style="width: 60px;">{{ address.manager }}</td>
                         <td style="width: 100px;">{{ address.phone }}</td>
+
                         <td style="width: 100px;">{{ address.onlinetime_str }}</td>
                         <td style="width: 80px;">
                          

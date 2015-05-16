@@ -51,6 +51,9 @@ class ShoppingAddress(BaseModel):
         else:
             return True
 
+    @classmethod
+    def all(cls):
+        return cls.objects.filter(is_delete=False).order_by('-position')
 
 
 

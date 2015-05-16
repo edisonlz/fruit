@@ -48,6 +48,7 @@ def cms_address_create(request):
         phone = request.POST.get("phone")
         onlinetime = request.POST.get("onlinetime")
         city_id = request.POST.get("city_id")
+        manager = request.POST.get("manager")
 
         ad = ShoppingAddress()
         ad.name = name
@@ -56,6 +57,7 @@ def cms_address_create(request):
         ad.onlinetime = onlinetime
         ad.status = Status.StatusOpen
         ad.city_id = city_id
+        ad.manager = manager
         ad.save()
 
         response = {'status': 'success'}
@@ -73,6 +75,7 @@ def cms_address_update(request):
         phone = request.POST.get("phone")
         onlinetime = request.POST.get("onlinetime")
         city_id = request.POST.get("city_id")
+        manager = request.POST.get("manager")
 
         ad = ShoppingAddress.objects.get(id=pk)
         ad.name = name
@@ -80,6 +83,7 @@ def cms_address_update(request):
         ad.address = address
         ad.onlinetime = onlinetime
         ad.city_id = city_id
+        ad.manager = manager
         ad.save()
 
         response = {'status': 'success'}
