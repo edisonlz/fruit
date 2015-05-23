@@ -87,17 +87,30 @@ class BoxItem(models.Model):
         app_label = "content"
 
 
+
+    @property
+    def picture(self):
+        picture_dict={
+            0:"self.item.head_image",#head_image
+            1:"self.item.show_image",#show_image
+            2:"self.item.adv_image",#adv_image
+        }
+        return eval(picture_dict.get(self.box.box_type))
+
+
     @classmethod
     def deleteItem(cls,boxid,itemid):
 
         from item import Item
 
         try:
+            print "boxid:{}\titem:{}".format(boxid,itemid)
             box = Box.objects.get(pk=boxid)
             item = Item.objects.get(pk=itemid)
 
             boxitem = cls.objects.get(box=box,item=item)
             boxitem.is_delete=1
+            boxitem.position=0
             boxitem.save()
             return True
         except:
@@ -107,9 +120,11 @@ class BoxItem(models.Model):
     @classmethod
     def getBoxItemNum(cls,box):
 
-        items = cls.objects.filter(box=box)
-
-        return len(items)
+        items = cls.objects.filter(box=box,is_delete=0).order_by("-position")
+        if items:
+            return items[0].position
+        else:
+            return 0
 
     @classmethod
     def addItem(cls,boxid,itemid):
@@ -117,12 +132,14 @@ class BoxItem(models.Model):
         from item import Item
 
         try:
+            print "boxid:{}\titem:{}".format(boxid,itemid)
             box = Box.objects.get(pk=boxid)
             item = Item.objects.get(pk=itemid)
 
             position = cls.getBoxItemNum(box)
-            boxitem = cls.objects.get_or_create(box=box,item=item)
-            boxitem.position=position
+            boxitems = cls.objects.get_or_create(box=box,item=item)
+            boxitem=boxitems[0]
+            boxitem.position=position+1
             boxitem.is_delete=0
             boxitem.save()
 
@@ -136,6 +153,8 @@ class BoxItem(models.Model):
     def updatePosition(cls,box_id,item_ids):
 
         try:
+            # import pdb
+            # pdb.set_trace()
             position = 1
             for item_id in item_ids:
                 boxitem = cls.objects.get(box_id = box_id,item_id=item_id)
@@ -147,5 +166,7 @@ class BoxItem(models.Model):
         except:
             logging.error(traceback.format_exc())
             return False
+
+
 
 

@@ -46,6 +46,12 @@ class BaseModel(models.Model,Status):
         if is_save:
             self.save()
 
+    @classmethod
+    def all(cls):
+        return cls.objects.filter(is_delete=False).order_by('created_at')
+
+    
+
 
 
 

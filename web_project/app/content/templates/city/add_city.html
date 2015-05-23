@@ -3,12 +3,12 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="exampleModalLabel">新增提货点</h4>
+        <h4 class="modal-title" id="exampleModalLabel">新增城市</h4>
         
       </div>
       <div class="modal-body">
-        <form id="form_add_address" method="post" action="/content/address/create">
-
+        <form id="form_add_address" method="post" action="/content/city/create">
+           {% csrf_token %}
           <div class="form-group">
             <label class="sr-only" for="name"></label>
             <div class="input-group">
@@ -18,27 +18,12 @@
           </div>
 
           <div class="form-group">
-            <label class="sr-only" for="address"></label>
+            <label class="sr-only" for="city_code"></label>
             <div class="input-group">
-              <div class="input-group-addon">地址</div>
-              <input type="text" class="form-control" name="address" id="address" placeholder="">
+              <div class="input-group-addon">城市编码</div>
+              <input type="text" class="form-control" name="city_code" id="city_code" placeholder="">
             </div>
           </div>
-
-          <div class="form-group">
-            <label class="sr-only" for="city"></label>
-            <div class="input-group">
-              <div class="input-group-addon">城市</div>
-
-                        <select class="form-control" id="city_id" name="city_id" placeholder="">
-                            {% for city in citys %}
-                        <option  value="{{city.id}}">{{city.name}}</option>
-                            {% endfor %}
-                        </select>
-            </div>
-          </div>
-
-
 
           <div class="form-group">
             <label class="sr-only" for="manager"></label>
@@ -48,7 +33,6 @@
             </div>
           </div>
 
-          
           <div class="form-group">
             <label class="sr-only" for="phone"></label>
             <div class="input-group">
@@ -57,20 +41,14 @@
             </div>
           </div>
 
-          <div class="form-group">
-            
-            <div class="input-group">
-              <div class="input-group-addon">上线时间</div>
-                <input size="16" type="text" class="form-control form_datetime"  style="width:200px" id="onlinetime" name="onlinetime" value="" >
-              </div>
-          </div>
-        
         </form>
       </div>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
         <button id="btn_create" type="button" class="btn btn-primary">创建</button>
       </div>
+
     </div>
   </div>
   <script type="text/javascript">

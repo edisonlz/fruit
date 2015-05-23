@@ -1,76 +1,81 @@
-<div class="modal fade" id="boxModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
+{% extends "base.html" %}
+
+
+{% block link %}
+    <link href="{{ STATIC_URL }}select2/select2.css" rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}select2/select2.js"></script>
+    <link href="{{ STATIC_URL }}select2/select2-bootstrap.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">
+    <link href="{{ STATIC_URL }}bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+
+    <script type="text/javascript" src="{{ STATIC_URL }}bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"
+            charset="UTF-8"></script>
+    <script type="text/javascript"
+            src="{{ STATIC_URL }}bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+
+    <style type="text/css">
+        .status_editable {
+
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+<div>
+  <div>
+    <div>
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="exampleModalLabel">新增提货点</h4>
+        <h4 class="modal-title" id="exampleModalLabel">更新城市</h4>
         
       </div>
       <div class="modal-body">
-        <form id="form_add_address" method="post" action="/content/address/create">
-
+        <form id="form_update_city" method="post" action="/content/city/update">
+           {% csrf_token %}
           <div class="form-group">
             <label class="sr-only" for="name"></label>
             <div class="input-group">
               <div class="input-group-addon">名称</div>
-              <input type="text" class="form-control" name="name" id="name" placeholder="">
+              <input type="text" class="form-control" value="{{city.name}}" name="name" id="name" placeholder="">
+              <input type="hidden"  value="{{city.id}}" class="form-control" name="pk" id="pk">
             </div>
           </div>
 
           <div class="form-group">
-            <label class="sr-only" for="address"></label>
+            <label class="sr-only" for="city_code"></label>
             <div class="input-group">
-              <div class="input-group-addon">地址</div>
-              <input type="text" class="form-control" name="address" id="address" placeholder="">
+              <div class="input-group-addon">城市编码</div>
+              <input type="text" value="{{city.city_code}}" class="form-control" name="city_code" id="city_code" placeholder="">
             </div>
           </div>
-
-          <div class="form-group">
-            <label class="sr-only" for="city"></label>
-            <div class="input-group">
-              <div class="input-group-addon">城市</div>
-
-                        <select class="form-control" id="city_id" name="city_id" placeholder="">
-                            {% for city in citys %}
-                        <option  value="{{city.id}}">{{city.name}}</option>
-                            {% endfor %}
-                        </select>
-            </div>
-          </div>
-
-
 
           <div class="form-group">
             <label class="sr-only" for="manager"></label>
             <div class="input-group">
               <div class="input-group-addon">负责人</div>
-              <input type="text" class="form-control" name="manager" id="manager" placeholder="">
+              <input manager="text" value="{{city.manager}}" class="form-control" name="manager" id="address" placeholder="">
             </div>
           </div>
 
-          
           <div class="form-group">
             <label class="sr-only" for="phone"></label>
             <div class="input-group">
               <div class="input-group-addon">联系电话</div>
-              <input type="text" class="form-control" name="phone" id="phone" placeholder="">
+              <input type="text" value="{{city.phone}}" class="form-control" name="phone" id="phone" placeholder="">
             </div>
           </div>
 
-          <div class="form-group">
-            
-            <div class="input-group">
-              <div class="input-group-addon">上线时间</div>
-                <input size="16" type="text" class="form-control form_datetime"  style="width:200px" id="onlinetime" name="onlinetime" value="" >
-              </div>
-          </div>
-        
         </form>
       </div>
+
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-        <button id="btn_create" type="button" class="btn btn-primary">创建</button>
+        <a href="/content/city" class="btn btn-default" >返回</a>
+        <button id="btn_create" type="button" class="btn btn-primary">更新</button>
       </div>
+
     </div>
   </div>
   <script type="text/javascript">
@@ -83,10 +88,10 @@
             success:       showResponse  // post-submit callback
         };
 
-        $('#form_add_address').ajaxForm(options);
+        $('#form_update_city').ajaxForm(options);
 
         $('#btn_create').click(function(){
-            $('#form_add_address').submit();
+            $('#form_update_city').submit();
         });
 
 
@@ -154,3 +159,22 @@
 
   </script>
 </div>
+
+
+{% endblock %}
+
+
+
+
+{% block js %}
+    <script src="{{ STATIC_URL }}select2/select2.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery.form.js"></script>
+    
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script src="{{ STATIC_URL }}jquery-validate/jquery.validate.js"></script>
+    <script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+    <link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet" />
+    <script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+{% endblock %}
