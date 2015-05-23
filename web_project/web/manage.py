@@ -14,4 +14,4 @@ from base.settings import execute
 
 if __name__ == "__main__":
 
-    execute('web_project.base', 'web_project.app', 'web_project.web')
+    execute('web_project.base',  'web_project.web')

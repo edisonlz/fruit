@@ -31,7 +31,7 @@ def load_settings(settings, debug=True, **kwargs):
 
             'TEMPLATE_DIRS': (
                 os.path.join(PROJECT_ROOT, "templates"),
-                os.path.join(PROJECT_ROOT, "content/templates"),
+                os.path.join(PROJECT_ROOT, "info/templates"),
                 os.path.join(PROJECT_ROOT, "user/templates"),
             ),
 
@@ -71,15 +71,15 @@ def load_settings(settings, debug=True, **kwargs):
                 'django.contrib.sessions',
                 'django.contrib.messages',
                 'django.contrib.staticfiles',
-                'django_admin_bootstrapped',
+                #'django_admin_bootstrapped',
                 'django.contrib.admin',
                 'django.contrib.admindocs',
                 'django.contrib.admin',
                 'django.contrib.admindocs',
-                'app.user',
                 'south',
-                'app.content',
-                'app.bootstrap_toolkit',
+                'web.user',
+                #'web.info',
+                #'web.bootstrap_toolkit',
                 'django_extensions',
             ],
             

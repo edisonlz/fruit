@@ -14,15 +14,15 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    url(r'^admin/', include(admin.site.urls)),
+    #url(r'^admin/', include(admin.site.urls)),
 
 
-    url(r'^$', 'content.views.module.index', name=u'首页'),
+    #url(r'^$', 'web.info.views.module.index', name=u'首页'),
 
     #url(r'^signin/$', 'django.contrib.auth.views.login', {'template_name': 'signin.html'}, name="signin"),
     #url(r'^signout/$', 'django.contrib.auth.views.logout_then_login',  name="signout"),
 
-    url(r'^content/', include('app.content.urls')),
+    #url(r'^info/', include('web.info.urls')),
 
 
 
