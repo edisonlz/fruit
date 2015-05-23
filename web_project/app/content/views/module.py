@@ -5,9 +5,11 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 import json
-from app.content.models import Box, BoxType,BoxItem
+from app.content.models.home_module import Box, BoxType,BoxItem
 from django.db import transaction
 from app.content.models import Status
+from app.content.models.address import City,ShoppingAddress
+
 
 @login_required
 def update_box_position(request):
@@ -35,14 +37,27 @@ def cms_box_create(request):
         title = request.POST.get("title")
         icount = request.POST.get("icount")
 
-        box = Box()
-        box.box_type = box_type
-        box.title = title
-        box.iner_count = icount
-        box.save()
+        shop = int(request.POST.get("shop"))
+        if not shop:
+            return
 
-        response = {'status': 'success'}
-        return HttpResponse(json.dumps(response), content_type="application/json")
+        try:
+            box = Box()
+            box.box_type = box_type
+            box.title = title
+            box.iner_count = icount
+            box.shop_id = shop
+            box.save()
+
+
+            response = {'status': 'success'}
+            return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+        except:
+            response = {'status': 'error'}
+            return HttpResponse(json.dumps(response), content_type="application/json")
+
     else:
         response = {'status': 'fail'}
         return HttpResponse(json.dumps(response), content_type="application/json")
@@ -82,7 +97,9 @@ def cms_box_delete(request):
 
         box_id = request.POST.get("box_id")
 
-        flage = Box.delete_box(box_id)
+        box = Box.objects.get(pk=int(box_id))
+        flage = box.delete()
+
         if flage:
             response = {'status': 'success',"box_id":box_id}
         else:
@@ -98,12 +115,22 @@ def cms_box_delete(request):
 @login_required
 def cms_box(request):
     if request.method == 'GET':
-        boxes = Box.objects.filter(is_delete=False).order_by('-position')
+
+        citys = City.objects.all()
+        shop = request.GET.get("shop","")
+
+        boxes = Box.getBoxes(shop)
+
         return render(request, 'box/box.html', {
             'boxes': boxes,
             'box_types': BoxType.TYPES,
             "menu":3,
+            "citys":citys
         })
+
+
+
+
 
 @login_required
 def index(request):
@@ -281,5 +308,27 @@ def app_auto_complete(request):
     #     "status":"success",
     #     "data":results
     # }
+
+    return HttpResponse(json.dumps(results), content_type="application/json")
+
+
+
+@login_required
+def getShopByCity(request):
+
+    # import pdb
+    # pdb.set_trace()
+
+    city =request.GET.get("city","")
+    if not city:
+        results={"status":"error"}
+
+    else:
+        items = ShoppingAddress.getShopByCity_Js(city)
+
+        results={
+            "status":"success",
+            "results":items,
+        }
 
     return HttpResponse(json.dumps(results), content_type="application/json")

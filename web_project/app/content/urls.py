@@ -10,6 +10,7 @@ urlpatterns = patterns(
     url(regex='^box/create$', view='module.cms_box_create', name=u'cms_box_create'),
     url(regex='^box/update$', view='module.cms_box_update', name=u'cms_box_update'),
     url(regex='^box/delete$', view='module.cms_box_delete', name=u'cms_box_delete'),
+    url(regex='^box/getshops$', view='module.getShopByCity', name=u'box_get_shops'),
     url(regex='^box/child$', view='module.box_item_list', name=u'box_item_list'),
     url(regex='^box/child/create$', view='module.add_item_to_box', name=u'add_item_to_box'),
     url(regex='^box/child/delete$', view='module.delete_item_to_box', name=u'delete_item_to_box'),

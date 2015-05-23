@@ -27,6 +27,22 @@
             <input id="icount"  class="form-control" name="icount" placeholder="" type="text" />
           </div>
 
+          <div class="form-group form-inline" id="city_div">
+            <label for="recipient-name" class="control-label">城市:</label>
+            <select id="city" class="form-control">
+                {% for city in citys %}
+                    <option value="{{ city.id }}"> {{ city.name }}</option>
+                {% endfor %}
+            </select>
+          </div>
+          <div class="form-group form-inline" id="shop_div">
+            <label for="recipient-name" class="control-label">提货点:</label>
+            <select id="shop" class="form-control" name="shop" >
+{#                {% for shop in citys %}#}
+{#                    <option value="{{ city.id }}"> {{ city.name }}</option>#}
+{#                {% endfor %}#}
+            </select>
+          </div>
         </form>
       </div>
       <div class="modal-footer">
