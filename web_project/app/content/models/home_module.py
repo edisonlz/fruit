@@ -52,7 +52,7 @@ class Box(BaseModel):
 
 
     @classmethod
-    def getBoxes(cls,shop):
+    def getBoxes(cls,shop=None):
 
         if not shop:
             city = City.objects.get(name="全局")
@@ -63,6 +63,10 @@ class Box(BaseModel):
         items = cls.objects.filter(shop=shop)
 
         return items
+
+    @property
+    def items(self):
+        return BoxItem.objects.filter(box=self)
 
 
 class BoxItem(models.Model):

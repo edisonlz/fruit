@@ -35,7 +35,7 @@ def load_settings(settings, debug=True, **kwargs):
                 os.path.join(PROJECT_ROOT, "user/templates"),
             ),
 
-            'ROOT_URLCONF': 'app.urls',
+            'ROOT_URLCONF': 'web.urls',
             'STATICFILES_FINDERS': [
                 'django.contrib.staticfiles.finders.FileSystemFinder',
                 'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -78,7 +78,8 @@ def load_settings(settings, debug=True, **kwargs):
                 'django.contrib.admindocs',
                 'south',
                 'web.user',
-                #'web.info',
+                'web.info',
+                'app.content',
                 #'web.bootstrap_toolkit',
                 'django_extensions',
             ],

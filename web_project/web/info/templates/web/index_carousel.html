@@ -1,0 +1,27 @@
+
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        {% for item in box.items %}
+        <li data-target="#myCarousel" data-slide-to="{{ forloop.counter }}"
+            {% if forloop.first %}   class="active" {% endif %}></li>
+        {% endfor %}
+      </ol>
+
+
+    <div class="item active">
+
+        {% for item in box.items %}
+              <img class="first-slide" src="" alt="First slide">
+              <div class="container">
+                <div class="carousel-caption">
+                  <h1>{{ item.item.title }}</h1>
+                  <p>{{ item.item.title }}</p>
+                  <p><a class="btn btn-lg btn-primary" href="#" role="button">Sign up today</a></p>
+                </div>
+              </div>
+        {% endfor %}
+
+     </div>
+
+</div>

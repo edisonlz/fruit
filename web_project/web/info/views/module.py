@@ -5,12 +5,16 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 import json
-#from app.content.models import Box, BoxType,BoxItem
+from app.content.models import Box, BoxType,BoxItem ,City ,ShoppingAddress, BoxType
 from django.db import transaction
-#from app.content.models import Status
+from app.content.models import Status
 
 
 
 def index(request):
-    return render(request, 'web/index.html')
+
+    boxes = Box.getBoxes()
+    return render(request, 'web/index.html', {"boxes":boxes,"BoxType":BoxType})
+
+
 
