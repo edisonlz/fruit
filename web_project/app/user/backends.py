@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 
 # from app.user.lib.ldapauth import validate_user
-from app.user.lib.ldapauth2 import validate_user, ServerIsBusy
+# from app.user.lib.ldapauth2 import validate_user, ServerIsBusy
 from django.core.exceptions import PermissionDenied
 
 
