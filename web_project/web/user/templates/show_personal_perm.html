@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% load bootstrap_toolkit %}
+{% load util_tags %}
+
+{% block link %}
+
+    <style type="text/css">
+        #content-box {
+            width: 100%;
+        }
+
+        #perm_form .uid {
+            margin-left: 70px;
+            margin-right: 15px;
+            text-align: right;
+            vertical-align: top;
+        }
+
+        .box_place {
+            width: 50%;
+            height: 100%;
+        }
+
+        .page-header {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        div.alert {
+            margin-top: 30px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header" style="padding-top: 8px; width: 100%; padding-bottom: 1px;">
+        <h3>用户权限</h3>
+    </div>
+
+    <div class="row-fluid">
+        <div class="pull-left box_place">
+            <a class="btn"
+               href="{% url 'user_list' %}"><i class="icon-arrow-left"></i>返回</a>
+            <button class="btn btn-danger" id="push_trash"><i class="icon-trash"></i>删除</button>
+
+
+            <h4 style="display: inline-block;float: right;">{{ local_user.username }}的抽屉权限列表</h4>
+
+
+            <div style="margin:0 10px 40px;">
+                {% if user_perm_tag %}
+                    <table class="table table-hover table-striped">
+                        <thead>
+                        <th><input type="checkbox" class="block_all"></th>
+                        <th>区域</th>
+                        <th>设备</th>
+                        <th>抽屉名/频道名</th>
+                        <th>抽屉ID</th>
+                        </thead>
+                        <tbody>
+                        {% for user in now_user_perms %}
+                            <tr>
+                                <td><input type="checkbox" class="perm_box" value="{{ user.box.id }}"
+                                           data-src="{{ user.source }}"></td>
+                                <td>
+                                    {% get_perm_platform_desc user.source %}
+                                </td>
+                                <td>{% if user.source == 0 %}{{ user.box.platform_to_s }}{% endif %}</td>
+                                <td>{{ user.box.title }}</td>
+                                <td>{{ user.box.id }}</td>
+                            </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="alert alert-block alert-info fade in">
+                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        <p>该用户没有任何权限～！</p>
+                    </div>
+                {% endif %}
+
+
+            </div>
+        </div>
+        <form class="form-control" method="post" action="{% url 'del_main_box_perm' %}" id="delForm">
+            <input type="hidden" name="user_id" value="{{ local_user.id }}">
+            <input type="hidden" name="drawer_and_src">
+        </form>
+
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap-confirmation.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#push_trash').confirmation({
+                title: '确定删除吗?',
+                btnOkClass: 'btn-info',
+                singleton: true,
+                popout: true,
+                placement: 'right',
+                onConfirm: function () {
+                    var perm_set = $('.perm_box:checked');
+                    if (perm_set.length <= 0) {
+                        alert('请至少选中一个权限');
+                        return;
+                    }
+                    var perm_list = perm_set.map(function () {
+                        return $(this).attr('value') + ',' + $(this).data('src')
+                    }).get().join('|');
+                    var form = $('#delForm');
+                    form.children('[name=drawer_and_src]').attr('value', perm_list);
+                    form.submit();
+                }
+            });
+
+            var all_perm_btns = $(".perm_box");
+            var block = $(".block_all");
+            block.bind('click', function () {
+                var perm_set = $(this).closest('table').find('.perm_box');
+                if ($(this).is(':checked')) {
+                    perm_set.prop('checked', true);
+                } else {
+                    perm_set.prop('checked', false);
+                }
+            });
+
+            all_perm_btns.bind('click', function () {
+                var childs = $(this).closest('tbody').find('.perm_box');
+                if (childs.length === childs.filter(':checked').length) {
+                    $(this).closest('table').find('.block_all').prop('checked', true);
+                } else {
+                    $(this).closest('table').find('.block_all').prop('checked', false);
+                }
+            });
+
+        });
+    </script>
+{% endblock %}

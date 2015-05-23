@@ -1,0 +1,29 @@
+{% load util_tags %}
+<table class="table table-hover table-striped">
+    <thead>
+    <th><input type="checkbox" class="block_all"></th>
+    <th>区域</th>
+    {% if src == 0 %}
+    <th>平台</th>
+    {% endif %}
+    <th>抽屉名/频道名</th>
+    <th>抽屉ID</th>
+    </thead>
+    <tbody>
+    {% for box in give_boxes %}
+        <tr>
+            <td><input type="checkbox" class="perm_box" value="{{ box.id }}"
+                       data-src="{{ src }}"></td>
+            <td>
+                {% get_perm_platform_desc src %}
+            </td>
+            {% if src == 0 %}
+            <td>{{ box.platform_to_s }}</td>
+            {% endif %}
+            <td>{{ box.title }}</td>
+            <td>{{ box.id }}</td>
+        </tr>
+    {% endfor %}
+
+    </tbody>
+</table>

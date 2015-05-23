@@ -1,0 +1,175 @@
+<style type="text/css">
+    ul {
+        margin: 0;
+    }
+
+    .nav-header {
+        margin-left: -10px;
+        padding-left: 0;
+        line-height: 30px;
+        font-size: 18px;
+        color: #333;
+        font-weight: normal;
+    }
+
+    div#menu-list {
+        margin-top: 10px;
+        background-color: #F8f8f8;
+        border-color: #dbdde0;
+    }
+
+    div#menu-list .nav-list > li {
+        line-height: 25px;
+    }
+
+    div#menu-list div.accordion-group {
+        border: none;
+    }
+
+    div#menu-list > ul {
+        margin: 0 auto;
+    }
+
+    div#menu-list .nav-stacked li a {
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+    .nav-stacked {
+        font-size: 13px;
+    }
+
+    ul.nav-stacked {
+        margin-bottom: 0;
+    }
+
+    ul.nav-stacked > li > a {
+        padding-left: 0;
+        margin-left: 0;
+    }
+
+    .well [class^="icon-"] {
+        width: 20px;
+        height: 14px;
+        margin-right: 2px;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .well > ul > li ul > li a [class^="icon-"] {
+        margin-right: -4px;
+    }
+
+    div[id^="home_management"] li > a {
+        margin-left: 5px;
+        margin-right: 0;
+        padding: 3px 0 3px 0;
+        max-width: 95px;
+    }
+
+    div[id^="Channel"] ul > li > a {
+        margin-left: 5px;
+        margin-right: 0;
+    }
+
+    .nav-list > li > a {
+        margin-left: -10px;
+        margin-right: -10px;
+    }
+
+    .nav-list {
+        width: 145px;
+    }
+
+    .list-nest div li a {
+        padding-right: 10px;
+    }
+
+    .nav-list > li > a, .nav-list .nav-header {
+        margin-left: 0;
+    }
+
+    #menu-list > ul > li > div {
+        margin-left: 20px;
+    }
+
+    .nav-list > li > a {
+        padding-right: 0;
+    }
+
+    #menu-list > ul > li > a {
+        max-width: 170px;
+        width: 100%;
+    }
+
+    .nav-list {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    #menu-list {
+        padding: 19px 0;
+        min-width: 175px;
+    }
+
+    .nav li + .nav-header {
+        margin-top: 0;
+    }
+
+</style>
+
+
+<div class="well" id="menu-list">
+
+    <ul class="nav nav-list">
+        {% for block in menu %}
+            {% if block.hidden_for_normal_user and user.is_normal_user %}{% else %}
+                <li class="nav-header"><i class="{{ block.img_class }}"></i>{{ block.name }}</li>
+            {% endif %}
+
+            {% if block.hidden_for_normal_user and user.is_normal_user %}{% else %}
+                {% for item in block.children %}
+                    {% if not item.children and item.level %}
+                        {% if item.hidden_for_normal_user and user.is_normal_user %}{% else %}
+                            <li {% if item.active and not item.children %}class="active"{% endif %}><a
+                                    href="{{ item.path }}"><i
+                                    class="{{ item.img_class }}"></i>{{ item.name }}</a></li>
+                        {% endif %}
+                    {% endif %}
+
+
+                    {% if item.hidden_for_normal_user and user.is_normal_user %}
+
+                    {% else %}
+                        {% if item.children %}
+                            <li class="">
+                                <a href="#{{ block.id }}{{ forloop.counter }}" data-toggle="collapse"><i
+                                        class="{{ item.img_class }}"></i>{{ item.name }}</a>
+                            </li>
+                            <li class="list-nest">
+                                <div class="accordion-group">
+                                    <div id="{{ block.id }}{{ forloop.counter }}"
+                                         class="accordion-body collapse {% if item.active %}in{% endif %}">
+                                        <ul class="nav nav-pills nav-stacked">
+                                            {% for low_item in item.children %}
+                                                {% if low_item.hidden_for_normal_user and user.is_normal_user %}
+                                                {% else %}
+                                                    <li {% if low_item.active %}class="active"
+                                                        style="display: inline-block" {% endif %}>
+                                                        <a href="{{ low_item.path }}"><i
+                                                                class="icon-angle-right"></i>{{ low_item.name }}</a>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+</div>
