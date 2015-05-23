@@ -8,8 +8,9 @@ from django.http import HttpResponse
 from django.utils import simplejson
 from django.conf import settings
 from app.content.models.item import *
+from django.contrib.auth.decorators import login_required
 
-
+from sorl.thumbnail import get_thumbnail
 MIMEANY = '*/*'
 MIMEJSON = 'application/json'
 MIMETEXT = 'text/plain'
@@ -45,7 +46,7 @@ class JSONResponse(HttpResponse):
         content = simplejson.dumps(obj, **json_opts)
         super(JSONResponse, self).__init__(content, mimetype, *args, **kwargs)
 
-
+@login_required
 def item_edit(request):
     if request.method == "GET":
         #item id
@@ -114,7 +115,7 @@ def item_edit(request):
         response['Content-Disposition'] = 'inline; filename=files.json'
         return HttpResponse(response, content_type="application/json")
 
-
+@login_required
 def upload_img(request):
 
     if request.method == 'POST':
@@ -124,9 +125,13 @@ def upload_img(request):
             os.path.join(settings.STATICFILES_DIRS[0]),
             file_obj.name)
 
+
         with open(path_name, 'w') as des_f:
             for chunk in file_obj.chunks():
                 des_f.write(chunk)
+
+        im = get_thumbnail(path_name, '480x320', crop='center', quality=99)
+        print dir(im)
 
         response_data = {
             "files": [
@@ -164,3 +169,14 @@ def item_auto_complete(request):
     # response['Content-Disposition'] = 'inline; filename=files.json'
     response["Access-Control-Allow-Origin"] = "*"
     return response
+
+@login_required
+def item_list(request):
+    if request.method == "GET":
+        key = request.GET.get("key")
+
+        items = Item.objects.filter()
+        if key:
+            items = Item.objects.filter(title__contains="%s" % key)
+
+        return render(request, 'item/item_list.html', locals())

@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+
+{% block link %}
+    <link href="{{ STATIC_URL }}select2/select2.css" rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}select2/select2.js"></script>
+    <link href="{{ STATIC_URL }}select2/select2-bootstrap.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">
+    <style type="text/css">
+        .status_editable {
+
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="pull-left">
+            <ul class="nav nav-tabs">
+              <li role="presentation" class="active"><a href="#">商品列表</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="pull-right">
+            <form id="form_search" method="get" action="/content/item/list">
+                <div class="form-group form-inline">
+
+                  <input type="text" {% if key %} value="{{key}}"  {%endif%} id="key" name="key" class="form-control " style="width:200px" placeholder="Search for...">
+                    <button id="searchbtn" class="btn btn-default" type="button">Go!</button>
+
+                    <a href="/content/item/edit" role="button" class="btn  btn-primary" data-toggle="modal">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增商品
+                    </a>
+                </div>
+             </form>
+        </div>
+    </div>
+
+    <div class="row">
+            <table class="table  table-hover">
+                <thead>
+                    <th>商品ID</th>
+                    <th>商品名称</th>
+                    <th>展示图片</th>
+                    <th>操作</th>
+                </thead>
+                <tbody id="">
+                {% for item in items %}
+                    <tr class="sort-item" id="item_{{item.id }}" value="{{ item.id }}">
+                        <td style="width: 180px;"> {{item.id }}</td>
+                        <td style="width: 180px;"> {{item.title }}</td>
+                        <td style="width: 180px;">
+                            <img height="80px" width="120px" src="{{ item.show_image }}"></td>
+                        <td style="width: 180px;">
+                            <a class="btn btn-small btn-warning btn-table del"
+                               title="编辑"  href="/content/item/edit?item_id={{ item.id }}">
+                               <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 编辑
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+    </div>
+
+
+{% endblock %}
+
+
+
+
+{% block js %}
+
+
+    <script type="text/javascript">
+
+            $("#searchbtn").click(function(){
+
+                $('#form_search').submit();
+
+            });
+
+{#        $(document).ready(function () {#}
+{#            /* list table sortbale */#}
+{#            $("#sortable").sortable({#}
+{#                revert: true,#}
+{#                start: function(event, ui) {#}
+{#                    ui.item.startPos = ui.item.index();#}
+{#                },#}
+{#                stop: function(event, ui) {#}
+{#                    console.log("Start position: " + ui.item.startPos);#}
+{#                    console.log("New position: " + ui.item.index());#}
+{##}
+{#                    if(ui.item.startPos!=ui.item.index())#}
+{#                        $("#save_position_btn").removeClass("disabled");#}
+{#                }#}
+{##}
+{#            });#}
+{##}
+{##}
+{##}
+{##}
+{#            function deleteitem(box,item){#}
+{##}
+{#                var statu = confirm("确认删除吗?");#}
+{#                if(!statu){#}
+{#                    return false;#}
+{#                }#}
+{##}
+{#                $.ajax({#}
+{##}
+{#                     type: 'POST',#}
+{##}
+{#                     url: "/content/item/delete" ,#}
+{##}
+{#                    data: {"box_id":box,#}
+{#                           "item_id":item},#}
+{##}
+{#                    success: function(data){#}
+{##}
+{##}
+{#                        if (data.status =="success")#}
+{#                        {#}
+{#                           //$("tr[value="+data.box_id+"]").hide();#}
+{#                           location.reload();#}
+{#                        }#}
+{#                        else{#}
+{#                            alert(data.status);#}
+{#                        }#}
+{#                    } ,#}
+{##}
+{#                    dataType: "json"#}
+{##}
+{#                });#}
+{##}
+{##}
+{#            };#}
+{##}
+{##}
+{#            /* state checkbox */#}
+{#             $('#state-all-pick').click(function () {#}
+{#                if ($(this).is(':checked')) {#}
+{#                    $("input:checkbox.module-status-tag").prop("checked", true);#}
+{#                } else {#}
+{#                    $("input:checkbox:checked.module-status-tag").attr("checked", false);#}
+{#                }#}
+{#            });#}
+{##}
+{##}
+{#             /* save positoin */#}
+{#            $("#save_position_btn").click(function(){#}
+{##}
+{##}
+{#                item_ids = collect_module_ids_with_order();#}
+{#                if(item_ids==''){#}
+{#                    alert('没有要排序的内容');#}
+{#                    return false;#}
+{#                }#}
+{##}
+{#                var $btn = $(this).button('loading');#}
+{#                $("#item_ids").val(item_ids);#}
+{##}
+{#                $('#form_positoin').submit();#}
+{##}
+{#            });#}
+{##}
+{#            /* save position form */#}
+{#            var options = {#}
+{#                success:  function(responseText, statusText){#}
+{##}
+{#                    setTimeout(function () {$("#save_position_btn").button('reset')}, 1000);#}
+{##}
+{#                    if(responseText.status=="success"){#}
+{#                       $().toastmessage('showSuccessToast', '操作成功');#}
+{#                    } else {#}
+{#                        $().toastmessage('showErrorToast', "操作失败");#}
+{#                    }#}
+{#                }#}
+{#            };#}
+{#            $('#form_positoin').ajaxForm(options);#}
+{##}
+{#        });#}
+{##}
+{##}
+{#        function collect_module_ids_with_order(){#}
+{#                children = $("#sortable").children();#}
+{#                ret = ''#}
+{#                for(i=0;i<children.length;i++){#}
+{#                    child = children[i];#}
+{#                    ret += $(child).attr('value')+',';#}
+{#                }#}
+{#                return ret.substring(0, ret.length-1);#}
+{#        }#}
+
+</script>
+
+    <script src="{{ STATIC_URL }}select2/select2.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery.form.js"></script>
+
+    <script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+    <script src="{{ STATIC_URL }}jquery-validate/jquery.validate.js"></script>
+    <script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+    <link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet" />
+    <script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+{% endblock %}

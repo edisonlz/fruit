@@ -2,7 +2,7 @@
 from django.db import models
 from wi_cache.base import CachingManager
 from django.db.models import Max
-from sorl.thumbnail.fields import ImageWithThumbnailsField
+# from sorl.thumbnail.fields import ImageWithThumbnailsField
 import uuid
 from home_module import Box
 from common import BaseModel
@@ -162,7 +162,6 @@ class Item(models.Model):
             ]
         else:
             return []
-
 
 
 
