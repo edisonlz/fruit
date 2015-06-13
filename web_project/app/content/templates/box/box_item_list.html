@@ -72,7 +72,7 @@
                             <input type="checkbox" class="module-status-tag">
                         </td>
                         <td style="width: 60px;">{{ forloop.counter }}</td>
-                        <td style="width: 100px;"> {{ boxitem.item.title }}</td>
+                        <td style="width: 100px;"> <a href="/content/item/edit?item_id={{boxitem.item.id }}">{{ boxitem.item.title }}</a></td>
                         <td style="width: 80px;"> <img src="{{ boxitem.picture }}" class="img-thumbnail" style="height:60px;"></td>
                         <td style="width: 100px;"> {{ boxitem.item.price }}</td>
                         <td style="width: 100px;"> {{ boxitem.item.promote.title }}</td>
