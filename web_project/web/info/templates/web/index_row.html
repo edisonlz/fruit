@@ -3,30 +3,33 @@
       <!-- Three columns of text below the carousel -->
     <div class="row">
 
-      <div class="col-lg-2"></div>
+      <div class="col-lg-1"></div>
 
-      <div class="col-lg-8">
 
+
+
+      <div class="col-lg-10">
+
+        <h2 class="common_h2">荔白优选</h2>
          {% for item in box.items %}
 
-                <div class="col-lg-2">
-                  <!--image -->
-                  <div>
-                    <img src="{{ item.item.show_image }}" style="width:100%" />
+              <div class="item">
+
+                  <div class="clear_box" data-id="967">   
+
+                          <img class="scrollLoading" xsrc="http://imgcdn.xuxian.com/upload/2015/06/01/20150601073928310_464_261.jpg" src="http://imgcdn.xuxian.com/upload/2015/06/01/20150601073928310_464_261.jpg" title="山西西瓜，清爽解渴，盛夏之王" style="width:100%">
+                    
                   </div>
-                  <div style="display: inline-block">
-                    <div>
-                      {{item.item.title}} <span class="badge">￥{{item.item.price}}</span>
-                    </div>
-                    <div>
-                      <button type="button" class="btn btn-warning">+加入购物车</button>
-                    </div>
+                  <div class="buy-title">
+                         <h3>{{item.item.title}}</h3>
+                         <h4><span>¥{{item.item.price}}/1个 </span><del>市场价：¥{{item.item.price}}</del></h4>
                   </div>
-                </div><!-- /.col-lg-4 -->
+              </div>
+
          {% endfor %}
     </div>
 
-     <div class="col-lg-2"></div>
+     <div class="col-lg-1"></div>
 
   </div>
 

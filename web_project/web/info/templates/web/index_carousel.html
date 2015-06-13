@@ -1,32 +1,30 @@
 
  <div class="container">
   <div class="row">
-    <div class="col-lg-2"></div>
+    <div class="col-lg-1"></div>
 
       
-          <div class="col-lg-6">
-                  <div class="slides multiple-items">
-                    
+          <div class="col-lg-10">
+                  <div class="slides multiple-items adv_item_left">
                     {% for item in box.items %}
                       <div>
                           <a> <img src="{{ STATIC_URL }}home/c1.jpg" /> </a>
                       </div>
                     {% endfor %}
                   </div>
-          </div>
 
-          <div class="col-lg-2 clear_box">
-            
-              <div class="clear_box"> 
-                <img src="{{ STATIC_URL }}home/home1.jpg" class="adv_right">
-              </div>
-              <div class="clear_box"> 
-                <img src="{{ STATIC_URL }}home/home2.jpg" class="adv_right">
-              </div>
-          </div>
+                  <div class="adv_item_right">
+                   <div class="clear_box"> 
+                      <img src="{{ STATIC_URL }}home/home1.jpg" class="adv_right">
+                    </div>
+                    <div class="clear_box"> 
+                      <img src="{{ STATIC_URL }}home/home2.jpg" class="adv_right">
+                    </div>
+                  </div>
 
+      </div>
  
-    <div class="col-lg-2"></div>
+    <div class="col-lg-1"></div>
 
   </div>
 </div>
