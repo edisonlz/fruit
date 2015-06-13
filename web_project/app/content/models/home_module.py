@@ -4,6 +4,8 @@ from wi_cache.base import CachingManager
 from django.db.models import Max
 from common import Status
 from common import BaseModel
+from address import ShoppingAddress,City
+
 import logging
 import traceback
 
@@ -35,7 +37,7 @@ class Box(BaseModel):
     position = models.IntegerField(verbose_name=u'位置', default=0, db_index=True)
     iner_count = models.IntegerField(verbose_name=u"内部容器个数", default=12)
     box_type = models.IntegerField(verbose_name=u"模块类型", choices=BoxType.TYPES,default=BoxType.NORMAL, db_index=True)
-
+    shop = models.ForeignKey(ShoppingAddress)
 
     objects = CachingManager()
 
@@ -49,27 +51,22 @@ class Box(BaseModel):
         return BoxType.to_s(int(self.box_type))
 
 
-    def deletebox(self):
-        self.is_delete=1
-        self.save()
-
-
     @classmethod
-    def delete_box(cls,boxid):
+    def getBoxes(cls,shop=None):
 
-        try:
-            box = cls.objects.get(pk=boxid)
+        if not shop:
+            city = City.objects.get(name="全局")
+            shop = ShoppingAddress.objects.get(city=city,name="全局")
+        else:
+            shop = ShoppingAddress.objects.get(pk=shop)
 
-            box.deletebox()
+        items = cls.objects.filter(shop=shop)
 
-            return True
+        return items
 
-        except:
-
-            logging.error(traceback.format_exc())
-            return False
-
-
+    @property
+    def items(self):
+        return BoxItem.objects.filter(box=self)
 
 
 class BoxItem(models.Model):
@@ -166,7 +163,6 @@ class BoxItem(models.Model):
         except:
             logging.error(traceback.format_exc())
             return False
-
 
 
 

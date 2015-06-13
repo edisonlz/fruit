@@ -42,6 +42,7 @@ class ShoppingAddress(BaseModel):
 
 
 
+
     def is_new(self):
     	"""上线1个月内==new"""
         n = datetime.datetime.now()
@@ -58,3 +59,14 @@ class ShoppingAddress(BaseModel):
 
 
 
+    @classmethod
+    def getShopByCity_Js(cls,city_id):
+
+        items = cls.objects.filter(city_id=city_id)
+
+        results=[]
+        for item in items:
+
+            results.append({"id":item.id,"name":item.name})
+
+        return results
