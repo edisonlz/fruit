@@ -56,6 +56,4 @@ docs/_build/
 # PyBuilder
 target/
 mysettings.py
-*.jpg
-*.png
 *.xml
