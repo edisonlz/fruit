@@ -87,12 +87,17 @@ class BoxItem(models.Model):
 
     @property
     def picture(self):
+
         picture_dict={
             0:"self.item.head_image",#head_image
             1:"self.item.show_image",#show_image
             2:"self.item.adv_image",#adv_image
         }
-        return eval(picture_dict.get(self.box.box_type))
+        url = eval(picture_dict.get(self.box.box_type))
+        if not url:
+            url = eval("self.item.show_image")
+
+        return url 
 
 
     @classmethod

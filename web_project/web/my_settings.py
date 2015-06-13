@@ -5,7 +5,7 @@ def load_settings(settings):
             'default': {
                 'ENGINE': 'django.db.backends.mysql',
                  #'NAME': 'cms_platform', # Or path to database file if using sqlite3.
-                'NAME': 'fruit_cms_platform', # Or path to database file if using sqlite3.
+                'NAME': 'fruit', # Or path to database file if using sqlite3.
                 'USER': 'root', # Not used with sqlite3.
                 'PASSWORD': '', # Not used with sqlite3.
                 'HOST': '127.0.0.1', # Set to sempty string for localhost. Not used with sqlite3.
