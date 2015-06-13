@@ -140,10 +140,6 @@ def upload_img(request):
             for chunk in file_obj.chunks():
                 des_f.write(chunk)
 
-<<<<<<< HEAD
-=======
-
->>>>>>> c0eb1d5f350a6e80c57fe5bd54e43e2fde4c635a
         response_data = {
             "files": [
                 {
