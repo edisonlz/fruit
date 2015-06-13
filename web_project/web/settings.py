@@ -84,7 +84,6 @@ def load_settings(settings, debug=True, **kwargs):
             "LOGIN_REDIRECT_URL": "/",
             "FUNC_INIT_DOWNLOAD_AMOUNT": lambda: random.randint(5000, 9999),
             "ALWAYS_ALLOWED_PERMS": ("signout/$", "signin/$"),
-
             
         }
     )

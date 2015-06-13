@@ -5,22 +5,39 @@
 
       
           <div class="col-lg-10">
-                  <div class="slides multiple-items adv_item_left">
-                    {% for item in box.items %}
-                      <div>
-                          <a> <img src="{{ STATIC_URL }}home/c1.jpg" /> </a>
-                      </div>
-                    {% endfor %}
-                  </div>
 
-                  <div class="adv_item_right">
+            <div class="adv_item_left">
+                    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                        <!-- Indicators -->
+                        <ol class="carousel-indicators">
+                          {% for item in box.items %}
+                          <li data-target="#carousel-example-generic" data-slide-to="{{forloop.counter}}" 
+                          {% if forloop.first%}class="active" {%endif%}></li>
+                          {% endfor %}
+                        </ol>
+
+                        <!-- Wrapper for slides -->
+                        <div class="carousel-inner" role="listbox">
+
+                          {% for item in box.items %}
+                            <div class="item {% if forloop.first%} active{%endif%}">
+                              <img src="{{ item.picture}}" />
+                            </div>
+                          {% endfor %}
+                        </div>
+                  </div>
+          </div>
+
+           <div class="adv_item_right">
                    <div class="clear_box"> 
                       <img src="{{ STATIC_URL }}home/home1.jpg" class="adv_right">
                     </div>
                     <div class="clear_box"> 
                       <img src="{{ STATIC_URL }}home/home2.jpg" class="adv_right">
                     </div>
-                  </div>
+          </div>
+
+                 
 
       </div>
  

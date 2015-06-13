@@ -22,10 +22,6 @@
     <![endif]-->
 
     <!-- Custom styles for this template -->
-    
-
-    <link href="{{ STATIC_URL }}slick/slick.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}slick/slick-theme.css" rel="stylesheet">
     <style type="text/css">
     .clear {
         clear: both;
@@ -94,7 +90,7 @@
       .common_h2 { color: #000; padding: 10px 0; border-top: 1px solid #e1e1e1; font-size: 16px;}
 
       .buy-title h3 { font-size: 12px; color: #000; padding: 0px 8px; margin: 10px auto; }
-      .buy-title h4 { margin: 10px auto; border-top: 1px solid #e5e5e5; padding: 0px 8px; }
+      .buy-title h4 { margin: 6px auto; border-top: 1px solid #e5e5e5; padding: 4px 8px; }
 
       .buy-title h4 span { float: right; color: #ff5600; }
       .buy-title h4 del { color: #666; font-size: 12px; }
@@ -163,26 +159,17 @@
 
 
       <!-- FOOTER -->
-      <footer>
+      <div>
         <p class="pull-right"><a href="#">返回首页</a> </p>
         <p>&copy;荔白 2015 Company, Inc. &middot; <a href="#">Privacy</a> </p>
-      </footer>
-
+      </div>
 
 
     <script src="{{ STATIC_URL }}js/jquery-1.11.0.min.js"></script>
-    <script src="{{ STATIC_URL }}js/jquery-migrate-1.2.1.min.js"></script>
     <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>>
-    <script src="{{ STATIC_URL }}slick/slick.js"></script>
-    <script type="text/javascript">
-    $(document).ready(function(){
-          $(".multiple-items").slick({
-            infinite: true,
-              dots: true,
-              speed: 500
-          });
-    });
-
+    <script src="{{ STATIC_URL }}js/bootstrap-button.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap-carousel.js"></script>
+    
     </script>
 
   </body>
