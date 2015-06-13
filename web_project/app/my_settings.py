@@ -20,5 +20,7 @@ def load_settings(settings, debug=True, **kwargs):
                 }
         },
 
+        "APPHOST":"127.0.0.1:9002",
+
         }
     )
