@@ -89,7 +89,7 @@ class BoxItem(models.Model):
     def picture(self):
 
         picture_dict={
-            0:"self.item.head_image",#head_image
+            0:"self.item.adv_image",#head_image
             1:"self.item.show_image",#show_image
             2:"self.item.adv_image",#adv_image
         }
