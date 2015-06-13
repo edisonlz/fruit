@@ -8,7 +8,7 @@ from address import ShoppingAddress,City
 
 import logging
 import traceback
-
+from django.conf import settings
 class BoxType(object):
     NORMAL = 1
     HEADER_SHOW = 0
@@ -97,7 +97,10 @@ class BoxItem(models.Model):
         if not url:
             url = eval("self.item.show_image")
 
-        return url 
+        public_url = "http://{}{}".format(settings.APPHOST,url)
+        print public_url
+
+        return public_url
 
 
     @classmethod
