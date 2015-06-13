@@ -55,9 +55,14 @@ def item_edit(request):
             item = Item.objects.get(pk=item_id)
         except:
             pass
+
         #select data
         categories = ItemCategory.objects.all()
         promotes = ItemPromote.objects.all()
+        try:
+            show_image = ItemImage.objects.get(item_id=item_id)
+        except ItemImage.DoesNotExist:
+            show_image = None
 
         return render(request, 'item/edit.html', locals())
 
@@ -101,19 +106,24 @@ def item_edit(request):
         item.promote = ItemPromote.objects.get(
             id=promote_id
         )
-
         #save item
         item.save()
+
+        ItemImage.add_show_image(
+            item, url=data.get('show_image', ''))
+
         response_data = {
             "status": "success",
             "item_id": item.id
         }
+
         response = JSONResponse(
             response_data,
             mimetype=response_mimetype(request)
         )
         response['Content-Disposition'] = 'inline; filename=files.json'
         return HttpResponse(response, content_type="application/json")
+
 
 @login_required
 def upload_img(request):
@@ -129,9 +139,6 @@ def upload_img(request):
         with open(path_name, 'w') as des_f:
             for chunk in file_obj.chunks():
                 des_f.write(chunk)
-
-        im = get_thumbnail(path_name, '480x320', crop='center', quality=99)
-        print dir(im)
 
         response_data = {
             "files": [
@@ -154,7 +161,7 @@ def upload_img(request):
 def item_auto_complete(request):
     """auto complete return format"""
 
-    key = request.GET.get('key','')
+    key = request.GET.get('key', '')
     count = request.GET.get('count', 10)
     qs = Item.objects.filter(title__icontains=key)[0:count]
 
@@ -170,6 +177,7 @@ def item_auto_complete(request):
     response["Access-Control-Allow-Origin"] = "*"
     return response
 
+
 @login_required
 def item_list(request):
     if request.method == "GET":
@@ -180,3 +188,49 @@ def item_list(request):
             items = Item.objects.filter(title__contains="%s" % key)
 
         return render(request, 'item/item_list.html', locals())
+
+
+def image_tag_edit(request):
+
+    if request.method == "GET":
+        img_id = request.GET.get('img_id')
+        tags = ImageTag.objects.filter(image_id=img_id)
+        image = ItemImage.objects.get(id=img_id)
+        tag_data = []
+        for t in tags:
+            tmp = {}
+            tmp['text'] = t.content
+            tmp['x'] = t.tag_x
+            tmp['y'] = t.tag_y
+            tag_data.append(tmp)
+        tag_data = json.dumps(tag_data)
+        return render(request, 'item/image_edit.html',
+                      {'image': image, 'tag_data': tag_data})
+
+    if request.method == "POST":
+        data = request.POST.get('result')
+        image_id = request.POST.get('img_id')
+        tags = json.loads(data)
+        image = ItemImage.objects.get(id=image_id)
+        #delete old tags
+        ImageTag.objects.filter(image=image).delete()
+
+        #create tags
+        for tag in tags:
+            t = ImageTag(
+                image=image, content=tag['text'],
+                tag_x=tag['x'], tag_y=tag['y']
+            )
+            t.save()
+
+        response_data = {
+            "status": "success",
+        }
+
+        response = JSONResponse(
+            response_data,
+            mimetype=response_mimetype(request)
+        )
+        response['Content-Disposition'] = 'inline; filename=files.json'
+        return HttpResponse(response, content_type="application/json")
+
