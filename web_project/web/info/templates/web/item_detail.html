@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load util_tags %}
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="icon" href="../../favicon.ico">
+
+<title></title>
+
+
+<!-- Bootstrap core CSS -->
+<link href="{{ STATIC_URL }}bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="{{ STATIC_URL }}spinner/spinner/jquery.spinner.css" rel="stylesheet">
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+  <script src="{{ STATIC_URL }}js/html5shiv.min.js"></script>
+  <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+<style type="text/css">
+    .container{
+        padding-left: 80px;
+        padding-right: 80px;
+    }
+
+    .fruit_display h2 {
+        margin-top: 0px;
+        font-size: 16px;
+        padding: 10px 45px 10px 10px;
+        line-height: 26px;
+    }
+    .fruit_display h2 {
+        color: #000;
+        border-top: 1px solid #e5e5e5;
+        border-bottom: 1px solid #e5e5e5;
+    }
+    .fruit_display h3 {
+        font-size: 16px;
+        padding: 10px 45px 10px 10px;
+        line-height: 24px;
+    }
+    .fruit_display h3 {
+        color: #ff5600;
+    }
+{#    .fruit_display h3 span {#}
+{#        float: right;#}
+{#    }#}
+    .fruit_display h3 span {
+        color: #666;
+    }
+    .fruit_display h4 {
+        font-size: 16px;
+        padding: 0px 45px 10px 10px;
+        line-height: 24px;
+    }
+    .fruit_display h4 {
+        color: #666;
+    }
+
+    .big_w510 {
+    width: 344px;
+    }
+
+    .cont_common_h2 {
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .cont_common_h2 {
+        color: #000;
+        padding: 10px 0;
+        border-top: 1px solid #e1e1e1;
+        border-bottom: 1px solid #e1e1e1;
+
+    }
+    .big_w918 {
+        width: 616px;
+    }
+    .fl {
+        float: left;
+    }
+    .fr {
+        float: right;
+    }
+    .big_w918 img {
+        width: 616px;
+    }
+
+    .info_element{
+        margin-top: 10px;
+    }
+</style>
+</head>
+
+<body>
+    <div class="container" style="margin-top: 50px">
+        <div class="row" style="margin-top: 10px;margin-bottom: 10px">
+             <div class="col-lg-8">
+                 <img src="http://imgcdn.xuxian.com/upload/2015/06/01/20150601073928310.jpg" height="338px" width="640px">
+             </div>
+
+             <div class="col-lg-4 fruit_display">
+                 <div class="row ">
+                 <div class="col-lg-12">
+                     <h2 style="font-weight:bold">山西西瓜，清爽解渴，盛夏之王</h2>
+                 </div>
+                 </div>
+
+                 <div class="row"style="margin-top: 15px">
+                   <div class="col-lg-12">
+                    <h3 style="font-weight:bold;font-size: 24px;padding-bottom: 0px">
+                        产品价格：<strong style="font-weight:bold">¥12.90</strong><br>
+                    </h3>
+                   </div>
+                 </div>
+
+                 <div class="row">
+                    <div class="col-lg-12">
+                    <h3>
+                        <span style="margin-top: 5px"><del>市场价：¥<bi>39.00</bi></del></span>
+                    </h3>
+                    </div>
+                 </div>
+                 <div class="row">
+                   <div class="col-lg-12">
+                    <h4>规格：1个 </h4>
+                   </div>
+                 </div>
+
+                 <div class="row ">
+                     <div class="col-lg-4" style="margin-top: 0px">
+                        <h4 style="padding-right: 0px">数量:</h4>
+                     </div>
+                     <div class="col-lg-8" style="padding-left: 0px">
+                            <input type="text" class="spinner"/>
+                     </div>
+                 </div>
+
+                 <div class="row" style="margin-top: 25px">
+                   <div class="col-lg-12">
+                       <button type="button" class="btn btn-lg btn-block btn-success">
+                           <span class="glyphicon glyphicon-shopping-cart"></span> 添加到购物车</button>
+                   </div>
+                 </div>
+
+             </div>
+        </div><!--/row-->
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="cont_common_h2">商品信息</h2>
+            </div>
+        </div>
+        <div class="row" style="padding-left: 10px;padding-right: 10px">
+            <div class="col-lg-8">
+                <div class="fl big_w918 goodscoontent">
+                    <img src="http://imgcdn.xuxian.com/upload/2015/06/02/20150602063132338.jpg" alt="">
+                    <img src="http://imgcdn.xuxian.com/upload/2015/06/02/20150602120943525.jpg" alt="">
+                    <img src="http://imgcdn.xuxian.com/upload/2015/06/02/20150602120947659.jpg" alt="">
+                    <img src="http://imgcdn.xuxian.com/upload/2015/06/02/20150602120953302.jpg" alt="">
+                    <img src="http://imgcdn.xuxian.com/upload/2015/06/02/20150602120959962.jpg" alt="">
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="fr big_w510 piaofu_fr">
+                    <div data-spy="affix" data-offset-top="60" data-offset-bottom="200" style="margin: 100px 0 0 40px">
+                         <img src="http://imgcdn.xuxian.com/images/cong_right.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!--/.container-->
+<script src="{{ STATIC_URL }}js/jquery.js"></script>
+
+<script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+<script src="{{ STATIC_URL }}spinner/spinner/jquery.spinner.js"></script>
+
+<script type="text/javascript">
+$('.spinner').spinner();
+{#$('#myAffix').affix({#}
+{#  offset: {#}
+{#    top: 10,#}
+{#    bottom: function () {#}
+{#      alert("Edddd");#}
+{#      return (this.bottom = $('.footer').outerHeight(true))#}
+{#    }#}
+{#  }#}
+{#)#}
+</script>
+</body>
