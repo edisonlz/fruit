@@ -10,7 +10,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Carousel Template for Bootstrap</title>
+    <title>荔白超市</title>
 
     <!-- Bootstrap core CSS -->
     <link href="{{ STATIC_URL }}bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -22,7 +22,49 @@
     <![endif]-->
 
     <!-- Custom styles for this template -->
-    <link href="{{ STATIC_URL }}bootstrap/css/carousel.css" rel="stylesheet">
+    
+
+    <link href="{{ STATIC_URL }}slick/slick.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}slick/slick-theme.css" rel="stylesheet">
+    <style type="text/css">
+    .clear {
+        clear: both;
+        font-size: 1px;
+        height: 0;
+        line-height: 0px;
+        margin: 0;
+        padding: 0;
+      }
+
+      .main {
+       padding-top: 60px; 
+       display: block;
+       margin: 0 auto;
+
+      }
+
+      .fixed_top{
+         position: fixed;
+         right: 0;
+         left: 0;
+         width:100%;
+         border-radius: 0;
+         z-index: 1003;
+      }
+
+      .slides div a img {
+        width: 100%;
+      }
+
+      .adv_right {
+        width: 100%; 
+        border: 0px;
+      }
+      .clear_box {
+        margin: 0px;
+        padding: 0px;
+      }
+    </style>
   </head>
 <!-- NAVBAR
 ================================================== -->
@@ -30,67 +72,67 @@
     <div class="navbar-wrapper">
       <div class="container">
 
-        <nav class="navbar navbar-inverse navbar-static-top">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-              <a class="navbar-brand" href="#">Project name</a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-              <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="#">Action</a></li>
-                    <li><a href="#">Another action</a></li>
-                    <li><a href="#">Something else here</a></li>
-                    <li class="divider"></li>
-                    <li class="dropdown-header">Nav header</li>
-                    <li><a href="#">Separated link</a></li>
-                    <li><a href="#">One more separated link</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
+        <nav class="navbar fixed_top navbar-inverse" style="background-color:#428bca;border-color:#428bca;">
+            <div class="container">
+              <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" style="color:#FFF;" href="#">
+                  <span class="glyphicon glyphicon-grain" aria-hidden="true"></span>&nbsp;荔白-您身边的便利超市
+                </a>
+              </div>
+              <div id="navbar" class="collapse navbar-collapse">
+
+                <ul class="nav navbar-nav">
+                  <li class="active" ><a style="background-color:#428bca;" href="/">首页</a></li>
+                  <li><a  href="#about" style="color:#FFFFFF;">提货点选择</a></li>
+                  <li><a  href="#about" style="color:#FFFFFF;">关于</a></li>
+                  <li><a href="#contact" style="color:#FFFFFF;">联系我们</a></li>
+                </ul>
+
+                <p class="navbar-text pull-right" style="color:#FFFFFF;">
+                  Logged in as Ali<span style="margin:6px;">|</span><a style="color:#FFF;" href="/signout/" class="navbar-link">注销</a>
+                  &nbsp;
+                  <span class="glyphicon glyphicon-qrcode" aria-hidden="true"></span>
+                </p>
+
+              </div><!-- /.nav-collapse -->
+            </div><!-- /.container -->
+          </nav><!-- /.navbar -->
 
       </div>
     </div>
 
 
+    <div class="clear"></div>
     <!-- Carousel
     ================================================== -->
-    {% for box in boxes %}
+    <div class="main">
+      {% for box in boxes %}
 
-        {% if box.box_type == BoxType.HEADER_SHOW %}
-                {% include  'web/index_carousel.html' with box=box  %}
-        {% elif  box.box_type == BoxType.NORMAL %}
-                {% include  'web/index_row.html' with box=box %}
-        {% endif %}
+          {% if box.box_type == BoxType.HEADER_SHOW %}
+                  {% include  'web/index_carousel.html' with box=box  %}
+          {% elif  box.box_type == BoxType.NORMAL %}
+                  {% include  'web/index_row.html' with box=box %}
+          {% endif %}
 
-    {% endfor %}
+      {% endfor %}
+    </div>
 
-      <hr class="featurette-divider">
+    
 
       <!-- /END THE FEATURETTES -->
 
 
       <!-- FOOTER -->
       <footer>
-        <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>&copy; 2014 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+        <p class="pull-right"><a href="#">返回首页</a> </p>
+        <p>&copy;荔白 2015 Company, Inc. &middot; <a href="#">Privacy</a> </p>
       </footer>
 
-    </div><!-- /.container -->
 
 
     <script src="{{ STATIC_URL }}js/jquery.js"></script>
@@ -107,6 +149,17 @@
     <script src="{{ STATIC_URL }}js/bootstrap-collapse.js"></script>
     <script src="{{ STATIC_URL }}js/bootstrap-carousel.js"></script>
     <script src="{{ STATIC_URL }}js/bootstrap-typeahead.js"></script>
+    <script src="{{ STATIC_URL }}slick/slick.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+          $(".multiple-items").slick({
+            infinite: true,
+              dots: true,
+              speed: 500
+          });
+    });
+
+    </script>
 
   </body>
 </html>
