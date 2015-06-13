@@ -130,9 +130,6 @@ def upload_img(request):
             for chunk in file_obj.chunks():
                 des_f.write(chunk)
 
-        im = get_thumbnail(path_name, '480x320', crop='center', quality=99)
-        print dir(im)
-
         response_data = {
             "files": [
                 {
