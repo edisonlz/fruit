@@ -13,12 +13,10 @@
         <h2 class="common_h2">{{box.title}}</h2>
          {% for item in box.items %}
 
-              <div class="item">
+              <div class="fruit_item">
 
                   <div class="clear_box" data-id="967">   
-
-                          <img class="scrollLoading" xsrc="http://imgcdn.xuxian.com/upload/2015/06/01/20150601073928310_464_261.jpg" src="http://imgcdn.xuxian.com/upload/2015/06/01/20150601073928310_464_261.jpg" title="山西西瓜，清爽解渴，盛夏之王" style="width:100%">
-                    
+                          <img src="{{item.picture}}" title="{{item.item.title}}" style="width:100%">
                   </div>
                   <div class="buy-title">
                          <h3>{{item.item.title}}</h3>

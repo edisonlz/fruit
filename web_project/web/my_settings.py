@@ -27,4 +27,6 @@ def load_settings(settings):
             "fragment_cache": ["localhost:11211"],
             "user_cache": ["localhost:11211"],
         },
+
+        "APPHOST":"127.0.0.1:9002",
     })
