@@ -15,6 +15,7 @@ from redis_model.queue import Worker
 from base.core.dateutils import *
 import json
 
+
 def do_sync_favorite(data):
     print "**Recieve data: ", data
 
@@ -22,7 +23,6 @@ def do_sync_favorite(data):
     device_id = data["device_id"]
     #......
 
-    
 
 if __name__ == "__main__":
     worker = Worker("device_info.sync.favorite")
@@ -35,5 +35,3 @@ if __name__ == "__main__":
         sys.exit(1)
     except Exception, e:
         print e
-
-    

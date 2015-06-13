@@ -164,4 +164,44 @@ class Item(models.Model):
             return []
 
 
+class ItemImage(models.Model):
 
+    SHOW_IMAGE = 1
+
+    item = models.ForeignKey(Item, verbose_name=u'商品')
+    url = models.CharField(max_length=200, verbose_name=u'图片链接')
+    type = models.IntegerField(verbose_name=u'图片类型',)
+
+    class Meta:
+        verbose_name = u"商品图片"
+        verbose_name_plural = verbose_name
+        app_label = "content"
+
+    @classmethod
+    def add_show_image(cls, item, url):
+        """
+        add a show image
+        """
+        try:
+            item_image = cls.objects.get(item=item)
+        except cls.DoesNotExist:
+            item_image = ItemImage()
+        item_image.item = item
+        item_image.url = url
+        item_image.type = cls.SHOW_IMAGE
+        item_image.save()
+
+        return item_image
+
+
+class ImageTag(models.Model):
+    image = models.ForeignKey(ItemImage, verbose_name=u'商品展示图')
+    content = models.CharField(max_length=50, verbose_name=u'tag内容',default='')
+    link = models.CharField(max_length=256,verbose_name=u'tag 链接 ',default='')
+    tag_x = models.FloatField(verbose_name=u'横坐标',)
+    tag_y = models.FloatField(verbose_name=u'纵坐标')
+
+    class Meta:
+        verbose_name = u"商品图片标签"
+        verbose_name_plural = verbose_name
+        app_label = "content"
