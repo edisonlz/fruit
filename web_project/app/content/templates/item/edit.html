@@ -44,7 +44,9 @@
                     <div class="alert alert-success img_div"
                          style="display: {% if not item.show_image %}none{% endif %};font-size: 20px;margin-top: 10px">
                         <button type="button" class="close">&times;</button>
-                        <img src="{{ item.show_image }}" class="img-responsive img-polaroid"/>
+                        <a href="/content/item/image/edit?img_id={{ show_image.id }}">
+                            <img src="{{ item.show_image }}" class="img-responsive img-polaroid"/>
+                        </a>
                     </div>
                     <div class="progress progress-success progress-striped active" style="display: none">
                         <div class="bar"></div>

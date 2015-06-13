@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+
+{% block link %}
+    <link href="{{ STATIC_URL }}select2/select2.css" rel="stylesheet"/>
+    <script src="{{ STATIC_URL }}select2/select2.js"></script>
+    <link href="{{ STATIC_URL }}select2/select2-bootstrap.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}file_upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}toast_message/jquery.toastmessage.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}jquery-validate/jquery.validate.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}taggd/css/taggd.css" />
+
+    <style type="text/css">
+		img {
+			display: block;
+			width: 640px;
+            height: 480px;
+		}
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+            <img src="{{ image.url }}" class="taggd" alt="" />
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 20px">
+        <div class="col-sm-3">
+            <button id="final_submit" class="btn btn-info btn-lg ">保存</button>
+        </div>
+        <div class="col-sm-3">
+            <button id="clear" class="btn btn-danget btn-lg ">清除</button>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+
+
+{% block js %}
+
+
+<script src="{{ STATIC_URL }}select2/select2.js"></script>
+<script src="{{ STATIC_URL }}js/jquery.form.js"></script>
+<script src="{{ STATIC_URL }}file_upload/js/vendor/jquery.ui.widget.js"></script>
+<script src="{{ STATIC_URL }}file_upload/js/jquery.iframe-transport.js"></script>
+<script src="{{ STATIC_URL }}file_upload/js/jquery.fileupload.js"></script>
+<script src="{{ STATIC_URL }}jquery-validate/jquery.validate.js"></script>
+<script src="{{ STATIC_URL }}toast_message/jquery.toastmessage.js"></script>
+<link href="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet" />
+<script src="{{ STATIC_URL }}bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.js"></script>
+<script src="{{ STATIC_URL }}taggd/js/jquery.taggd.js"></script>
+
+
+<script type="text/javascript">
+var options = {
+
+    edit: true,
+
+    align: {
+        y: 'top'
+    },
+
+    offset: {
+        top: 15
+    },
+
+    handlers: {
+        click: 'toggle'
+    }
+};
+
+
+
+var data={{tag_data |safe}};
+
+
+var taggd = $('.taggd').taggd( options, data);
+
+
+$("#final_submit").click(function () {
+    console.log("******");
+    console.log(taggd.data)
+    $.post("/content/item/image/edit", {"result": JSON.stringify(taggd.data),"img_id":{{image.id}} }, function (data) {
+        if (data.status == "success") {
+            $().toastmessage('showSuccessToast', '操作成功');
+            setTimeout(function () {
+                location.href="/content/item/image/edit?img_id=" + {{ image.id }};
+            }, 1000);
+
+        } else {
+            $().toastmessage('showErrorToast', '操作失败');        }
+    });
+
+});
+$("#final_submit").click(function () {
+    console.log("******");
+    console.log(taggd.data)
+    $.post("/content/item/image/edit", {"result": JSON.stringify(taggd.data),"img_id":{{image.id}} }, function (data) {
+        if (data.status == "success") {
+            $().toastmessage('showSuccessToast', '操作成功');
+            setTimeout(function () {
+                location.href="/content/item/image/edit?img_id=" + {{ image.id }};
+            }, 1000);
+
+        } else {
+            $().toastmessage('showErrorToast', '操作失败');        }
+    });
+
+});
+</script>
+
+{% endblock %}
