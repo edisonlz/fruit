@@ -63,7 +63,7 @@ def load_settings(settings, debug=True, **kwargs):
                 'app.middleware.profile_middleware.ProfileMiddleware',
             ],
 
-            'AUTH_USER_MODEL': 'user.User',
+            #'AUTH_USER_MODEL': 'user.User',
 
             'INSTALLED_APPS': [
                 'django.contrib.auth',
@@ -71,24 +71,19 @@ def load_settings(settings, debug=True, **kwargs):
                 'django.contrib.sessions',
                 'django.contrib.messages',
                 'django.contrib.staticfiles',
-                #'django_admin_bootstrapped',
                 'django.contrib.admin',
                 'django.contrib.admindocs',
                 'django.contrib.admin',
                 'django.contrib.admindocs',
                 'south',
-                'web.user',
+                #'web.user',
                 'web.info',
-                'app.content',
-                #'web.bootstrap_toolkit',
-                'django_extensions',
             ],
             
             "LOGIN_URL": "/signin",
             "LOGIN_REDIRECT_URL": "/",
             "FUNC_INIT_DOWNLOAD_AMOUNT": lambda: random.randint(5000, 9999),
             "ALWAYS_ALLOWED_PERMS": ("signout/$", "signin/$"),
-
             
         }
     )
