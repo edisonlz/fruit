@@ -1,12 +1,9 @@
 # coding=utf-8
-from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 import json
-from app.content.models import Box, BoxType , ShoppingAddress , City
-from django.db import transaction
+from app.content.models import ShoppingAddress, City
 from app.content.models import Status
 
 
@@ -155,11 +152,10 @@ def delete(request):
         return HttpResponse(json.dumps(response), content_type="application/json")
 
 
-
 @login_required
 def map(request):
 
-    pk =  request.GET.get("id")
+    pk = request.GET.get("id")
     address = ShoppingAddress.objects.get(id=pk)
 
     return render(request, 'address/map.html', {

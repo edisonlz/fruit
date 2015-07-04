@@ -1,0 +1,49 @@
+class RebateLimit(models.Model):
+
+    rebate_type = models.ForeignKey(RebateType, verbose_name=u'返利类型 只有阶梯付费支持')
+    max_amount = models.IntegerField(verbose_name=u'返利需要达到金额',default=0)
+    rebate_amount = models.IntegerField(verbose_name=u'返利金额', default=0)
+
+    class Meta:
+        verbose_name = u"返利阶梯"
+        verbose_name_plural = verbose_name
+
+    @classmethod
+    def get_step_rebate(cls, rebate_type_id):
+        """
+        获取阶梯返利数据结构
+        """
+        qs = cls.objects.filter(rebate_type_id=rebate_type_id)
+
+        step_rebate = []
+        step_rebate_map = {}
+
+        for rebate in qs:
+
+            step_rebate.append(rebate.max_amount)
+            step_rebate_map[rebate.max_amount] = {
+                'id': rebate.id,
+                'max_amount': rebate.max_amount,
+                'rebate_amount': rebate.rebate_amount,
+            }
+
+        step_rebate = sorted(step_rebate)
+
+        return step_rebate, step_rebate_map
+
+
+    @classmethod
+    def get_rebate_amount(cls, rebate_type_id, pay_amount):
+
+        step_rebate, step_rebate_map = cls.get_step_rebate(rebate_type_id)
+
+        right_first = bisect.bisect_right(step_rebate, pay_amount)
+
+        if right_first >= 1:
+            score = step_rebate[right_first-1]
+            rebate_item = step_rebate_map.get(
+                score, None)
+        else:
+            rebate_item = None
+
+        return rebate_item

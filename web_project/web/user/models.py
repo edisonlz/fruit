@@ -3,7 +3,6 @@ import functools
 from django.db import models
 
 
-
 class User(models.Model):
 
     username = models.CharField(verbose_name=u'用户名', max_length=30, unique=True,
